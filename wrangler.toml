@@ -1,0 +1,13 @@
+name = "travel-plan-api"
+main = "worker.js"
+compatibility_date = "2026-05-05"
+
+# 先在 Cloudflare 创建 KV Namespace，再把 id 填到这里：
+# wrangler kv namespace create TRAVEL_DATA
+[[kv_namespaces]]
+binding = "TRAVEL_DATA"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+
+# 可选：限制允许访问的前端域名，例如 https://your-project.pages.dev
+# [vars]
+# ALLOWED_ORIGIN = "https://your-project.pages.dev"

@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "updatedAt": "",
+  "peopleOptions": ["Evan", "Gonca", "Ainiya", "Lin", "Mom", "全家"],
+  "rows": [
+    {"id":"r_17may","lang":"中文","date":"17-May","weekday":"Sunday","content":"午饭后去市中心逛街，晚上住酒店","links":[],"participants":["Evan","Gonca"]},
+    {"id":"r_18may","lang":"中文","date":"18-May","weekday":"Monday","content":"早上去体检，午饭后出发去橘子洲头,零食王国","links":["http://xhslink.com/o/4fAotv0DtEv"],"participants":["Evan","Gonca","Ainiya","Lin"]},
+    {"id":"r_19may","lang":"中文","date":"19-May","weekday":"Tuesday","content":"早上去办银行卡，然后出发长沙华谊兄弟电影小镇","links":["http://xhslink.com/o/2SrlJCvzOXb"],"participants":["Evan","Gonca"]},
+    {"id":"r_20may","lang":"中文","date":"20-May","weekday":"Wednesday","content":"株洲小众南法庄园\n株洲攸县酒仙湖","links":["http://xhslink.com/o/ACQvZz4bh7U","http://xhslink.com/o/70msgGQjc3q"],"participants":["Evan","Gonca"]},
+    {"id":"r_21may","lang":"中文","date":"21-May","weekday":"Thursday","content":"早点吃午饭然后去动物园","links":["http://xhslink.com/o/2szPYKOkA9l"],"participants":["Evan","Gonca","Ainiya","Mom"]},
+    {"id":"r_22may","lang":"中文","date":"22-May","weekday":"Friday","content":"一起去吃龙虾或者烧烤","links":[],"participants":["全家"]},
+    {"id":"r_23may","lang":"中文","date":"23-May","weekday":"Saturday","content":"株洲港湾咖啡馆","links":["http://xhslink.com/o/3zoe1CNfnPz"],"participants":["Evan","Gonca"]},
+    {"id":"r_24may","lang":"中文","date":"24-May","weekday":"Sunday","content":"休息，准备行李","links":[],"participants":[]}
+  ]
+}
