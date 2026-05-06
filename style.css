@@ -790,7 +790,7 @@ body.modalLocked{
 }
 
 
-/* v2.42.6 readability + content-density optimization */
+/* v2.42.7 readability + content-density optimization */
 .daySummary{
   display:flex;
   flex-wrap:wrap;
@@ -1058,7 +1058,7 @@ body.modalLocked{
 }
 
 
-/* v2.42.6 compact density pass: PC + mobile show more content */
+/* v2.42.7 compact density pass: PC + mobile show more content */
 :root{
   --compact-radius:14px;
   --compact-gap:10px;
@@ -1386,7 +1386,7 @@ button{
 }
 
 
-/* v2.42.6: compress top cards, reduce vertical gaps, show more trip content */
+/* v2.42.7: compress top cards, reduce vertical gaps, show more trip content */
 .page{
   padding-top:10px!important;
 }
@@ -1587,7 +1587,7 @@ button{
 }
 
 
-/* v2.42.6 Red Note links open in a new window; viewer modal disabled */
+/* v2.42.7 Red Note links open in a new window; viewer modal disabled */
 #viewerMask{
   display:none!important;
 }
@@ -1596,7 +1596,7 @@ button{
 }
 
 
-/* v2.42.6 record copy button */
+/* v2.42.7 record copy button */
 .btnCopy{
   color:#0f5132!important;
   border-color:#cce8d8!important;
@@ -1640,7 +1640,7 @@ button{
 }
 
 
-/* v2.42.6 keep Edit / Copy / Delete in one row */
+/* v2.42.7 keep Edit / Copy / Delete in one row */
 .actionCell{
   display:flex!important;
   flex-direction:row!important;
@@ -1719,7 +1719,7 @@ button{
 }
 
 
-/* v2.42.6 mobile edit modal one-screen compact layout */
+/* v2.42.7 mobile edit modal one-screen compact layout */
 @media(max-width:760px){
   /*
     Goal: editing form should fit on one mobile screen without scrolling.
@@ -1997,7 +1997,7 @@ button{
 }
 
 
-/* v2.42.6 mobile edit page redesign: full screen, visual hierarchy, plan content focus */
+/* v2.42.7 mobile edit page redesign: full screen, visual hierarchy, plan content focus */
 @media(max-width:760px){
   /* Full-screen edit experience */
   #editMask{
@@ -2362,7 +2362,7 @@ button{
 }
 
 
-/* v2.42.6 mobile edit page: one-column full-screen, no empty space, no scroll by default */
+/* v2.42.7 mobile edit page: one-column full-screen, no empty space, no scroll by default */
 @media(max-width:760px){
   #editMask{
     align-items:stretch!important;
@@ -2662,7 +2662,7 @@ button{
 }
 
 
-/* v2.42.6 mobile edit: Plan Content + Red Note adaptive height, exact full-screen fill */
+/* v2.42.7 mobile edit: Plan Content + Red Note adaptive height, exact full-screen fill */
 @media(max-width:760px){
   #editMask .modal{
     height:var(--app-height,100vh)!important;
@@ -2814,7 +2814,7 @@ button{
 }
 
 
-/* v2.42.6 PC card spacing compact */
+/* v2.42.7 PC card spacing compact */
 @media(min-width:761px){
   .page{
     padding-top:8px!important;
@@ -2864,7 +2864,7 @@ button{
 }
 
 
-/* v2.42.6 PC ultra compact spacing */
+/* v2.42.7 PC ultra compact spacing */
 @media(min-width:761px){
   body{
     background:#f3f6fa!important;
@@ -3015,7 +3015,7 @@ button{
 }
 
 
-/* v2.42.6 PC date-card spacing ultra compact */
+/* v2.42.7 PC date-card spacing ultra compact */
 @media(min-width:761px){
   .board{
     gap:2px!important;
@@ -3043,7 +3043,7 @@ button{
 }
 
 
-/* v2.42.6 Must / Optional priority design */
+/* v2.42.7 Must / Optional priority design */
 .priorityBadge{
   display:inline-flex;
   align-items:center;
@@ -3204,7 +3204,7 @@ button{
 }
 
 
-/* v2.42.6 Optional row color follow-through
+/* v2.42.7 Optional row color follow-through
    基于 v2.42.0，只优化 Optional 行的视觉状态，不套用 v2.43/v2.44 的大改样式。
 */
 .planRow.priority-optional{
@@ -3275,7 +3275,7 @@ button{
 }
 
 
-/* v2.42.6 PC/mobile display options */
+/* v2.42.7 PC/mobile display options */
 .displayOptionsField{
   margin-top:12px;
 }
@@ -3379,7 +3379,7 @@ button{
 }
 
 
-/* v2.42.6 floating sync button */
+/* v2.42.7 floating sync button */
 .fabSync svg{
   width:20px;
   height:20px;

@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.42.6";
+  const APP_VERSION = "v2.42.7";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -90,7 +90,7 @@
       import: "Import Excel",
       tplZh: "Chinese Template",
       tplEn: "English Template",
-      peopleConfig: "People Settings",
+      settings: "Settings",
       cloudflareConfig: "Cloudflare Sync",
       refresh: "Refresh",
       search: "Search date / content / people",
@@ -129,7 +129,7 @@
       preview: "Link Preview",
       iframeTip: "If it cannot be displayed, open it in a new window.",
       openNew: "Open new window",
-      peopleSyncNotice: "People settings are saved to data.json together with plans and sync on new devices.",
+      settingsSyncNotice: "Settings are saved to data.json together with plans and sync on new devices.",
       peopleList: "People list",
       peopleHint: "One name per line. Saving writes to data.json peopleOptions.",
       displaySettings: "Display Settings",
@@ -863,9 +863,15 @@
       const key = $(this).data("i18n-placeholder");
       $(this).attr("placeholder", t(key));
     });
-    $("#btnLang").attr("title", appLang === "zh" ? "Switch to English" : "切换中文");
-    $("#btnFabAdd").attr("title", t("addItem"));
-    $("#btnFabAdd").attr("aria-label", t("addItem"));
+
+    $("#btnPeople").attr({ title: t("settings"), "aria-label": t("settings") });
+    $("#btnCloudflare").attr({ title: t("cloudflareConfig"), "aria-label": t("cloudflareConfig") });
+    $("#btnFabAdd").attr({ title: t("addItem"), "aria-label": t("addItem") });
+    $("#btnFabSync").attr({ title: t("syncData"), "aria-label": t("syncData") });
+    $("#btnLang").attr({
+      title: appLang === "zh" ? "Switch to English" : "切换中文",
+      "aria-label": appLang === "zh" ? "Switch to English" : "切换中文"
+    });
   }
 
   function render() {
@@ -1076,6 +1082,9 @@
       render();
       refreshWeekday();
       renderPeopleSummary();
+      if ($("#peopleMask").hasClass("show")) {
+        renderDisplayOptionsConfig();
+      }
     });
 
     $("#editDate").on("change input", refreshWeekday);
