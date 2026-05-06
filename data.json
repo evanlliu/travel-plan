@@ -1,6 +1,6 @@
 {
   "version": "v2.26.0",
-  "updatedAt": "2026-05-06T10:50:28.329Z",
+  "updatedAt": "2026-05-06T10:50:30.493Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -86,19 +86,6 @@
         "Ainiya"
       ],
       "sort": 5
-    },
-    {
-      "id": "i_007",
-      "dateISO": "2026-05-19",
-      "time": "19:00",
-      "group": "Plan 1",
-      "content": "Bar and club",
-      "links": [],
-      "participants": [
-        "Evan",
-        "Gonca"
-      ],
-      "sort": 7
     },
     {
       "id": "i_009",
