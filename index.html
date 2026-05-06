@@ -10,19 +10,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-  <title>Travel Plan v2.15.0</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <link rel="stylesheet" href="./style.css?v=v2.15.0">
+  <title>Travel Plan v2.16.0</title>
+  <link rel="stylesheet" href="./style.css?v=v2.16.0">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh.js"></script>
 </head>
 <body>
   <main class="page">
     <section class="hero">
       <div class="heroText">
-        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.15.0</span></h1>
+        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.16.0</span></h1>
       </div>
 
       <div class="heroActions">
@@ -72,7 +69,7 @@
         <div class="grid">
           <div class="field">
             <label data-i18n="date">日期</label>
-            <input type="text" id="editDate" data-i18n-placeholder="datePlaceholder" placeholder="选择日期" autocomplete="off" readonly inputmode="none" enterkeyhint="done">
+            <input type="date" id="editDate" data-i18n-placeholder="datePlaceholder" placeholder="选择日期" autocomplete="off" inputmode="none">
           </div>
           <div class="field">
             <label data-i18n="time">时间</label>
@@ -175,6 +172,6 @@
     </div>
   </div>
 
-  <script src="./app.js?v=v2.15.0"></script>
+  <script src="./app.js?v=v2.16.0"></script>
 </body>
 </html>

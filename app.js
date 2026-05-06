@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.15.0";
+  const APP_VERSION = "v2.16.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -787,60 +787,25 @@
       setStatus("err", t("networkErr"));
     }
   }  function initDatePicker() {
-    if (typeof flatpickr === "undefined") return;
-
-    const current = $("#editDate").val();
-    $("#editDate").attr({ readonly: true, inputmode: "none", autocomplete: "off" });
-
-    if (fp) {
+    if (fp && typeof fp.destroy === "function") {
       fp.destroy();
-      fp = null;
     }
+    fp = null;
 
-    const dateInput = document.getElementById("editDate");
-    fp = flatpickr(dateInput, {
-      dateFormat: "Y-m-d",
-      altInput: true,
-      altFormat: appLang === "zh" ? "Y年m月d日" : "F j, Y",
-      locale: appLang === "zh" && flatpickr.l10ns && flatpickr.l10ns.zh ? flatpickr.l10ns.zh : "default",
-      disableMobile: true,
-      defaultDate: current || null,
-      allowInput: false,
-      clickOpens: false,
-      static: false,
-      appendTo: document.body,
-      position: "auto center",
-      onReady: function (_selectedDates, _dateStr, instance) {
-        blurDateInput(instance, false);
-      },
-      onOpen: function (_selectedDates, _dateStr, instance) {
-        blurDateInput(instance, true);
-        placeMobileCalendar(instance);
-        setTimeout(function () {
-          blurDateInput(instance, true);
-          placeMobileCalendar(instance);
-        }, 60);
-      },
-      onMonthChange: function (_selectedDates, _dateStr, instance) {
-        placeMobileCalendar(instance);
-      },
-      onYearChange: function (_selectedDates, _dateStr, instance) {
-        placeMobileCalendar(instance);
-      },
-      onChange: function (_selectedDates, _dateStr, instance) {
-        blurDateInput(instance, true);
-        refreshWeekday();
-      },
-      onValueUpdate: function (_selectedDates, _dateStr, instance) {
-        blurDateInput(instance, true);
-        refreshWeekday();
-      },
-      onClose: function () {
-        refreshWeekday();
-      }
-    });
+    const $date = $("#editDate");
+    $date
+      .attr({
+        type: "date",
+        inputmode: "none",
+        autocomplete: "off"
+      })
+      .prop("readonly", false);
 
-    blurDateInput(fp, false);
+    const el = $date.get(0);
+    if (el && el.value && !/^\d{4}-\d{2}-\d{2}$/.test(el.value)) {
+      const parsed = dateToInput(el.value);
+      if (parsed) el.value = parsed;
+    }
   }
 
   function refreshWeekday() {
@@ -877,7 +842,6 @@
     renderPicker();
     refreshWeekday();
     openModal("editMask");
-    if (fp) setTimeout(function () { blurDateInput(fp); }, 60);
   }
 
   function todayISO() {
@@ -889,7 +853,7 @@
     const id = $("#editId").val();
     const item = {
       id: id,
-      dateISO: $("#editDate").val(),
+      dateISO: dateToInput($("#editDate").val()) || $("#editDate").val(),
       time: cleanText($("#editTime").val()),
       group: cleanText($("#editGroup").val()),
       content: cleanText($("#editContent").val()),
@@ -1013,7 +977,7 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.15.0.xlsx" : "travel-plan-pro-en-v2.15.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.16.0.xlsx" : "travel-plan-pro-en-v2.16.0.xlsx");
   }
 
   async function testCloud() {
@@ -1098,11 +1062,6 @@
 
     if (target.closest("#viewerFrame")) return;
 
-    if (target.closest(".flatpickr-calendar")) {
-      e.preventDefault();
-      return;
-    }
-
     if (Math.abs(deltaX) > 5) {
       e.preventDefault();
       return;
@@ -1128,7 +1087,7 @@
 
   $(document).on("touchmove", ".mask.show", function (e) {
     const $target = $(e.target);
-    if (!$target.closest(".modalBody, .peoplePanel, .flatpickr-calendar, #viewerFrame").length) {
+    if (!$target.closest(".modalBody, .peoplePanel, #viewerFrame").length) {
       e.preventDefault();
     }
   });
@@ -1139,28 +1098,28 @@
 
   $(document).on("keydown", function (e) {
     if (e.key === "Escape") closeAllModals();
-  });  $(document).on("touchstart pointerdown mousedown", "#editDate, .flatpickr-input", function (e) {
-    if (this.id === "editDate" || this._flatpickr || $(this).hasClass("flatpickr-input")) {
+  });  document.addEventListener("gesturestart", function (e) {
+    if ($(".mask.show").length) e.preventDefault();
+  }, { passive: false });
+
+  document.addEventListener("touchmove", function (e) {
+    if (!$(".mask.show").length || !e.touches || !e.touches.length) return;
+    const x = e.touches[0].clientX;
+    if (typeof window.__lastModalTouchX === "number" && Math.abs(x - window.__lastModalTouchX) > 4) {
       e.preventDefault();
-      e.stopPropagation();
-      openDatePickerSafe();
     }
-  });
+    window.__lastModalTouchX = x;
+  }, { passive: false });
 
-  $(document).on("click", "#editDate, .flatpickr-input", function (e) {
-    if (this.id === "editDate" || this._flatpickr || $(this).hasClass("flatpickr-input")) {
-      e.preventDefault();
-      e.stopPropagation();
-      openDatePickerSafe();
-    }
-  });
+  document.addEventListener("touchend", function () {
+    window.__lastModalTouchX = null;
+  }, { passive: true });
 
-  $(document).on("focus", "#editDate, .flatpickr-input", function () {
-    this.blur();
-  });
-
-  $(document).on("keydown", "#editDate, .flatpickr-input", function (e) {
-    e.preventDefault();
+  $(document).on("click touchstart", "#editDate", function () {
+    const el = this;
+    el.readOnly = false;
+    el.type = "date";
+    el.inputMode = "none";
   });
 
   $("#btnFabAdd").on("click", function () { openEdit(null); });
