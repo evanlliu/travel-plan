@@ -1,10 +1,10 @@
 {
-  "version": "v2.3.0",
-  "updatedAt": "2026-05-06T05:41:32.872Z",
+  "version": "v2.3.1",
+  "updatedAt": "2026-05-06T05:51:14.148Z",
   "settings": {
     "cloudflare": {
-      "apiBase": "",
-      "appPassword": "",
+      "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
+      "appPassword": "1123",
       "configSavedInDataJson": true,
       "passwordStorage": "data.json settings.cloudflare.appPassword"
     }
@@ -27,8 +27,7 @@
       "links": [],
       "participants": [
         "Evan",
-        "Gonca",
-        "Lin"
+        "Gonca"
       ],
       "sort": 1
     },
