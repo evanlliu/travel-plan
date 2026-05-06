@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.24.0";
+  const APP_VERSION = "v2.25.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -184,6 +184,21 @@
   let modalScrollY = 0;
   let modalBaseHeight = 0;
 
+  function setBottomUiOffsetVar() {
+    let offset = 0;
+    const isMobile = window.matchMedia && window.matchMedia("(max-width: 760px)").matches;
+    const standalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone;
+
+    if (isMobile && window.visualViewport && !standalone) {
+      const vv = window.visualViewport;
+      const base = window.innerHeight || document.documentElement.clientHeight || 0;
+      const chromeBottom = Math.max(0, Math.round(base - (vv.height + vv.offsetTop)));
+      offset = Math.min(140, chromeBottom);
+    }
+
+    document.documentElement.style.setProperty("--bottom-ui-offset", offset + "px");
+  }
+
   function setAppHeightVar() {
     let h;
 
@@ -195,6 +210,7 @@
 
     if (!h && window.visualViewport) h = window.visualViewport.height;
     document.documentElement.style.setProperty("--app-height", Math.round(h) + "px");
+    setBottomUiOffsetVar();
   }
 
 
@@ -989,7 +1005,7 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.24.0.xlsx" : "travel-plan-pro-en-v2.24.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.25.0.xlsx" : "travel-plan-pro-en-v2.25.0.xlsx");
   }
 
   async function testCloud() {
@@ -1229,7 +1245,7 @@
   $("#searchInput").on("input", render);
   $("#editDate").on("input change", refreshWeekday);
   function positionDesktopPeoplePanel() {
-    // v2.24.0: PC People 面板改为 CSS absolute，固定在下拉框正下方。
+    // v2.25.0: PC People 面板改为 CSS absolute，固定在下拉框正下方。
     // 不再用 JS 计算 viewport fixed 坐标，避免跑到计划内容 / 小红书链接区域。
     return;
   }
