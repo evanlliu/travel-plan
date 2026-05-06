@@ -790,7 +790,7 @@ body.modalLocked{
 }
 
 
-/* v2.34.0 readability + content-density optimization */
+/* v2.37.0 readability + content-density optimization */
 .daySummary{
   display:flex;
   flex-wrap:wrap;
@@ -1058,7 +1058,7 @@ body.modalLocked{
 }
 
 
-/* v2.34.0 compact density pass: PC + mobile show more content */
+/* v2.37.0 compact density pass: PC + mobile show more content */
 :root{
   --compact-radius:14px;
   --compact-gap:10px;
@@ -1386,7 +1386,7 @@ button{
 }
 
 
-/* v2.34.0: compress top cards, reduce vertical gaps, show more trip content */
+/* v2.37.0: compress top cards, reduce vertical gaps, show more trip content */
 .page{
   padding-top:10px!important;
 }
@@ -1587,7 +1587,7 @@ button{
 }
 
 
-/* v2.34.0 Red Note links open in a new window; viewer modal disabled */
+/* v2.37.0 Red Note links open in a new window; viewer modal disabled */
 #viewerMask{
   display:none!important;
 }
@@ -1596,7 +1596,7 @@ button{
 }
 
 
-/* v2.34.0 record copy button */
+/* v2.37.0 record copy button */
 .btnCopy{
   color:#0f5132!important;
   border-color:#cce8d8!important;
@@ -1640,7 +1640,7 @@ button{
 }
 
 
-/* v2.34.0 keep Edit / Copy / Delete in one row */
+/* v2.37.0 keep Edit / Copy / Delete in one row */
 .actionCell{
   display:flex!important;
   flex-direction:row!important;
@@ -1719,7 +1719,7 @@ button{
 }
 
 
-/* v2.34.0 mobile edit modal one-screen compact layout */
+/* v2.37.0 mobile edit modal one-screen compact layout */
 @media(max-width:760px){
   /*
     Goal: editing form should fit on one mobile screen without scrolling.
@@ -1993,5 +1993,822 @@ button{
   #editMask .modalFoot button{
     min-height:36px!important;
     height:36px!important;
+  }
+}
+
+
+/* v2.37.0 mobile edit page redesign: full screen, visual hierarchy, plan content focus */
+@media(max-width:760px){
+  /* Full-screen edit experience */
+  #editMask{
+    align-items:stretch!important;
+    justify-content:stretch!important;
+    padding:0!important;
+    overflow:hidden!important;
+    background:rgba(15,23,42,.56)!important;
+  }
+
+  #editMask .modal{
+    width:100vw!important;
+    height:var(--app-height,100vh)!important;
+    max-width:none!important;
+    max-height:var(--app-height,100vh)!important;
+    margin:0!important;
+    border-radius:0!important;
+    display:grid!important;
+    grid-template-rows:auto minmax(0,1fr) auto!important;
+    overflow:hidden!important;
+    background:
+      linear-gradient(180deg,#ffffff 0%,#ffffff 64%,#f7fafc 100%)!important;
+    box-shadow:none!important;
+    border:0!important;
+    bottom:auto!important;
+  }
+
+  html.isStandalone #editMask .modal,
+  body.isStandalone #editMask .modal{
+    width:100vw!important;
+    height:var(--app-height,100vh)!important;
+    max-height:var(--app-height,100vh)!important;
+    bottom:auto!important;
+  }
+
+  /* Header: compact but premium */
+  #editMask .modalHead{
+    padding:
+      calc(env(safe-area-inset-top,0px) + 12px)
+      16px
+      12px!important;
+    min-height:0!important;
+    border-bottom:1px solid rgba(15,23,42,.08)!important;
+    background:rgba(255,255,255,.96)!important;
+    backdrop-filter:blur(16px)!important;
+    -webkit-backdrop-filter:blur(16px)!important;
+  }
+
+  #editMask .modalHead h2{
+    font-size:24px!important;
+    line-height:1.05!important;
+    letter-spacing:-.04em!important;
+    margin:0!important;
+  }
+
+  #editMask .modalHead .iconBtn{
+    width:44px!important;
+    height:44px!important;
+    min-height:44px!important;
+    border-radius:16px!important;
+    font-size:24px!important;
+    background:#fff!important;
+    box-shadow:0 8px 20px rgba(15,23,42,.08)!important;
+  }
+
+  /* Body has a little scroll fallback only for very small screens */
+  #editMask .modalBody{
+    min-height:0!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    padding:12px 14px 14px!important;
+    max-height:none!important;
+    background:#fff!important;
+  }
+
+  #editMask .modalBody::-webkit-scrollbar{
+    display:none!important;
+  }
+
+  #editMask .grid{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    gap:10px 10px!important;
+    align-items:start!important;
+  }
+
+  #editMask .field{
+    min-width:0!important;
+    gap:5px!important;
+    padding:0!important;
+  }
+
+  #editMask .field label{
+    font-size:12px!important;
+    line-height:1.05!important;
+    font-weight:900!important;
+    color:#475569!important;
+    letter-spacing:-.01em!important;
+  }
+
+  #editMask input,
+  #editMask textarea,
+  #editMask select,
+  #peopleToggle{
+    width:100%!important;
+    min-height:44px!important;
+    height:44px!important;
+    padding:9px 12px!important;
+    border-radius:14px!important;
+    font-size:16px!important;
+    line-height:1.2!important;
+    border:1px solid #cbd5e1!important;
+    background:#fff!important;
+    box-shadow:0 1px 0 rgba(15,23,42,.02)!important;
+  }
+
+  #editMask input:focus,
+  #editMask textarea:focus,
+  #peopleToggle:focus{
+    border-color:#12804b!important;
+    box-shadow:0 0 0 3px rgba(18,128,75,.12)!important;
+    outline:0!important;
+  }
+
+  #editMask input::placeholder,
+  #editMask textarea::placeholder{
+    color:#9ca3af!important;
+    font-size:16px!important;
+    font-weight:700!important;
+  }
+
+  /* Form order and layout */
+  #editMask .editFieldDate{order:1!important;grid-column:1 / 2!important;}
+  #editMask .editFieldTime{order:2!important;grid-column:2 / 3!important;}
+  #editMask .editFieldWeekday{order:3!important;grid-column:1 / 2!important;}
+  #editMask .editFieldPeople{order:4!important;grid-column:2 / 3!important;}
+  #editMask .editFieldGroup{order:5!important;grid-column:1 / -1!important;}
+  #editMask .editFieldContent{order:6!important;grid-column:1 / -1!important;}
+  #editMask .editFieldLinks{order:7!important;grid-column:1 / -1!important;}
+
+  #editWeekday{
+    color:#0f172a!important;
+    font-weight:900!important;
+    background:#f8fafc!important;
+  }
+
+  /* Key content: make plan content obvious and larger */
+  #editMask .editFieldContent{
+    margin-top:2px!important;
+  }
+
+  #editMask .editFieldContent label{
+    font-size:14px!important;
+    color:#0f172a!important;
+  }
+
+  #editContent{
+    min-height:128px!important;
+    height:128px!important;
+    resize:none!important;
+    font-size:17px!important;
+    font-weight:800!important;
+    line-height:1.35!important;
+    border-width:1.5px!important;
+    background:#fbfdff!important;
+  }
+
+  #editContent::placeholder{
+    font-size:17px!important;
+  }
+
+  /* Red Note: enough height, but lower priority than plan content */
+  #editLinks{
+    min-height:70px!important;
+    height:70px!important;
+    resize:none!important;
+    line-height:1.3!important;
+    background:#fbfdff!important;
+  }
+
+  #editMask .hint{
+    display:none!important;
+  }
+
+  /* People picker: floating under People field, not pushing content */
+  #peoplePicker{
+    position:relative!important;
+    z-index:40!important;
+  }
+
+  #peopleToggle{
+    overflow:hidden!important;
+    white-space:nowrap!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:5px!important;
+  }
+
+  #peopleToggle .chip{
+    max-width:66px!important;
+    padding:3px 7px!important;
+    font-size:11px!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+
+  #peoplePanel{
+    position:absolute!important;
+    left:0!important;
+    right:0!important;
+    top:calc(100% + 6px)!important;
+    max-height:190px!important;
+    overflow:auto!important;
+    z-index:90!important;
+    padding:8px!important;
+    border-radius:16px!important;
+    border:1px solid #dbe4ef!important;
+    box-shadow:0 18px 42px rgba(15,23,42,.22)!important;
+    background:#fff!important;
+  }
+
+  #peoplePanel.open{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:5px!important;
+  }
+
+  #peoplePanel .peopleOption{
+    min-height:36px!important;
+    padding:7px 9px!important;
+    border-radius:11px!important;
+  }
+
+  #peoplePanel .peopleOption input{
+    width:18px!important;
+    height:18px!important;
+    min-height:18px!important;
+    flex:0 0 auto!important;
+  }
+
+  #peoplePanel .peopleOption span{
+    font-size:13px!important;
+    line-height:1.15!important;
+  }
+
+  /* Footer: full-width action area, always visible */
+  #editMask .modalFoot{
+    position:relative!important;
+    bottom:auto!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:10px!important;
+    padding:
+      12px
+      14px
+      calc(14px + env(safe-area-inset-bottom,0px))!important;
+    border-top:1px solid rgba(15,23,42,.08)!important;
+    background:rgba(255,255,255,.96)!important;
+    backdrop-filter:blur(16px)!important;
+    -webkit-backdrop-filter:blur(16px)!important;
+    box-shadow:0 -10px 28px rgba(15,23,42,.08)!important;
+    z-index:30!important;
+  }
+
+  #editMask .modalFoot button{
+    width:100%!important;
+    min-height:48px!important;
+    height:48px!important;
+    padding:8px 12px!important;
+    border-radius:16px!important;
+    font-size:17px!important;
+    font-weight:900!important;
+  }
+
+  body.keyboardOpen #editMask .modal,
+  body.keyboardOpen #editMask .modalBody,
+  body.keyboardOpen #editMask .modalFoot{
+    transform:none!important;
+  }
+
+  body.keyboardOpen #editMask .modalFoot,
+  html.isStandalone body.keyboardOpen #editMask .modalFoot,
+  body.isStandalone.keyboardOpen #editMask .modalFoot{
+    position:relative!important;
+    bottom:auto!important;
+    display:grid!important;
+  }
+
+  body.keyboardOpen #editMask .modalBody,
+  html.isStandalone body.keyboardOpen #editMask .modalBody,
+  body.isStandalone.keyboardOpen #editMask .modalBody{
+    padding-bottom:14px!important;
+  }
+}
+
+/* Small iPhone height: still full-screen, slightly tighter while keeping plan content visible */
+@media(max-width:760px) and (max-height:720px){
+  #editMask .modalHead{
+    padding:
+      calc(env(safe-area-inset-top,0px) + 8px)
+      14px
+      8px!important;
+  }
+
+  #editMask .modalHead h2{
+    font-size:22px!important;
+  }
+
+  #editMask .modalHead .iconBtn{
+    width:40px!important;
+    height:40px!important;
+    min-height:40px!important;
+  }
+
+  #editMask .modalBody{
+    padding:9px 12px 10px!important;
+  }
+
+  #editMask .grid{
+    gap:7px 8px!important;
+  }
+
+  #editMask .field{
+    gap:3px!important;
+  }
+
+  #editMask .field label{
+    font-size:11px!important;
+  }
+
+  #editMask input,
+  #editMask textarea,
+  #editMask select,
+  #peopleToggle{
+    min-height:40px!important;
+    height:40px!important;
+    padding:7px 10px!important;
+  }
+
+  #editContent{
+    min-height:102px!important;
+    height:102px!important;
+  }
+
+  #editLinks{
+    min-height:56px!important;
+    height:56px!important;
+  }
+
+  #editMask .modalFoot{
+    padding:
+      9px
+      12px
+      calc(10px + env(safe-area-inset-bottom,0px))!important;
+  }
+
+  #editMask .modalFoot button{
+    min-height:44px!important;
+    height:44px!important;
+  }
+}
+
+
+/* v2.37.0 mobile edit page: one-column full-screen, no empty space, no scroll by default */
+@media(max-width:760px){
+  #editMask{
+    align-items:stretch!important;
+    justify-content:stretch!important;
+    padding:0!important;
+    overflow:hidden!important;
+  }
+
+  #editMask .modal{
+    width:100vw!important;
+    height:var(--app-height,100vh)!important;
+    max-height:var(--app-height,100vh)!important;
+    border-radius:0!important;
+    display:grid!important;
+    grid-template-rows:auto minmax(0,1fr) auto!important;
+    overflow:hidden!important;
+    background:#fff!important;
+  }
+
+  #editMask .modalHead{
+    padding:
+      calc(env(safe-area-inset-top,0px) + 12px)
+      16px
+      10px!important;
+    min-height:0!important;
+  }
+
+  #editMask .modalHead h2{
+    font-size:23px!important;
+    line-height:1.05!important;
+  }
+
+  #editMask .modalHead .iconBtn{
+    width:42px!important;
+    height:42px!important;
+    min-height:42px!important;
+    border-radius:15px!important;
+  }
+
+  #editMask .modalBody{
+    min-height:0!important;
+    height:100%!important;
+    overflow:hidden!important;
+    padding:10px 16px 12px!important;
+    background:
+      linear-gradient(180deg,#ffffff 0%,#ffffff 72%,#f8fafc 100%)!important;
+  }
+
+  #editMask .grid{
+    height:100%!important;
+    min-height:0!important;
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    grid-template-rows:
+      auto
+      auto
+      auto
+      auto
+      auto
+      minmax(170px,1fr)
+      auto!important;
+    gap:7px!important;
+    align-content:stretch!important;
+  }
+
+  #editMask .field{
+    min-height:0!important;
+    min-width:0!important;
+    gap:3px!important;
+  }
+
+  #editMask .field label{
+    font-size:12px!important;
+    line-height:1!important;
+    font-weight:900!important;
+    color:#334155!important;
+  }
+
+  #editMask .editFieldDate{order:1!important;grid-column:1 / -1!important;}
+  #editMask .editFieldTime{order:2!important;grid-column:1 / -1!important;}
+  #editMask .editFieldWeekday{order:3!important;grid-column:1 / -1!important;}
+  #editMask .editFieldPeople{order:4!important;grid-column:1 / -1!important;}
+  #editMask .editFieldGroup{order:5!important;grid-column:1 / -1!important;}
+  #editMask .editFieldContent{order:6!important;grid-column:1 / -1!important;}
+  #editMask .editFieldLinks{order:7!important;grid-column:1 / -1!important;}
+
+  #editMask input,
+  #editMask textarea,
+  #editMask select,
+  #peopleToggle{
+    min-height:39px!important;
+    height:39px!important;
+    padding:7px 12px!important;
+    border-radius:13px!important;
+    font-size:16px!important;
+    line-height:1.15!important;
+    border:1px solid #cbd5e1!important;
+    background:#fff!important;
+  }
+
+  #editWeekday{
+    background:#f8fafc!important;
+    font-weight:900!important;
+  }
+
+  #editMask .editFieldContent{
+    display:flex!important;
+    flex-direction:column!important;
+    min-height:0!important;
+  }
+
+  #editMask .editFieldContent label{
+    font-size:13px!important;
+    color:#0f172a!important;
+  }
+
+  #editContent{
+    flex:1 1 auto!important;
+    height:auto!important;
+    min-height:170px!important;
+    resize:none!important;
+    font-size:17px!important;
+    font-weight:800!important;
+    line-height:1.35!important;
+    background:#fbfdff!important;
+    border-width:1.5px!important;
+  }
+
+  #editLinks{
+    min-height:44px!important;
+    height:44px!important;
+    resize:none!important;
+    line-height:1.25!important;
+    background:#fbfdff!important;
+  }
+
+  #editMask .hint{
+    display:none!important;
+  }
+
+  #peoplePicker{
+    position:relative!important;
+    z-index:60!important;
+  }
+
+  #peopleToggle{
+    display:flex!important;
+    align-items:center!important;
+    gap:6px!important;
+    overflow:hidden!important;
+    white-space:nowrap!important;
+  }
+
+  #peopleToggle .chip{
+    max-width:82px!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+
+  #peoplePanel{
+    position:absolute!important;
+    left:0!important;
+    right:0!important;
+    top:calc(100% + 6px)!important;
+    max-height:210px!important;
+    overflow:auto!important;
+    background:#fff!important;
+    border-radius:16px!important;
+    box-shadow:0 18px 44px rgba(15,23,42,.22)!important;
+    z-index:100!important;
+  }
+
+  #peoplePanel.open{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:5px!important;
+  }
+
+  #peoplePanel .peopleOption{
+    min-height:34px!important;
+    padding:7px 10px!important;
+    border-radius:11px!important;
+  }
+
+  #editMask .modalFoot{
+    position:relative!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:10px!important;
+    padding:
+      10px
+      16px
+      calc(12px + env(safe-area-inset-bottom,0px))!important;
+    border-top:1px solid rgba(15,23,42,.08)!important;
+    background:#fff!important;
+    box-shadow:0 -8px 24px rgba(15,23,42,.06)!important;
+  }
+
+  #editMask .modalFoot button{
+    height:46px!important;
+    min-height:46px!important;
+    border-radius:15px!important;
+    font-size:16px!important;
+    font-weight:900!important;
+  }
+
+  body.keyboardOpen #editMask .modal,
+  body.keyboardOpen #editMask .modalBody,
+  body.keyboardOpen #editMask .modalFoot{
+    transform:none!important;
+  }
+
+  body.keyboardOpen #editMask .modalBody{
+    overflow:auto!important;
+  }
+}
+
+/* Short mobile screens: still one-column, keep plan content as largest area */
+@media(max-width:760px) and (max-height:740px){
+  #editMask .modalHead{
+    padding:
+      calc(env(safe-area-inset-top,0px) + 8px)
+      14px
+      7px!important;
+  }
+
+  #editMask .modalHead h2{
+    font-size:21px!important;
+  }
+
+  #editMask .modalHead .iconBtn{
+    width:38px!important;
+    height:38px!important;
+    min-height:38px!important;
+  }
+
+  #editMask .modalBody{
+    padding:7px 14px 8px!important;
+  }
+
+  #editMask .grid{
+    grid-template-rows:
+      auto
+      auto
+      auto
+      auto
+      auto
+      minmax(118px,1fr)
+      auto!important;
+    gap:5px!important;
+  }
+
+  #editMask .field label{
+    font-size:11px!important;
+  }
+
+  #editMask input,
+  #editMask textarea,
+  #editMask select,
+  #peopleToggle{
+    min-height:35px!important;
+    height:35px!important;
+    padding:5px 10px!important;
+  }
+
+  #editContent{
+    min-height:118px!important;
+  }
+
+  #editLinks{
+    min-height:38px!important;
+    height:38px!important;
+  }
+
+  #editMask .modalFoot{
+    padding:
+      8px
+      14px
+      calc(9px + env(safe-area-inset-bottom,0px))!important;
+  }
+
+  #editMask .modalFoot button{
+    height:41px!important;
+    min-height:41px!important;
+  }
+}
+
+/* Very short landscape / old iPhone fallback: allow body scroll only when impossible */
+@media(max-width:760px) and (max-height:620px){
+  #editMask .modalBody{
+    overflow:auto!important;
+  }
+
+  #editMask .grid{
+    min-height:620px!important;
+  }
+}
+
+
+/* v2.37.0 mobile edit: Plan Content + Red Note adaptive height, exact full-screen fill */
+@media(max-width:760px){
+  #editMask .modal{
+    height:var(--app-height,100vh)!important;
+    max-height:var(--app-height,100vh)!important;
+    grid-template-rows:auto minmax(0,1fr) auto!important;
+  }
+
+  #editMask .modalBody{
+    height:100%!important;
+    min-height:0!important;
+    overflow:hidden!important;
+    padding:9px 16px 10px!important;
+  }
+
+  #editMask .grid{
+    height:100%!important;
+    min-height:0!important;
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    grid-template-rows:
+      auto
+      auto
+      auto
+      auto
+      auto
+      minmax(150px,1.45fr)
+      minmax(88px,.62fr)!important;
+    gap:6px!important;
+    align-content:stretch!important;
+  }
+
+  #editMask .field{
+    min-height:0!important;
+    min-width:0!important;
+  }
+
+  #editMask .field label{
+    font-size:11px!important;
+    line-height:1!important;
+    margin:0!important;
+  }
+
+  #editMask input,
+  #editMask textarea,
+  #editMask select,
+  #peopleToggle{
+    min-height:36px!important;
+    height:36px!important;
+    padding:6px 11px!important;
+    border-radius:12px!important;
+  }
+
+  #editMask .editFieldContent,
+  #editMask .editFieldLinks{
+    display:flex!important;
+    flex-direction:column!important;
+    min-height:0!important;
+    height:100%!important;
+  }
+
+  #editMask .editFieldContent label{
+    font-size:13px!important;
+    line-height:1!important;
+    color:#0f172a!important;
+  }
+
+  #editContent{
+    flex:1 1 auto!important;
+    height:100%!important;
+    min-height:0!important;
+    max-height:none!important;
+    resize:none!important;
+    font-size:17px!important;
+    line-height:1.35!important;
+    font-weight:800!important;
+  }
+
+  #editLinks{
+    flex:1 1 auto!important;
+    height:100%!important;
+    min-height:0!important;
+    max-height:none!important;
+    resize:none!important;
+    line-height:1.3!important;
+  }
+
+  #editMask .modalFoot{
+    padding:
+      9px
+      16px
+      calc(10px + env(safe-area-inset-bottom,0px))!important;
+  }
+
+  #editMask .modalFoot button{
+    height:44px!important;
+    min-height:44px!important;
+  }
+}
+
+/* Short screens: keep full screen, still allocate visible height to Red Note */
+@media(max-width:760px) and (max-height:740px){
+  #editMask .modalBody{
+    padding:6px 14px 7px!important;
+  }
+
+  #editMask .grid{
+    grid-template-rows:
+      auto
+      auto
+      auto
+      auto
+      auto
+      minmax(112px,1.35fr)
+      minmax(66px,.58fr)!important;
+    gap:4px!important;
+  }
+
+  #editMask input,
+  #editMask textarea,
+  #editMask select,
+  #peopleToggle{
+    min-height:33px!important;
+    height:33px!important;
+    padding:4px 10px!important;
+  }
+
+  #editMask .modalFoot{
+    padding:
+      7px
+      14px
+      calc(8px + env(safe-area-inset-bottom,0px))!important;
+  }
+
+  #editMask .modalFoot button{
+    height:39px!important;
+    min-height:39px!important;
+  }
+}
+
+/* Extremely small screens: allow emergency scroll, but keep adaptive proportions */
+@media(max-width:760px) and (max-height:620px){
+  #editMask .modalBody{
+    overflow:auto!important;
+  }
+
+  #editMask .grid{
+    min-height:620px!important;
   }
 }
