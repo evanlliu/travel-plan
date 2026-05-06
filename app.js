@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.7.0";
+  const APP_VERSION = "v2.8.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -614,7 +614,9 @@
     $("[data-i18n-placeholder]").each(function () {
       $(this).attr("placeholder", t($(this).data("i18n-placeholder")));
     });
-    $("#btnLang").text(appLang === "zh" ? "EN" : "中");
+    $("#btnLang").attr("title", appLang === "zh" ? "Switch to English" : "切换到中文")
+      .attr("aria-label", appLang === "zh" ? "Switch to English" : "切换到中文");
+    $("#btnFabAdd").attr("title", t("add")).attr("aria-label", t("add"));
     $("#updatedText").text(data.updatedAt ? t("updated") + ": " + new Date(data.updatedAt).toLocaleString(appLang === "zh" ? "zh-CN" : "en-US") : "-");
     initDatePicker();
     refreshWeekday();
@@ -867,7 +869,7 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.7.0.xlsx" : "travel-plan-pro-en-v2.7.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.8.0.xlsx" : "travel-plan-pro-en-v2.8.0.xlsx");
   }
 
   async function testCloud() {
@@ -934,6 +936,7 @@
   });
 
   $("#btnAdd").on("click", function () { openEdit(null); });
+  $("#btnFabAdd").on("click", function () { openEdit(null); });
   $("#btnMore").on("click", function () { $("#morePanel").toggleClass("show"); });
   $("#btnSaveEdit").on("click", saveEdit);
   $("#btnImport").on("click", function () { $("#excelFile").click(); });

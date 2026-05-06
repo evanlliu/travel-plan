@@ -3,9 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Travel Plan Pro v2.7.0</title>
+  <meta name="theme-color" content="#166534">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Travel Plan Pro">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <title>Travel Plan Pro v2.8.0</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <link rel="stylesheet" href="./style.css?v=v2.7.0">
+  <link rel="stylesheet" href="./style.css?v=v2.8.0">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -15,13 +22,13 @@
   <main class="page">
     <section class="hero">
       <div class="heroText">
-        <div class="eyebrow"><span data-i18n="eyebrow">多设备同步行程</span><span class="ver">v2.7.0</span></div>
+        <div class="eyebrow"><span data-i18n="eyebrow">多设备同步行程</span><span class="ver">v2.8.0</span></div>
         <h1 data-i18n="appTitle">行程计划 Pro</h1>
         <p data-i18n="subtitle">按日期分组展示，支持 Excel 导入、人员多选、小红书链接预览、Cloudflare + GitHub 多设备同步。</p>
       </div>
 
       <div class="heroActions">
-        <button class="primary" id="btnAdd" data-i18n="add">新增安排</button>
+        <button class="primary desktopAdd" id="btnAdd" data-i18n="add">新增安排</button>
         <button id="btnMore" data-i18n="more">更多功能</button>
         <button class="lang" id="btnLang" aria-label="language">EN</button>
       </div>
@@ -163,6 +170,6 @@
     </div>
   </div>
 
-  <script src="./app.js?v=v2.7.0"></script>
+  <script src="./app.js?v=v2.8.0"></script>
 </body>
 </html>
