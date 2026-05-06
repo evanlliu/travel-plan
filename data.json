@@ -1,6 +1,6 @@
 {
-  "version": "v2.34.0",
-  "updatedAt": "2026-05-06T11:38:25.965Z",
+  "version": "v2.37.0",
+  "updatedAt": "2026-05-06T12:00:25.714Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -22,7 +22,7 @@
       "dateISO": "2026-05-17",
       "time": "13:00",
       "group": "",
-      "content": "Center shopping",
+      "content": "Center shopping+Get glasses",
       "links": [],
       "participants": [
         "Evan",
