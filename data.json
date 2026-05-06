@@ -1,6 +1,6 @@
 {
   "version": "v2.37.0",
-  "updatedAt": "2026-05-06T12:53:25.290Z",
+  "updatedAt": "2026-05-06T12:53:40.506Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -105,7 +105,7 @@
       "dateISO": "2026-05-21",
       "time": "10:00",
       "group": "",
-      "content": "Zoom",
+      "content": "Zoom/长沙动物园",
       "links": [
         "http://xhslink.com/o/2szPYKOkA9l"
       ],
