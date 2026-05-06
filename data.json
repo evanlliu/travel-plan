@@ -1,6 +1,6 @@
 {
   "version": "v2.33.0",
-  "updatedAt": "2026-05-06T11:27:53.121Z",
+  "updatedAt": "2026-05-06T11:28:31.289Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -198,14 +198,15 @@
       "dateISO": "2026-05-18",
       "time": "12:00",
       "group": "",
-      "content": "Snack Kingdom",
+      "content": "Wenheyou",
       "links": [
-        "https://www.xiaohongshu.com/discovery/item/69e0b3a2000000002302369a?source=webshare&xhsshare=pc_web&xsec_token=ABGyk--4p6A6_5xeXoxTdK3M2bo8Fk2f_lTrYv8cMrifI=&xsec_source=pc_share"
+        "https://www.xiaohongshu.com/discovery/item/692ffd8e000000000d00cf06?source=webshare&xhsshare=pc_web&xsec_token=AB6VbDwPvC-8PYE13KSBjJiF2kajAJRF0Y30OJSUtf1Yw=&xsec_source=pc_share"
       ],
       "participants": [
         "Evan",
         "Gonca",
-        "Ainiya"
+        "Ainiya",
+        "Sister"
       ],
       "sort": 18
     }
