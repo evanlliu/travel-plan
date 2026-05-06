@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.4.0";
+  const APP_VERSION = "v2.5.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const LS_API = "travel-plan-cloudflare-api-base";
@@ -44,20 +44,19 @@
 
   const I18N = {
     zh: {
+      eyebrow: "多设备同步行程",
       appTitle: "行程计划 Pro",
-      subtitle: "按日期分组管理行程，支持 Excel 导入、小红书链接预览、人员多选和 Cloudflare 多设备同步。",
+      subtitle: "按日期分组管理行程，支持中英文、Excel 导入、小红书链接预览、人员多选和 Cloudflare + GitHub 同步。",
       add: "新增安排",
       more: "更多功能",
       import: "导入 Excel",
       tplZh: "中文模板",
       tplEn: "英文模板",
       peopleConfig: "人员配置",
-      cloudConfig: "Cloudflare 同步配置",
+      cloudflareConfig: "Cloudflare 同步配置",
       refresh: "刷新同步",
-      moreHint: "除“新增安排”外，其他功能已折叠在这里，移动端更清爽。",
-      search: "搜索日期 / 内容 / 人员 / 分组",
+      search: "搜索日期 / 内容 / 人员",
       date: "日期",
-      dateHint: "日期选择器已自定义处理，切换中英文后月份和显示格式会一起变化。",
       time: "时间",
       weekday: "星期",
       group: "分组",
@@ -69,6 +68,7 @@
       delete: "删除",
       cancel: "取消",
       save: "保存",
+      savePeople: "保存人员配置",
       addTitle: "新增安排",
       editTitle: "编辑安排",
       groupPlaceholder: "例如：Plan 1",
@@ -76,53 +76,52 @@
       linksPlaceholder: "每行一个链接",
       linksHint: "支持多个链接，每行一个；点击列表中的链接可弹窗预览。",
       peopleList: "人员列表",
-      peopleHint: "一行一个名字，保存后用于参与人员下拉多选。",
+      peopleHint: "一行一个名字。保存后会写入 data.json 的 peopleOptions。",
+      peopleSyncNotice: "人员配置会和行程一起保存到 data.json，新设备加载后也会自动同步。",
+      workerAddress: "Worker 地址",
+      writePassword: "写入密码",
+      workerHint: "支持填写根地址、/data 或 /data.json，保存时会自动规范化。",
+      passwordHint: "对应 Cloudflare Worker Secret：APP_PASSWORD。此版本会按你的要求保存到 data.json。",
+      cloudNotice: "Worker 地址和写入密码都会保存到 data.json，方便新设备自动同步。",
+      testRead: "测试读取",
+      saveConfig: "保存配置",
       preview: "链接预览",
       iframeTip: "如果无法显示，请新窗口打开。",
       openNew: "新窗口打开",
-      workerUrl: "Worker 地址",
-      workerUrlHint: "Worker 地址会保存到 data.json 的 settings.cloudflare.apiBase。可填写根地址、/data 或 /data.json，系统会自动兼容。",
-      workerPassword: "写入密码",
-      passwordHint: "对应 Cloudflare Worker Secret：APP_PASSWORD。本版本会按你的要求保存到 data.json 的 settings.cloudflare.appPassword。",
-      testCloud: "测试读取",
-      saveConfig: "保存配置",
-      cloudDisabled: "当前未配置 Cloudflare，同步方式：本机 localStorage。",
-      cloudReady: "Cloudflare 已配置，同步地址：",
-      cloudSaved: "Cloudflare 配置和 APP_PASSWORD 已保存到 data.json。",
-      cloudTestOk: "测试成功，已从 Cloudflare 读取数据。",
-      cloudTestFail: "测试失败，请检查 Worker 地址、路径、CORS、GitHub Token 权限或网络。",
       loading: "正在加载数据...",
+      loadingBootstrap: "正在读取本地 data.json 配置...",
       loaded: "数据已加载",
-      saved: "已保存并同步",
+      saved: "已保存并同步到 data.json",
+      peopleSaved: "人员配置已保存到 data.json",
+      configSaved: "Cloudflare 配置已保存到 data.json",
       localSaved: "未配置 Cloudflare，已保存到本机 localStorage",
       imported: "Excel 已导入并保存",
       badFile: "未识别到有效数据，请检查模板格式",
       confirmDelete: "确定删除这条安排吗？",
       wrongPwd: "密码错误或没有写入权限",
-      networkErr: "同步失败，请检查 Worker 地址 / CORS / 网络",
+      networkErr: "同步失败，请检查 Worker 地址、路径、CORS、GitHub Token 权限或网络",
       empty: "暂无安排，点击“新增安排”开始创建。",
       updated: "更新时间",
       itemCount: "项安排",
       noTime: "待定",
       selectPeople: "请选择",
-      year: "年",
-      day: "日"
+      testOk: "测试成功，可以读取 Worker 的 data.json。",
+      testFail: "测试失败，请检查 Worker 地址、路径、CORS、GitHub Token 权限或网络。"
     },
     en: {
+      eyebrow: "Multi-device trip sync",
       appTitle: "Travel Plan Pro",
-      subtitle: "Manage plans by date with Excel import, Red Note link preview, multi-select people, and Cloudflare sync.",
+      subtitle: "Manage trip plans by date with bilingual UI, Excel import, Red Note preview, multi-select people, and Cloudflare + GitHub sync.",
       add: "Add Item",
       more: "More",
       import: "Import Excel",
       tplZh: "Chinese Template",
       tplEn: "English Template",
       peopleConfig: "People",
-      cloudConfig: "Cloudflare Sync",
+      cloudflareConfig: "Cloudflare Sync",
       refresh: "Refresh",
-      moreHint: "All tools except Add Item are folded here to keep the mobile UI clean.",
-      search: "Search date / content / people / group",
+      search: "Search by date / content / people",
       date: "Date",
-      dateHint: "The date picker is custom-built, so month names and display formats update when you switch languages.",
       time: "Time",
       weekday: "Weekday",
       group: "Group",
@@ -134,6 +133,7 @@
       delete: "Delete",
       cancel: "Cancel",
       save: "Save",
+      savePeople: "Save People",
       addTitle: "Add Item",
       editTitle: "Edit Item",
       groupPlaceholder: "For example: Plan 1",
@@ -141,42 +141,41 @@
       linksPlaceholder: "One link per line",
       linksHint: "Multiple links are supported. One link per line. Click a link to preview it.",
       peopleList: "People List",
-      peopleHint: "One name per line. Saved names will be used in the participant multi-select.",
+      peopleHint: "One name per line. It will be saved to data.json peopleOptions.",
+      peopleSyncNotice: "People settings are saved to data.json with your trip data and sync automatically on new devices.",
+      workerAddress: "Worker URL",
+      writePassword: "Write password",
+      workerHint: "Root URL, /data, and /data.json are supported. The URL is normalized when saved.",
+      passwordHint: "This maps to Cloudflare Worker Secret: APP_PASSWORD. This version saves it to data.json as requested.",
+      cloudNotice: "Worker URL and write password are saved to data.json for automatic sync on new devices.",
+      testRead: "Test Read",
+      saveConfig: "Save Config",
       preview: "Link Preview",
       iframeTip: "If the page does not load, open it in a new window.",
       openNew: "Open in new window",
-      workerUrl: "Worker URL",
-      workerUrlHint: "The Worker URL is saved to data.json at settings.cloudflare.apiBase. Root URL, /data, and /data.json are supported.",
-      workerPassword: "Write Password",
-      passwordHint: "This matches the Cloudflare Worker Secret: APP_PASSWORD. In this version, it is saved to data.json at settings.cloudflare.appPassword as requested.",
-      testCloud: "Test Read",
-      saveConfig: "Save Config",
-      cloudDisabled: "Cloudflare is not configured. Sync mode: localStorage on this device.",
-      cloudReady: "Cloudflare is configured. Sync URL:",
-      cloudSaved: "Cloudflare config and APP_PASSWORD were saved to data.json.",
-      cloudTestOk: "Test succeeded. Data was loaded from Cloudflare.",
-      cloudTestFail: "Test failed. Check the Worker URL/path, CORS, GitHub token permissions, or network.",
       loading: "Loading data...",
+      loadingBootstrap: "Reading local data.json config...",
       loaded: "Data loaded",
-      saved: "Saved and synced",
-      localSaved: "Cloudflare is not configured; saved to localStorage only",
+      saved: "Saved and synced to data.json",
+      peopleSaved: "People settings saved to data.json",
+      configSaved: "Cloudflare config saved to data.json",
+      localSaved: "Cloudflare is not configured. Data was saved to localStorage only.",
       imported: "Excel imported and saved",
-      badFile: "No valid rows found. Please check the template format",
+      badFile: "No valid rows found. Please check the template format.",
       confirmDelete: "Delete this item?",
-      wrongPwd: "Wrong password or no write permission",
-      networkErr: "Sync failed. Check the Worker URL / CORS / network",
+      wrongPwd: "Wrong password or no write permission.",
+      networkErr: "Sync failed. Check Worker URL, path, CORS, GitHub token permission, or network.",
       empty: "No items yet. Click Add Item to create one.",
       updated: "Updated",
       itemCount: "items",
       noTime: "TBD",
       selectPeople: "Select people",
-      year: "Year",
-      day: "Day"
+      testOk: "Test successful. Worker data.json is readable.",
+      testFail: "Test failed. Check Worker URL, path, CORS, GitHub token permission, or network."
     }
   };
 
   const MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const MONTHS_FULL_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const WEEK_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const WEEK_ZH = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
 
@@ -205,101 +204,76 @@
     return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d;
   }
   function defaultSettings() {
-    return {
-      cloudflare: {
-        apiBase: "",
-        appPassword: "",
-        configSavedInDataJson: true,
-        passwordStorage: "data.json settings.cloudflare.appPassword"
-      }
-    };
+    return clone(DEFAULT_DATA.settings);
   }
-
   function normalizeWorkerBase(api) {
-    let clean = String(api || "").trim().replace(/\/+$/, "");
-    // Compatible with users pasting the full endpoint, for example:
-    // https://xxx.workers.dev/data or https://xxx.workers.dev/data.json
-    clean = clean.replace(/\/data\.json$/i, "").replace(/\/data$/i, "");
+    let clean = String(api || "").trim();
+    if (!clean) return "";
+    clean = clean.replace(/\/+$/, "");
+    clean = clean.replace(/\/data\.json$/i, "");
+    clean = clean.replace(/\/data$/i, "");
     return clean;
   }
-
-  function getSettings() {
+  function ensureSettings() {
     if (!data.settings || typeof data.settings !== "object") data.settings = defaultSettings();
     if (!data.settings.cloudflare || typeof data.settings.cloudflare !== "object") data.settings.cloudflare = defaultSettings().cloudflare;
-    data.settings.cloudflare.apiBase = normalizeWorkerBase(data.settings.cloudflare.apiBase || "");
-    data.settings.cloudflare.appPassword = String(data.settings.cloudflare.appPassword || localStorage.getItem(LS_PASSWORD) || "");
+    if (typeof data.settings.cloudflare.apiBase !== "string") data.settings.cloudflare.apiBase = "";
+    if (typeof data.settings.cloudflare.appPassword !== "string") data.settings.cloudflare.appPassword = "";
     data.settings.cloudflare.configSavedInDataJson = true;
     data.settings.cloudflare.passwordStorage = "data.json settings.cloudflare.appPassword";
     return data.settings;
   }
-
-  function setCloudApiBase(api) {
-    const clean = normalizeWorkerBase(api);
-    getSettings().cloudflare.apiBase = clean;
-    if (clean) localStorage.setItem(LS_API, clean);
-    else localStorage.removeItem(LS_API);
-  }
-
   function getApiBase() {
-    const fromDataJson = data && data.settings && data.settings.cloudflare ? data.settings.cloudflare.apiBase : "";
-    return normalizeWorkerBase(fromDataJson || localStorage.getItem(LS_API) || "");
+    const settingsApi = normalizeWorkerBase(ensureSettings().cloudflare.apiBase);
+    return settingsApi || normalizeWorkerBase(localStorage.getItem(LS_API) || "");
   }
-
-  function setCloudPassword(password) {
-    const value = String(password || "");
-    getSettings().cloudflare.appPassword = value;
-    if (value) localStorage.setItem(LS_PASSWORD, value);
-    else localStorage.removeItem(LS_PASSWORD);
+  function setCloudApiBase(value) {
+    const clean = normalizeWorkerBase(value);
+    ensureSettings().cloudflare.apiBase = clean;
+    if (clean) localStorage.setItem(LS_API, clean);
+    return clean;
   }
-
   function getCloudPassword() {
-    const fromDataJson = data && data.settings && data.settings.cloudflare ? data.settings.cloudflare.appPassword : "";
-    return String(fromDataJson || localStorage.getItem(LS_PASSWORD) || "");
+    const pwd = ensureSettings().cloudflare.appPassword || "";
+    return pwd || localStorage.getItem(LS_PASSWORD) || "";
   }
-  function dataUrl() { return getApiBase() + "/data.json"; }
-  function setStatus(kind, message) {
-    $("#statusDot").removeClass("ok warn err").addClass(kind || "");
-    $("#statusText").text(message || "");
+  function setCloudPassword(value) {
+    const pwd = String(value || "");
+    ensureSettings().cloudflare.appPassword = pwd;
+    if (pwd) localStorage.setItem(LS_PASSWORD, pwd);
+    return pwd;
+  }
+  function endpoint() {
+    const base = getApiBase();
+    return base ? base + "/data.json" : "";
   }
 
   function dateToInput(value) {
     let s = String(value || "").trim();
     s = s.replace(/^(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|星期[日一二三四五六]|周[日天一二三四五六])\s*,?\s*/i, "");
     if (!s) return "";
-
     let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
     if (m && isValidDate(+m[1], +m[2], +m[3])) return m[1] + "-" + pad2(m[2]) + "-" + pad2(m[3]);
-
     m = s.match(/^(\d{4})年(\d{1,2})月(\d{1,2})日?$/);
     if (m && isValidDate(+m[1], +m[2], +m[3])) return m[1] + "-" + pad2(m[2]) + "-" + pad2(m[3]);
-
     m = s.match(/^(\d{1,2})月(\d{1,2})日?$/);
     if (m) {
       const y = new Date().getFullYear();
       if (isValidDate(y, +m[1], +m[2])) return y + "-" + pad2(m[1]) + "-" + pad2(m[2]);
     }
-
-    const map = {
-      jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3,
-      apr: 4, april: 4, may: 5, jun: 6, june: 6, jul: 7, july: 7,
-      aug: 8, august: 8, sep: 9, sept: 9, september: 9,
-      oct: 10, october: 10, nov: 11, november: 11, dec: 12, december: 12
-    };
-
-    m = s.match(/^(\d{1,2})[-\s/]?([A-Za-z]{3,9})(?:[-\s,/]*(\d{4}))?$/);
+    const map = { jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3, apr: 4, april: 4, may: 5, jun: 6, june: 6, jul: 7, july: 7, aug: 8, august: 8, sep: 9, sept: 9, september: 9, oct: 10, october: 10, nov: 11, november: 11, dec: 12, december: 12 };
+    m = s.match(/^(\d{1,2})[-\s\/]?([A-Za-z]{3,9})(?:[-\s,\/]*(\d{4}))?$/);
     if (m) {
       const y = +(m[3] || new Date().getFullYear());
       const mo = map[m[2].toLowerCase()];
       if (mo && isValidDate(y, mo, +m[1])) return y + "-" + pad2(mo) + "-" + pad2(m[1]);
     }
-
     m = s.match(/^([A-Za-z]{3,9})\s+(\d{1,2})(?:,?\s*(\d{4}))?$/);
     if (m) {
       const y = +(m[3] || new Date().getFullYear());
       const mo = map[m[1].toLowerCase()];
       if (mo && isValidDate(y, mo, +m[2])) return y + "-" + pad2(mo) + "-" + pad2(m[2]);
     }
-
     return "";
   }
 
@@ -314,74 +288,18 @@
     const d = MONTHS_EN[dt.getMonth()] + " " + dt.getDate();
     return withWeek ? WEEK_EN[dt.getDay()] + ", " + d : d;
   }
-
   function weekday(iso) {
     const m = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
     if (!m) return "";
     const dt = new Date(+m[1], +m[2] - 1, +m[3]);
     return appLang === "zh" ? WEEK_ZH[dt.getDay()] : WEEK_EN[dt.getDay()];
   }
-
   function formatTime(time) { return String(time || "").trim() || t("noTime"); }
 
-  function getSelectedDateISO() {
-    const y = +$("#editYear").val();
-    const m = +$("#editMonth").val();
-    const d = +$("#editDay").val();
-    if (!y || !m || !d) return "";
-    return y + "-" + pad2(m) + "-" + pad2(d);
-  }
-
-  function populateDatePicker(iso) {
-    const parsed = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    const now = new Date();
-    const selected = parsed ? new Date(+parsed[1], +parsed[2] - 1, +parsed[3]) : now;
-    const selectedYear = selected.getFullYear();
-    const selectedMonth = selected.getMonth() + 1;
-    const selectedDay = selected.getDate();
-    const startYear = Math.min(now.getFullYear() - 3, selectedYear - 1);
-    const endYear = Math.max(now.getFullYear() + 6, selectedYear + 1);
-
-    let yearHtml = "";
-    for (let y = startYear; y <= endYear; y++) {
-      yearHtml += '<option value="' + y + '"' + (y === selectedYear ? " selected" : "") + '>' + (appLang === "zh" ? y + "年" : y) + '</option>';
-    }
-    $("#editYear").html(yearHtml);
-
-    let monthHtml = "";
-    for (let m = 1; m <= 12; m++) {
-      const label = appLang === "zh" ? m + "月" : MONTHS_FULL_EN[m - 1];
-      monthHtml += '<option value="' + m + '"' + (m === selectedMonth ? " selected" : "") + '>' + label + '</option>';
-    }
-    $("#editMonth").html(monthHtml);
-
-    refreshDayOptions(selectedDay);
-    refreshWeekday();
-  }
-
-  function refreshDayOptions(preferredDay) {
-    const y = +$("#editYear").val();
-    const m = +$("#editMonth").val();
-    const max = daysInMonth(y, m);
-    const current = preferredDay || +$("#editDay").val() || 1;
-    const safeDay = Math.min(current, max);
-    let dayHtml = "";
-    for (let d = 1; d <= max; d++) {
-      const label = appLang === "zh" ? d + "日" : d;
-      dayHtml += '<option value="' + d + '"' + (d === safeDay ? " selected" : "") + '>' + label + '</option>';
-    }
-    $("#editDay").html(dayHtml);
-  }
-
-  function refreshWeekday() {
-    const iso = getSelectedDateISO();
-    $("#editWeekday").val(iso ? weekday(iso) : "");
-  }
-
   function normalize(raw) {
+    const oldSettings = data && data.settings ? clone(data.settings) : defaultSettings();
     const src = raw && typeof raw === "object" ? clone(raw) : clone(DEFAULT_DATA);
     let items = Array.isArray(src.items) ? src.items : [];
-
     if (!items.length && Array.isArray(src.rows)) {
       items = src.rows.map(function (r) {
         return {
@@ -395,19 +313,10 @@
         };
       });
     }
-
-    const srcSettings = src.settings && typeof src.settings === "object" ? src.settings : {};
-    const srcCloudflare = srcSettings.cloudflare && typeof srcSettings.cloudflare === "object" ? srcSettings.cloudflare : {};
-    const settings = defaultSettings();
-    settings.cloudflare.apiBase = normalizeWorkerBase(srcCloudflare.apiBase || src.cloudflareApiBase || localStorage.getItem(LS_API) || "");
-    settings.cloudflare.appPassword = String(srcCloudflare.appPassword || srcCloudflare.APP_PASSWORD || src.appPassword || localStorage.getItem(LS_PASSWORD) || "");
-    settings.cloudflare.configSavedInDataJson = true;
-    settings.cloudflare.passwordStorage = "data.json settings.cloudflare.appPassword";
-
-    const result = {
+    const normalized = {
       version: src.version || APP_VERSION,
       updatedAt: src.updatedAt || "",
-      settings: settings,
+      settings: src.settings && typeof src.settings === "object" ? src.settings : oldSettings,
       peopleOptions: Array.isArray(src.peopleOptions) ? src.peopleOptions.map(String).filter(Boolean) : clone(DEFAULT_DATA.peopleOptions),
       items: items.map(function (r, idx) {
         return {
@@ -420,59 +329,47 @@
           participants: (Array.isArray(r.participants) ? r.participants : splitList(r.participants)).map(String).filter(Boolean),
           sort: typeof r.sort === "number" ? r.sort : idx
         };
-      }).filter(function (r) { return r.dateISO || r.content || r.links.length || r.participants.length; })
+      }).filter(function (r) {
+        return r.dateISO || r.content || r.links.length || r.participants.length;
+      })
     };
-
-    result.items.forEach(function (item) {
+    data = normalized;
+    ensureSettings();
+    const cf = data.settings.cloudflare;
+    if (!cf.apiBase && oldSettings.cloudflare && oldSettings.cloudflare.apiBase) cf.apiBase = oldSettings.cloudflare.apiBase;
+    if (!cf.appPassword && oldSettings.cloudflare && oldSettings.cloudflare.appPassword) cf.appPassword = oldSettings.cloudflare.appPassword;
+    if (!cf.apiBase && localStorage.getItem(LS_API)) cf.apiBase = normalizeWorkerBase(localStorage.getItem(LS_API));
+    if (!cf.appPassword && localStorage.getItem(LS_PASSWORD)) cf.appPassword = localStorage.getItem(LS_PASSWORD);
+    data.items.forEach(function (item) {
       item.participants.forEach(function (p) {
-        if (!result.peopleOptions.includes(p)) result.peopleOptions.push(p);
+        if (!data.peopleOptions.includes(p)) data.peopleOptions.push(p);
       });
     });
-    return result;
+    return data;
   }
 
-  async function loadBootstrapConfigFromDataJson() {
-    try {
-      const res = await fetch("./data.json?ts=" + Date.now(), { cache: "no-store" });
-      if (!res.ok) return false;
-
-      const boot = normalize(await res.json());
-      const cloud = boot.settings && boot.settings.cloudflare ? boot.settings.cloudflare : {};
-      const api = normalizeWorkerBase(cloud.apiBase || "");
-      const password = String(cloud.appPassword || "");
-
-      // New device behavior:
-      // 1. Read the static data.json shipped with the site.
-      // 2. If it contains Cloudflare config, save that config into the current runtime data.
-      // 3. Then loadData() will immediately fetch the Worker /data.json for the latest synced data.
-      const hasLocalCache = Boolean(localStorage.getItem(LS_DATA));
-      if (!hasLocalCache && (boot.items.length || api || password)) {
-        data = boot;
-      } else {
-        getSettings();
-        if (boot.settings && boot.settings.cloudflare) {
-          data.settings.cloudflare.apiBase = api || data.settings.cloudflare.apiBase || "";
-          data.settings.cloudflare.appPassword = password || data.settings.cloudflare.appPassword || "";
-          data.settings.cloudflare.configSavedInDataJson = true;
-          data.settings.cloudflare.passwordStorage = "data.json settings.cloudflare.appPassword";
-        }
-      }
-
-      if (api) setCloudApiBase(api);
-      if (password) setCloudPassword(password);
-
-      persist();
-      return Boolean(api || password);
-    } catch (e) {}
-    return false;
+  function persist() {
+    ensureSettings();
+    localStorage.setItem(LS_DATA, JSON.stringify(data));
   }
-
-  function persist() { localStorage.setItem(LS_DATA, JSON.stringify(data)); }
   function loadLocal() {
     try {
       const raw = localStorage.getItem(LS_DATA);
-      if (raw) data = normalize(JSON.parse(raw));
+      if (raw) normalize(JSON.parse(raw));
     } catch (e) {}
+  }
+  async function loadBootstrapConfigFromDataJson() {
+    try {
+      setStatus("warn", t("loadingBootstrap"));
+      const res = await fetch("./data.json?ts=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) return false;
+      const siteData = await res.json();
+      normalize(siteData);
+      persist();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   function filteredItems() {
@@ -488,32 +385,25 @@
       return [formatDate(item.dateISO, true), item.time, item.group, item.content, (item.links || []).join(" "), (item.participants || []).join(" ")].join(" ").toLowerCase().includes(q);
     });
   }
-
   function groupByDate(items) {
     const days = [];
     items.forEach(function (item) {
       const key = item.dateISO || "no-date";
       let day = days.find(function (x) { return x.key === key; });
-      if (!day) {
-        day = { key: key, dateISO: item.dateISO, items: [] };
-        days.push(day);
-      }
+      if (!day) { day = { key: key, dateISO: item.dateISO, items: [] }; days.push(day); }
       day.items.push(item);
     });
     return days;
   }
-
-  function chips(people, cls) {
-    return (people || []).map(function (p) { return '<span class="chip ' + (cls || "person") + '">' + esc(p) + '</span>'; }).join("");
+  function chips(people) {
+    return (people || []).map(function (p) { return '<span class="chip">' + esc(p) + '</span>'; }).join("");
   }
-
-  function renderBoard() {
-    const days = groupByDate(filteredItems());
+  function renderBoard(items) {
+    const days = groupByDate(items);
     if (!days.length) {
       $("#board").html('<div class="empty">' + esc(t("empty")) + '</div>');
       return;
     }
-
     const html = days.map(function (day) {
       const uniquePeople = Array.from(new Set(day.items.flatMap(function (x) { return x.participants || []; })));
       let currentGroup = null;
@@ -524,9 +414,7 @@
           currentGroup = itemGroup;
           if (currentGroup) section = '<tr class="sectionRow"><td colspan="5"><div class="section">' + esc(currentGroup) + '</div></td></tr>';
         }
-        const links = (item.links || []).length
-          ? item.links.map(function (u) { return '<button class="linkBtn" data-link="' + esc(u) + '">' + esc(u) + '</button>'; }).join("")
-          : '<span class="small">-</span>';
+        const links = (item.links || []).length ? item.links.map(function (u) { return '<button class="linkBtn" data-link="' + esc(u) + '">' + esc(u) + '</button>'; }).join("") : '<span class="small">-</span>';
         return section + '<tr>' +
           '<td>' + esc(formatTime(item.time)) + '</td>' +
           '<td class="contentCell">' + esc(item.content || "-") + '</td>' +
@@ -536,19 +424,17 @@
           '</tr>';
       }).join("");
       return '<article class="day">' +
-        '<div class="dayHead"><div><h2>' + esc(formatDate(day.dateISO, true)) + '</h2><div class="small">' + day.items.length + ' ' + esc(t("itemCount")) + '</div></div><div class="chips">' + chips(uniquePeople) + '</div></div>' +
+        '<div class="dayHead"><div><h2>' + esc(formatDate(day.dateISO, true)) + '</h2><div class="small">' + day.items.length + " " + esc(t("itemCount")) + '</div></div><div class="chips">' + chips(uniquePeople) + '</div></div>' +
         '<div class="tableWrap"><table class="table"><thead><tr><th>' + esc(t("time")) + '</th><th>' + esc(t("content")) + '</th><th>' + esc(t("rednote")) + '</th><th>' + esc(t("people")) + '</th><th>' + esc(t("actions")) + '</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
         '</article>';
     }).join("");
     $("#board").html(html);
   }
 
-  function updateCloudState() {
-    const api = getApiBase();
-    if (api) $("#cloudState").text(t("cloudReady") + " " + api);
-    else $("#cloudState").text(t("cloudDisabled"));
+  function setStatus(kind, message) {
+    $("#statusDot").removeClass("ok warn err").addClass(kind || "");
+    $("#statusText").text(message || "");
   }
-
   function applyI18n() {
     document.documentElement.lang = appLang === "zh" ? "zh-CN" : "en";
     document.title = (appLang === "zh" ? "行程计划 Pro " : "Travel Plan Pro ") + APP_VERSION;
@@ -556,47 +442,30 @@
     $("[data-i18n-placeholder]").each(function () { $(this).attr("placeholder", t($(this).data("i18n-placeholder"))); });
     $("#btnLang").text(appLang === "zh" ? "EN" : "中");
     $("#updatedText").text(data.updatedAt ? t("updated") + ": " + new Date(data.updatedAt).toLocaleString(appLang === "zh" ? "zh-CN" : "en-US") : "-");
-    updateCloudState();
-    const currentIso = getSelectedDateISO();
-    if ($("#editMask").hasClass("show")) populateDatePicker(currentIso || undefined);
+    populateDatePicker(getSelectedDateISO(), true);
+    refreshWeekday();
   }
-
   function render() {
-    renderBoard();
+    renderBoard(filteredItems());
     applyI18n();
-    setStatus("ok", t("loaded"));
   }
 
   async function loadData(silent) {
     if (!silent) setStatus("warn", t("loading"));
-
-    // Always try to read the local/static data.json first.
-    // This lets a brand-new device discover the Worker address and APP_PASSWORD
-    // from data.json before syncing the latest Worker data.
-    await loadBootstrapConfigFromDataJson();
-
-    const currentApi = getApiBase();
-    const currentPassword = getCloudPassword();
-
-    if (!currentApi) {
+    const url = endpoint();
+    if (!url) {
       loadLocal();
       render();
+      setStatus("warn", t("localSaved"));
       return;
     }
-
     try {
-      const res = await fetch(dataUrl(), { cache: "no-store" });
-      if (!res.ok) throw new Error("load failed");
-
-      const next = normalize(await res.json());
-      if (!next.settings.cloudflare.apiBase) next.settings.cloudflare.apiBase = currentApi;
-      if (!next.settings.cloudflare.appPassword) next.settings.cloudflare.appPassword = currentPassword;
-
-      data = next;
-      setCloudApiBase(data.settings.cloudflare.apiBase || currentApi);
-      setCloudPassword(data.settings.cloudflare.appPassword || currentPassword);
+      const res = await fetch(url + "?ts=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) throw new Error("load failed " + res.status);
+      normalize(await res.json());
       persist();
       render();
+      setStatus("ok", t("loaded"));
     } catch (e) {
       loadLocal();
       render();
@@ -604,36 +473,85 @@
     }
   }
 
-  async function saveData() {
-    getSettings();
+  async function saveData(statusMessage) {
+    ensureSettings();
     data.version = APP_VERSION;
     data.updatedAt = new Date().toISOString();
-    getSettings();
     persist();
-
-    if (!getApiBase()) {
+    const url = endpoint();
+    if (!url) {
       render();
       setStatus("warn", t("localSaved"));
       return;
     }
-
     try {
-      const res = await fetch(dataUrl(), {
+      const res = await fetch(url, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", "X-App-Password": getCloudPassword() },
+        headers: {
+          "Content-Type": "application/json",
+          "X-App-Password": getCloudPassword()
+        },
         body: JSON.stringify(data)
       });
-      if (res.status === 401) {
-        setStatus("err", t("wrongPwd"));
-        return;
-      }
-      if (!res.ok) throw new Error("save failed");
+      if (res.status === 401) throw new Error("401");
+      if (!res.ok) throw new Error("save failed " + res.status);
       render();
-      setStatus("ok", t("saved"));
+      setStatus("ok", statusMessage || t("saved"));
     } catch (e) {
       render();
-      setStatus("err", t("networkErr"));
+      setStatus(e.message === "401" ? "err" : "err", e.message === "401" ? t("wrongPwd") : t("networkErr"));
     }
+  }
+
+  function populateDatePicker(iso, keepOptions) {
+    const parsed = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const now = new Date();
+    const selected = parsed ? new Date(+parsed[1], +parsed[2] - 1, +parsed[3]) : now;
+    const y = selected.getFullYear();
+    const m = selected.getMonth() + 1;
+    let d = selected.getDate();
+    if (!keepOptions || !$("#editYear option").length) {
+      let years = "";
+      for (let year = y - 5; year <= y + 5; year++) years += '<option value="' + year + '">' + year + (appLang === "zh" ? "年" : "") + '</option>';
+      $("#editYear").html(years);
+    } else {
+      $("#editYear option").each(function () {
+        const val = $(this).val();
+        $(this).text(appLang === "zh" ? val + "年" : val);
+      });
+    }
+    let months = "";
+    for (let month = 1; month <= 12; month++) months += '<option value="' + month + '">' + (appLang === "zh" ? month + "月" : MONTHS_EN[month - 1]) + '</option>';
+    $("#editMonth").html(months);
+    const maxDay = daysInMonth(y, m);
+    if (d > maxDay) d = maxDay;
+    let days = "";
+    for (let day = 1; day <= maxDay; day++) days += '<option value="' + day + '">' + (appLang === "zh" ? day + "日" : day) + '</option>';
+    $("#editDay").html(days);
+    $("#editYear").val(y);
+    $("#editMonth").val(m);
+    $("#editDay").val(d);
+  }
+  function getSelectedDateISO() {
+    const y = +$("#editYear").val();
+    const m = +$("#editMonth").val();
+    const d = +$("#editDay").val();
+    if (!y || !m || !d) return "";
+    return y + "-" + pad2(m) + "-" + pad2(d);
+  }
+  function refreshWeekday() {
+    const y = +$("#editYear").val();
+    const m = +$("#editMonth").val();
+    const currentDay = +$("#editDay").val() || 1;
+    if (y && m) {
+      const maxDay = daysInMonth(y, m);
+      let days = "";
+      const d = Math.min(currentDay, maxDay);
+      for (let day = 1; day <= maxDay; day++) days += '<option value="' + day + '">' + (appLang === "zh" ? day + "日" : day) + '</option>';
+      $("#editDay").html(days).val(d);
+    }
+    const iso = getSelectedDateISO();
+    $("#editWeekday").val(iso ? weekday(iso) : "");
   }
 
   function renderPicker() {
@@ -643,13 +561,12 @@
       return '<label class="peopleOption"><input type="checkbox" value="' + esc(p) + '" ' + (selectedPeople.includes(p) ? "checked" : "") + '> <span>' + esc(p) + '</span></label>';
     }).join(""));
   }
-
   function openEdit(id) {
     const item = id ? data.items.find(function (x) { return x.id === id; }) : { id: uid(), dateISO: todayISO(), time: "", group: "", content: "", links: [], participants: [] };
     if (!item) return;
     $("#editTitle").text(id ? t("editTitle") : t("addTitle"));
     $("#editId").val(item.id);
-    populateDatePicker(item.dateISO || todayISO());
+    populateDatePicker(item.dateISO || todayISO(), false);
     $("#editTime").val(item.time || "");
     $("#editGroup").val(item.group || "");
     $("#editContent").val(item.content || "");
@@ -659,12 +576,10 @@
     refreshWeekday();
     $("#editMask").addClass("show");
   }
-
   function todayISO() {
-    const now = new Date();
-    return now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate());
+    const d = new Date();
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
   }
-
   function saveEdit() {
     const id = $("#editId").val();
     const item = {
@@ -679,14 +594,9 @@
     };
     item.participants.forEach(function (p) { if (!data.peopleOptions.includes(p)) data.peopleOptions.push(p); });
     const idx = data.items.findIndex(function (x) { return x.id === id; });
-    if (idx >= 0) {
-      item.sort = data.items[idx].sort || idx;
-      data.items[idx] = item;
-    } else {
-      data.items.push(item);
-    }
+    if (idx >= 0) { item.sort = data.items[idx].sort || idx; data.items[idx] = item; } else { data.items.push(item); }
     $("#editMask").removeClass("show");
-    saveData();
+    saveData(t("saved"));
   }
 
   function importExcel(file) {
@@ -698,7 +608,6 @@
         const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: "" });
         const header = rows.find(function (r) { return Array.isArray(r) && r.some(function (x) { return String(x).trim(); }); });
         if (!header) throw new Error("bad header");
-
         const lower = header.map(function (x) { return String(x).trim().toLowerCase(); });
         function idx(names) {
           return lower.findIndex(function (x) { return names.map(function (n) { return n.toLowerCase(); }).includes(x); });
@@ -709,7 +618,6 @@
         const ci = idx(["计划内容", "plan content", "content"]);
         const li = idx(["小红书链接", "red note", "xiaohongshu link", "link", "links"]);
         const pi = idx(["参与人员", "people", "participants"]);
-
         let lastDate = "";
         let lastPeople = [];
         const imported = [];
@@ -737,10 +645,9 @@
           });
         });
         if (!imported.length) throw new Error("no rows");
-        imported.forEach(function (item) { item.participants.forEach(function (p) { if (!data.peopleOptions.includes(p)) data.peopleOptions.push(p); }); });
         data.items = imported;
-        saveData();
-        setStatus("ok", t("imported"));
+        data.items.forEach(function (item) { item.participants.forEach(function (p) { if (!data.peopleOptions.includes(p)) data.peopleOptions.push(p); }); });
+        saveData(t("imported"));
       } catch (err) {
         alert(t("badFile"));
       }
@@ -768,37 +675,39 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.4.0.xlsx" : "travel-plan-pro-en-v2.4.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-cn-" + APP_VERSION + ".xlsx" : "travel-plan-en-" + APP_VERSION + ".xlsx");
   }
 
   async function testCloud() {
-    const api = normalizeWorkerBase($("#cloudApiBase").val());
-    if (!api) {
-      $("#cloudState").text(t("cloudDisabled"));
-      return;
-    }
+    const inputApi = $("#cloudApiBase").val();
+    const inputPwd = $("#cloudPassword").val();
+    setCloudApiBase(inputApi);
+    setCloudPassword(inputPwd);
+    const url = endpoint();
+    $("#cloudResult").removeClass("ok err").text(t("loading"));
+    if (!url) { $("#cloudResult").addClass("err").text(t("testFail")); return; }
     try {
-      const res = await fetch(api + "/data.json", { cache: "no-store" });
+      const res = await fetch(url + "?ts=" + Date.now(), { cache: "no-store" });
       if (!res.ok) throw new Error("test failed");
-      data = normalize(await res.json());
-      setCloudApiBase(api);
-      setCloudPassword(String($("#cloudPassword").val() || getCloudPassword()));
-      persist();
-      render();
-      $("#cloudState").text(t("cloudTestOk"));
+      await res.json();
+      $("#cloudResult").removeClass("err").addClass("ok").text(t("testOk"));
     } catch (e) {
-      $("#cloudState").text(t("cloudTestFail"));
+      $("#cloudResult").removeClass("ok").addClass("err").text(t("testFail"));
     }
   }
 
-  $(document).on("click", "[data-close]", function () { $("#" + $(this).data("close")).removeClass("show"); });
-  $(document).on("click", ".mask", function (e) { if (e.target === this) $(this).removeClass("show"); });
+  $(document).on("click", "[data-close]", function () {
+    $("#" + $(this).data("close")).removeClass("show");
+  });
+  $(document).on("click", ".mask", function (e) {
+    if (e.target === this) $(this).removeClass("show");
+  });
   $(document).on("click", "[data-edit]", function () { openEdit($(this).data("edit")); });
   $(document).on("click", "[data-del]", function () {
     const id = $(this).data("del");
     if (confirm(t("confirmDelete"))) {
       data.items = data.items.filter(function (x) { return x.id !== id; });
-      saveData();
+      saveData(t("saved"));
     }
   });
   $(document).on("click", ".linkBtn", function () {
@@ -817,38 +726,37 @@
     renderPicker();
     $("#peoplePanel").addClass("open");
   });
-  $(document).on("click", function (e) { if (!$(e.target).closest("#peoplePicker").length) $("#peoplePanel").removeClass("open"); });
+  $(document).on("click", function (e) {
+    if (!$(e.target).closest("#peoplePicker").length) $("#peoplePanel").removeClass("open");
+  });
 
   $("#btnAdd").on("click", function () { openEdit(null); });
-  $("#btnMore").on("click", function () { $("#morePanel").toggleClass("open"); });
+  $("#btnMore").on("click", function () { $("#toolPanel").toggleClass("collapsed"); });
   $("#btnSaveEdit").on("click", saveEdit);
   $("#btnImport").on("click", function () { $("#excelFile").click(); });
   $("#excelFile").on("change", function () { if (this.files && this.files[0]) importExcel(this.files[0]); });
   $("#btnTplZh").on("click", function () { downloadTemplate("zh"); });
   $("#btnTplEn").on("click", function () { downloadTemplate("en"); });
-  $("#btnPeople").on("click", function () { $("#peopleText").val((data.peopleOptions || []).join("\n")); $("#peopleMask").addClass("show"); });
+  $("#btnPeople").on("click", function () {
+    $("#peopleText").val((data.peopleOptions || []).join("\n"));
+    $("#peopleMask").addClass("show");
+  });
   $("#btnSavePeople").on("click", function () {
     data.peopleOptions = $("#peopleText").val().split(/\n+/).map(function (x) { return x.trim(); }).filter(Boolean);
     $("#peopleMask").removeClass("show");
-    saveData();
+    saveData(t("peopleSaved"));
   });
   $("#btnCloudflare").on("click", function () {
-    if (!getSettings().cloudflare.apiBase && localStorage.getItem(LS_API)) setCloudApiBase(localStorage.getItem(LS_API));
     $("#cloudApiBase").val(getApiBase());
-    if (!getSettings().cloudflare.appPassword && localStorage.getItem(LS_PASSWORD)) setCloudPassword(localStorage.getItem(LS_PASSWORD));
     $("#cloudPassword").val(getCloudPassword());
-    updateCloudState();
+    $("#cloudResult").removeClass("ok err").text("");
     $("#cloudMask").addClass("show");
   });
   $("#btnSaveCloud").on("click", function () {
     setCloudApiBase($("#cloudApiBase").val());
     setCloudPassword($("#cloudPassword").val());
-    getSettings();
-    persist();
-    updateCloudState();
     $("#cloudMask").removeClass("show");
-    saveData();
-    setStatus("ok", t("cloudSaved"));
+    saveData(t("configSaved"));
   });
   $("#btnTestCloud").on("click", testCloud);
   $("#btnRefresh").on("click", function () { loadData(false); });
@@ -857,11 +765,11 @@
     localStorage.setItem(LS_LANG, appLang);
     render();
   });
-  $("#searchInput").on("input", renderBoard);
-  $("#editYear,#editMonth").on("change", function () { refreshDayOptions(); refreshWeekday(); });
+  $("#searchInput").on("input", render);
+  $("#editYear").on("change", refreshWeekday);
+  $("#editMonth").on("change", refreshWeekday);
   $("#editDay").on("change", refreshWeekday);
   $("#peopleToggle").on("click", function () { $("#peoplePanel").toggleClass("open"); });
-
   document.addEventListener("visibilitychange", function () { if (!document.hidden) loadData(true); });
 
   async function boot() {
@@ -871,6 +779,5 @@
     await loadData(false);
     setInterval(function () { loadData(true); }, AUTO_REFRESH_MS);
   }
-
   boot();
 })();

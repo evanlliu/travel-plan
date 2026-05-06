@@ -1,95 +1,49 @@
-# Travel Plan Pro
+# Travel Plan Pro v2.5.0
 
-当前版本：**v2.4.0**
+## 本版本重点
 
-## 本版更新
+- 人员配置 `peopleOptions` 会保存到 `data.json`。
+- Cloudflare Worker 地址和 `APP_PASSWORD` 会保存到 `data.json` 的 `settings.cloudflare`。
+- 每次设备打开页面时，会先读取当前站点的 `./data.json`，再用里面的 Cloudflare 配置同步 Worker 最新数据。
+- 支持你截图里的 Cloudflare Worker GitHub 模式变量：
+  - Secret: `APP_PASSWORD`
+  - Secret: `GH_TOKEN`
+  - Plaintext: `GH_OWNER`
+  - Plaintext: `GH_REPO`
+  - Plaintext: `GH_BRANCH`
+  - Plaintext: `DATA_PATH`
+- 仍兼容 KV 绑定 `TRAVEL_DATA`。
 
-- Cloudflare 同步配置里的 `APP_PASSWORD` 会按要求保存到 `data.json`：
+## data.json 关键结构
 
 ```json
 {
+  "version": "v2.5.0",
   "settings": {
     "cloudflare": {
-      "apiBase": "https://你的-worker.workers.dev",
-      "appPassword": "你的写入密码"
+      "apiBase": "https://your-worker.workers.dev",
+      "appPassword": "your-password",
+      "configSavedInDataJson": true,
+      "passwordStorage": "data.json settings.cloudflare.appPassword"
     }
-  }
+  },
+  "peopleOptions": ["Evan", "Gonca"],
+  "items": []
 }
 ```
 
-- Worker 已兼容你截图里的 Cloudflare Variables and Secrets：
-  - `APP_PASSWORD`：Secret，写入密码
-  - `DATA_PATH`：Plaintext，例如 `data.json`
-  - `GH_BRANCH`：Plaintext，例如 `main`
-  - `GH_OWNER`：Plaintext，例如 `evanlliu`
-  - `GH_REPO`：Plaintext，例如 `travel-plan`
-  - `GH_TOKEN`：Secret，GitHub Token
-- Worker 优先使用 GitHub 仓库里的 `data.json` 作为同步存储；如果没有配置 GitHub，则兼容旧版 KV：`TRAVEL_DATA`。
+## 部署方式
 
-## 重要提醒
-
-`APP_PASSWORD` 放到 `data.json` 后，任何能访问 `data.json` 或 Worker GET 地址的人都可能看到这个密码。你这版是按要求实现的。如果后面想更安全，可以再改回“只放 Cloudflare Secret，不写入 data.json”。
-
-## Cloudflare Variables and Secrets 配置
-
-进入：
-
-```text
-Workers & Pages → 你的 Worker → Settings → Variables and Secrets
-```
-
-按你的截图这样添加即可：
-
-| Type | Name | Value |
-|---|---|---|
-| Secret | APP_PASSWORD | 你的写入密码 |
-| Plaintext | DATA_PATH | data.json |
-| Plaintext | GH_BRANCH | main |
-| Plaintext | GH_OWNER | evanlliu |
-| Plaintext | GH_REPO | travel-plan |
-| Secret | GH_TOKEN | 你的 GitHub token |
-
-`GH_TOKEN` 建议使用 Fine-grained token，并给目标仓库 `Contents: Read and write` 权限。
-
-## 前端配置
-
-打开网页后：
-
-```text
-更多功能 → Cloudflare 同步配置
-```
-
-填写：
-
-```text
-Worker 地址：https://你的-worker.workers.dev
-写入密码：和 Cloudflare Secret APP_PASSWORD 一样
-```
-
-保存后，会写入 `data.json` 的：
-
-```text
-settings.cloudflare.apiBase
-settings.cloudflare.appPassword
-```
-
-## GitHub 仓库文件
-
-把这些文件放到你的 GitHub Pages / Cloudflare Pages 仓库：
-
-```text
-index.html
-style.css
-app.js
-data.json
-```
-
-Worker 单独部署：
-
-```text
-worker.js
-wrangler.toml
-```
+1. 把 `index.html`、`style.css`、`app.js`、`data.json` 上传到 GitHub 仓库。
+2. Cloudflare Pages 连接这个 GitHub 仓库。
+3. Cloudflare Worker 使用 `worker.js`。
+4. Worker 的 Variables and Secrets 按下面配置：
+   - `APP_PASSWORD`：Secret，写入密码。
+   - `GH_TOKEN`：Secret，GitHub Token，需要 Contents read/write 权限。
+   - `GH_OWNER`：Plaintext，例如 `evanlliu`。
+   - `GH_REPO`：Plaintext，例如 `travel-plan`。
+   - `GH_BRANCH`：Plaintext，例如 `main`。
+   - `DATA_PATH`：Plaintext，例如 `data.json`。
 
 ## Excel 表头
 
@@ -105,10 +59,6 @@ wrangler.toml
 Date, Time, Group, Plan Content, Red Note, People
 ```
 
-## v2.4.0 重要同步说明
+## 注意
 
-- Cloudflare Worker 地址保存到 `data.json -> settings.cloudflare.apiBase`。
-- APP_PASSWORD 保存到 `data.json -> settings.cloudflare.appPassword`。
-- 每次设备打开页面时，程序会先读取当前站点的 `data.json`，拿到 Cloudflare 同步配置。
-- 拿到 Worker 地址后，程序会马上请求 `Worker /data.json`，同步最新数据。
-- 如果你使用 GitHub 模式，Worker 写入 GitHub 的 `data.json` 后，其他设备重新打开页面即可读取同一份配置和数据。
+按你的要求，本版本会把 `APP_PASSWORD` 保存到 `data.json`。这样新设备同步更方便，但能访问 `data.json` 的人也能看到这个密码。
