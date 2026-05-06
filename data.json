@@ -1,6 +1,6 @@
 {
-  "version": "v2.5.0",
-  "updatedAt": "2026-05-06T06:10:27.176Z",
+  "version": "v2.6.0",
+  "updatedAt": "2026-05-06T06:28:44.708Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -14,8 +14,7 @@
     "Gonca",
     "Ainiya",
     "Lin",
-    "Mom",
-    "ÃÂ¥ÃÂÃÂ¨ÃÂ¥ÃÂ®ÃÂ¶"
+    "Mom"
   ],
   "items": [
     {
@@ -205,9 +204,7 @@
       "group": "",
       "content": "BBQ, Lobster",
       "links": [],
-      "participants": [
-        "ÃÂ¥ÃÂÃÂ¨ÃÂ¥ÃÂ®ÃÂ¶"
-      ],
+      "participants": [],
       "sort": 14
     },
     {
