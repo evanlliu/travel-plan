@@ -1,6 +1,6 @@
 {
   "version": "v2.37.0",
-  "updatedAt": "2026-05-06T12:00:58.454Z",
+  "updatedAt": "2026-05-06T12:01:07.312Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -233,13 +233,11 @@
       "dateISO": "2026-05-21",
       "time": "17:00",
       "group": "",
-      "content": "Go back ZhuZhou",
+      "content": "Get glasses",
       "links": [],
       "participants": [
         "Evan",
-        "Gonca",
-        "Ainiya",
-        "Mom"
+        "Gonca"
       ],
       "sort": 20
     }
