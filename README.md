@@ -1,256 +1,92 @@
-# Travel Plan
+# Travel Plan Web v2.28.0
 
-当前版本：**v2.26.0**
+一个轻量级行程计划网页，支持 PC、移动端 Safari、iPhone 添加到主屏幕后使用。
 
-## 本版修复
+## 功能
 
-1. 修复人员配置里的乱码人员重复出现问题。
-   - 自动过滤 `Ã`、`Â`、控制字符、替换字符等常见乱码。
-   - 保存人员配置时，会同步清理行程中的已删除人员，避免下次加载又被重新添加。
-2. 重新优化移动端兼容。
-   - 顶部按钮、更多功能、弹窗、行程表格在 iPhone Safari 上重新适配。
-3. 新增安排日期改为第三方日期插件 `flatpickr`。
-   - 一个输入框直接选择日期。
-   - 支持中文 / 英文日历。
-   - 切换语言后，日历月份、星期、显示格式会跟着切换。
-4. Cloudflare 同步配置、人员配置都会保存到 `data.json`。
-   - `settings.cloudflare.apiBase`
-   - `settings.cloudflare.appPassword`
-   - `peopleOptions`
+- 中英文切换
+- 按日期自动分组展示行程
+- 日期选择后自动带出星期
+- 新增、编辑、删除行程
+- 参与人员多选和人员配置
+- 小红书链接弹窗预览
+- Excel 导入
+- 中文 / 英文 Excel 模板导出
+- Cloudflare Worker + GitHub `data.json` 多设备同步
+- 普通 Safari 和添加到主屏幕后 PWA 模式适配
+
+## 文件说明
+
+```text
+index.html              页面结构
+style.css               样式和 PC / 移动端适配
+app.js                  前端逻辑
+data.json               行程数据、人员配置、Cloudflare 配置
+worker.js               Cloudflare Worker 同步接口
+wrangler.toml           Worker 配置示例
+manifest.webmanifest    PWA 配置
+icon-192.png            PWA 图标
+icon-512.png            PWA 图标
+apple-touch-icon.png    iOS 主屏幕图标
+```
+
+## GitHub Pages 部署
+
+把以下文件放到 GitHub Pages 仓库根目录：
+
+```text
+index.html
+style.css
+app.js
+data.json
+manifest.webmanifest
+icon-192.png
+icon-512.png
+apple-touch-icon.png
+```
+
+浏览器访问你的 GitHub Pages 地址即可。
 
 ## Cloudflare Worker 配置
 
-你的截图配置可以继续使用：
+Worker 需要部署：
+
+```text
+worker.js
+wrangler.toml
+```
+
+Cloudflare Worker 的 Variables and Secrets 建议这样配置：
 
 | Type | Name | Value |
 |---|---|---|
-| Secret | `APP_PASSWORD` | 你的写入密码 |
-| Secret | `GH_TOKEN` | GitHub Token |
-| Plaintext | `DATA_PATH` | `data.json` |
-| Plaintext | `GH_BRANCH` | `main` |
-| Plaintext | `GH_OWNER` | `evanlliu` |
-| Plaintext | `GH_REPO` | `travel-plan` |
+| Secret | APP_PASSWORD | 你的写入密码 |
+| Plaintext | DATA_PATH | data.json |
+| Plaintext | GH_BRANCH | main |
+| Plaintext | GH_OWNER | GitHub 用户名 |
+| Plaintext | GH_REPO | GitHub 仓库名 |
+| Secret | GH_TOKEN | GitHub Personal Access Token |
 
-`worker.js` 兼容路径：
-
-```text
-/
- /data
- /data.json
-```
-
-页面里的 Worker 地址可以填写：
+`APP_PASSWORD` 也会通过前端 Cloudflare 同步配置保存到 `data.json` 的：
 
 ```text
-https://你的-worker.workers.dev
+settings.cloudflare.appPassword
 ```
 
-也兼容：
-
-```text
-https://你的-worker.workers.dev/data
-https://你的-worker.workers.dev/data.json
-```
-
-## 部署
-
-1. 将这些文件上传到 GitHub 仓库：
-   - `index.html`
-   - `style.css`
-   - `app.js`
-   - `data.json`
-   - `worker.js`
-   - `wrangler.toml`
-2. Cloudflare Pages 连接该仓库。
-3. Cloudflare Worker 部署新版 `worker.js`。
-4. 打开网页，在“更多功能 -> Cloudflare 同步配置”里保存 Worker 地址和 APP_PASSWORD。
-5. 保存后配置会写入 GitHub 的 `data.json`，新设备加载后会自动同步。
-
-## Excel 表头
-
-中文：
-
-```text
-日期, 时间, 分组, 计划内容, 小红书链接, 参与人员
-```
-
-英文：
-
-```text
-Date, Time, Group, Plan Content, Red Note, People
-```
-
-## 注意
-
-按你的要求，`APP_PASSWORD` 会保存到 `data.json`。这样换设备方便同步，但如果别人能访问 `data.json`，也能看到这个密码。
-
-
-## v2.26.0 说明
-
-- 修复中文保存后变成乱码的问题。
-- Worker 和前端都使用 UTF-8 安全读写 GitHub `data.json`。
-- 读取旧数据时会自动尝试修复常见 UTF-8/Latin-1 双重乱码。
-- 人员配置不会再因为乱码清理逻辑误删中文人员。
-
-## v2.26.0 说明
-
-- iOS Safari 添加到主屏幕后以全屏 / PWA 模式打开。
-- 新增 `manifest.webmanifest`、`apple-touch-icon.png`、`icon-192.png`、`icon-512.png`。
-- 移动端新增安排和语言切换改为悬浮图标按钮，随时可以添加和切换。
-- 移动端顶部不再显示重复的“新增安排”按钮。
-
-
-## v2.26.0 说明
-
-- 删除首页“多设备同步行程”文案。
-- 删除首页功能说明文案。
-- 标题改为“行程计划 v2.26.0”，删除 Pro 字样。
-- 新增安排和语言切换改成全局悬浮图标按钮。
-- 移动端不再显示顶部 EN 按钮。
-- 清理顶部无用按钮和部分旧样式。
-
-
-## v2.26.0 说明
-
-- 移动端右下角悬浮按钮缩小，避免遮挡内容。
-- 多语言按钮图标改为 A / 文，更明显表示语言切换。
-- PC 端日期卡片右上角参与人员样式统一为和表格内相同的小标签。
-- 清理上一版重复的悬浮按钮样式覆盖代码。
-
-
-## v2.26.0 说明
-
-- 修复 iPhone Safari 添加到主屏幕后，全屏模式顶部状态栏遮挡标题的问题。
-- 移动端和 PWA 模式增加顶部安全区域 `safe-area-inset-top` 适配。
-- 增加横竖屏切换后重新计算安全区域。
-
-
-## v2.26.0 说明
-
-- 修复移动端打开“新增安排 / 编辑安排”弹窗后，触摸滑动会带动主页面一起滚动的问题。
-- 弹窗打开时会锁定背景页面滚动，关闭后恢复到原来的页面位置。
-- 编辑弹窗在移动端固定为独立滚动区域，表单内容只在弹窗内部滚动。
-- 优化 iOS Safari / 主屏幕 PWA 弹窗下滑时页面漂移的问题。
-
-
-## v2.26.0 说明
-
-- 移动端编辑 / 新增弹窗改为真正固定定位。
-- 使用 JS 写入 `--app-height`，避免 iOS Safari 动态视口变化导致弹窗跳动。
-- 增加弹窗内部滚动边界控制，防止滑到顶部或底部时弹窗跟着“弹来弹去”。
-- 人员配置、Cloudflare 配置和链接预览弹窗也同步使用固定面板策略。
-
-
-## v2.26.0 说明
-
-- 修复移动端点击日期选择器时弹出 iOS 键盘的问题。
-- 日期输入框改为只读，使用 flatpickr 选择日期，不再允许键盘输入。
-- 移动端日期选择器嵌入在编辑弹窗内，避免日历跑到屏幕顶部遮挡。
-- 修复编辑弹窗右滑 / 横向滑动导致页面整体偏移的问题。
-- 增加横向滑动拦截和全局 `overflow-x: hidden`。
-
-
-## v2.26.0 说明
-
-- 修复移动端日期区域出现大块空白的问题。
-- 日期选择器不再使用移动端静态内嵌模式，改为点击后浮层打开。
-- 日期输入框继续保持只读，点击日期不会弹出 iOS 键盘。
-- 打开编辑弹窗时，右下角悬浮新增 / 语言按钮会隐藏，避免遮挡保存按钮。
-- 进一步拦截横向滑动，减少 Safari 右滑导致页面偏移。
-
-
-## v2.26.0 说明
-
-- 日期选择方案改为 Safari / 浏览器原生 `input type=date`。
-- 移除 Flatpickr 日期插件调用，避免移动端空白、浮层错位、键盘冲突。
-- 点击日期直接调用 iOS Safari 自带日期选择器。
-- 继续保留选择日期后自动计算星期。
-- 进一步锁定移动端编辑弹窗横向滑动。
-
-
-## v2.26.0 说明
-
-- 修复移动端编辑弹窗中点击文本输入框后，iOS 键盘弹起导致页面布局错乱的问题。
-- 弹窗打开时固定基础高度，键盘弹起后不再重新压缩整个弹窗。
-- 输入文字时临时隐藏底部保存栏，避免保存栏被键盘顶到页面中间；键盘关闭后自动恢复。
-- 输入框聚焦后会在弹窗内部滚动到合适位置。
-- 时间输入框改为自适应宽度，不再强制占满整行。
-
-
-## v2.26.0 说明
-
-- 编辑弹窗中“参与人员”字段移动到“星期”下面，使用更顺手。
-- 优化移动端人员选择面板显示：
-  - 下拉面板改成更稳定的卡片列表样式
-  - 每个人员名称完整显示，不再只看到复选框或文字被挤到右侧
-  - 面板在移动端使用相对定位并限制高度，支持内部滚动
-
-
-## v2.26.0 说明
-
-- 编辑界面字段顺序固定为：日期、时间、星期、参与人员、分组、计划内容、小红书链接。
-- 为编辑表单字段增加独立排序 class，避免移动端样式覆盖导致顺序错乱。
-- 小红书链接输入框高度调小，减少表单占用空间。
-
-
-## v2.26.0 说明
-
-- 优化 PC 端编辑弹窗：
-  - 编辑弹窗改为更宽、更紧凑的三列布局
-  - 正常高度下不再出现编辑弹窗内部滚动条
-  - 日期、时间、星期、参与人员、分组、计划内容、小红书链接都可以直接看到
-- 修复 PC 端点击“参与人员”后下拉选项被遮挡 / 看不到的问题。
-- 小红书链接输入框高度继续减少，整体录入区域更紧凑。
-
-
-## v2.26.0 说明
-
-- 修复 PC 端编辑页面点击“参与人员”后下拉选项显示不完整的问题。
-  - PC 端人员选择不再使用 absolute 浮层，改成输入框下方直接展开的复选卡片。
-  - 避免被 grid、modal 或滚动容器裁切。
-- PC 端小红书链接输入框高度调整到和计划内容一致。
-- PC 端编辑弹窗继续压缩间距，减少内部滚动条。
-- 移动端修复“取消 / 保存”按钮可能消失的问题。
-  - 覆盖旧的 keyboardOpen 隐藏逻辑。
-  - 键盘关闭后自动清理 keyboardOpen 状态。
-
-
-## v2.26.0 说明
-
-- PC 端“参与人员”改为真正悬浮展开。
-- 点击展开后不会再撑高编辑弹窗，也不会让整个页面变高。
-- 悬浮面板会根据按钮位置自动计算 left / top / width，并在窗口 resize / scroll 时重新定位。
-- 移动端人员选择逻辑保持原来的内嵌滚动样式，不受本次 PC 悬浮优化影响。
-
-
-## v2.26.0 说明
-
-- PC 端“参与人员”下拉面板继续优化为真正悬浮。
-- 下拉面板固定显示在点击的参与人员输入框正下方，不再自动跑到其他位置。
-- 展开人员选择时不会撑高编辑页面。
-- 窗口滚动、弹窗内部滚动或窗口缩放时，会重新定位到输入框下方。
-
-
-## v2.26.0 说明
-
-- 修复 PC 端“参与人员”悬浮下拉跑到计划内容 / 小红书链接区域的问题。
-- PC 端 People 面板不再使用 JS 计算 fixed 坐标，改为跟随下拉框本身的 absolute 悬浮定位。
-- 点击参与人员后，面板固定显示在下拉框正下方，并且不会撑高编辑页面。
-
-
-## v2.26.0 说明
-
-- 修复移动端编辑页底部“Cancel / Save”只显示一半的问题。
-- 新增 `--bottom-ui-offset`，自动适配 iPhone Safari 底部浏览器工具栏高度。
-- 底部操作栏会自动上移到 Safari 底部栏上方。
-- 同时增加编辑表单底部留白，避免内容和按钮互相遮挡。
-
-
-## v2.26.0 说明
-
-- 修复 iPhone Safari “添加到主屏幕”后打开时，编辑页底部 Cancel / Save 只显示一半的问题。
-- 新增 PWA Standalone 模式识别：
-  - 自动给 `html/body` 添加 `isStandalone`
-  - 单独计算 PWA 底部安全距离
-- PWA 模式下编辑弹窗高度会避开 Home Indicator 区域。
-- PWA 模式下底部操作栏固定显示在安全区域上方。
+这样新设备加载 `data.json` 后，也能读取 Worker 地址和密码配置。
+
+## 使用说明
+
+1. 打开网页。
+2. 点右下角 `+` 新增安排。
+3. 点右下角语言按钮切换中英文。
+4. 点“更多功能”可以导入 Excel、导出模板、配置人员、配置 Cloudflare。
+5. 配置 Cloudflare 后，新增、编辑、删除、人员配置都会同步写入 GitHub 的 `data.json`。
+
+## v2.28.0 界面优化
+
+- PC 端改为更紧凑的行程表格：减少卡片空白、缩小按钮和标签，让一屏显示更多安排。
+- 移动端改为时间轴式紧凑卡片：时间固定在左侧，计划内容优先显示，链接和人员作为辅助信息显示。
+- 每天标题增加摘要：时间范围、参与人数、链接数量，方便快速抓重点。
+- 空链接 / 空人员在移动端隐藏，减少无效信息占位。
+- 小红书链接改为胶囊按钮，避免长链接占用太多宽度。

@@ -1,21 +1,15 @@
 name = "travel-plan-data-worker"
 main = "worker.js"
-compatibility_date = "2026-05-05"
+compatibility_date = "2026-05-06"
 
-# Your current GitHub storage mode:
-# Variables and Secrets:
-# APP_PASSWORD  Secret
-# GH_TOKEN      Secret
+# Cloudflare Worker Variables and Secrets:
+#
+# Secret:
+# APP_PASSWORD  写入密码
+# GH_TOKEN      GitHub Personal Access Token
+#
+# Plaintext:
 # DATA_PATH     data.json
 # GH_BRANCH     main
-# GH_OWNER      evanlliu
-# GH_REPO       travel-plan
-
-# Optional CORS restriction:
-# [vars]
-# ALLOWED_ORIGIN = "https://your-pages-domain.pages.dev"
-
-# Optional KV fallback mode:
-# [[kv_namespaces]]
-# binding = "TRAVEL_DATA"
-# id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+# GH_OWNER      GitHub 用户名，例如 evanlliu
+# GH_REPO       GitHub 仓库名，例如 travel-plan

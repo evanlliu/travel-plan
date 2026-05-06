@@ -1,12 +1,144 @@
 (function () {
-  const APP_VERSION = "v2.26.0";
+  "use strict";
+
+  const APP_VERSION = "v2.28.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
 
-  function uid() {
-    return "i_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
-  }
+  const WEEK = {
+    zh: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"],
+    en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+  };
+
+  const I18N = {
+    zh: {
+      appTitle: "行程计划",
+      more: "更多功能",
+      import: "导入 Excel",
+      tplZh: "中文模板",
+      tplEn: "英文模板",
+      peopleConfig: "人员配置",
+      cloudflareConfig: "Cloudflare 同步配置",
+      refresh: "刷新同步",
+      search: "搜索日期 / 内容 / 人员",
+      loading: "正在加载数据...",
+      loaded: "数据已加载",
+      synced: "已同步",
+      localMode: "本地模式",
+      syncFailed: "同步失败",
+      updatedAt: "更新时间：",
+      noData: "暂无行程",
+      noMatch: "没有匹配的行程",
+      date: "日期",
+      time: "时间",
+      weekday: "星期",
+      people: "参与人员",
+      group: "分组",
+      content: "计划内容",
+      rednote: "小红书链接",
+      action: "操作",
+      addItem: "新增安排",
+      editItem: "编辑安排",
+      edit: "编辑",
+      delete: "删除",
+      cancel: "取消",
+      save: "保存",
+      selectPeople: "请选择",
+      groupPlaceholder: "例如：Plan 1",
+      contentPlaceholder: "输入计划内容",
+      linksPlaceholder: "每行一个链接",
+      linksHint: "每行一个链接，点击页面中的链接可弹窗预览。",
+      preview: "链接预览",
+      iframeTip: "如果无法显示，请新窗口打开。",
+      openNew: "新窗口打开",
+      peopleSyncNotice: "人员配置会和行程一起保存到 data.json，新设备加载后也会自动同步。",
+      peopleList: "人员列表",
+      peopleHint: "一行一个名字。保存后会写入 data.json 的 peopleOptions。",
+      savePeople: "保存人员配置",
+      workerUrl: "Worker 地址",
+      workerHint: "支持填写根地址、/data 或 /data.json。保存后会写入 data.json。",
+      writePassword: "写入密码",
+      passwordHint: "会保存到 data.json 的 settings.cloudflare.appPassword。",
+      cloudNotice: "配置会保存到 data.json，新设备加载后会自动读取并同步。",
+      testRead: "测试读取",
+      saveConfig: "保存配置",
+      configSaved: "配置已保存",
+      testOk: "测试成功，可以读取 Cloudflare 数据。",
+      testFail: "测试失败，请检查 Worker 地址、CORS 或网络。",
+      saved: "已保存",
+      deleted: "已删除",
+      imported: "导入完成",
+      importFailed: "导入失败",
+      requiredDate: "请选择日期",
+      confirmDelete: "确认删除这条安排吗？",
+      uploadExcel: "请选择 Excel 文件",
+      link: "链接"
+    },
+    en: {
+      appTitle: "Travel Plan",
+      more: "More",
+      import: "Import Excel",
+      tplZh: "Chinese Template",
+      tplEn: "English Template",
+      peopleConfig: "People Settings",
+      cloudflareConfig: "Cloudflare Sync",
+      refresh: "Refresh",
+      search: "Search date / content / people",
+      loading: "Loading data...",
+      loaded: "Data loaded",
+      synced: "Synced",
+      localMode: "Local mode",
+      syncFailed: "Sync failed",
+      updatedAt: "Updated: ",
+      noData: "No plans yet",
+      noMatch: "No matching plans",
+      date: "Date",
+      time: "Time",
+      weekday: "Weekday",
+      people: "People",
+      group: "Group",
+      content: "Plan Content",
+      rednote: "Red Note",
+      action: "Action",
+      addItem: "Add Item",
+      editItem: "Edit Item",
+      edit: "Edit",
+      delete: "Delete",
+      cancel: "Cancel",
+      save: "Save",
+      selectPeople: "Select people",
+      groupPlaceholder: "For example: Plan 1",
+      contentPlaceholder: "Enter plan details",
+      linksPlaceholder: "One link per line",
+      linksHint: "Multiple links are supported. One link per line. Click a link to preview it.",
+      preview: "Link Preview",
+      iframeTip: "If it cannot be displayed, open it in a new window.",
+      openNew: "Open new window",
+      peopleSyncNotice: "People settings are saved to data.json together with plans and sync on new devices.",
+      peopleList: "People list",
+      peopleHint: "One name per line. Saving writes to data.json peopleOptions.",
+      savePeople: "Save People",
+      workerUrl: "Worker URL",
+      workerHint: "Root URL, /data, or /data.json are supported. Saving writes to data.json.",
+      writePassword: "Write password",
+      passwordHint: "Saved to data.json settings.cloudflare.appPassword.",
+      cloudNotice: "Config is saved to data.json and will sync automatically on new devices.",
+      testRead: "Test Read",
+      saveConfig: "Save Config",
+      configSaved: "Config saved",
+      testOk: "Test passed. Cloudflare data can be read.",
+      testFail: "Test failed. Check Worker URL, CORS, or network.",
+      saved: "Saved",
+      deleted: "Deleted",
+      imported: "Imported",
+      importFailed: "Import failed",
+      requiredDate: "Please choose a date",
+      confirmDelete: "Delete this plan?",
+      uploadExcel: "Please choose an Excel file",
+      link: "Link"
+    }
+  };
 
   const DEFAULT_DATA = {
     version: APP_VERSION,
@@ -21,290 +153,106 @@
     },
     peopleOptions: ["Evan", "Gonca", "Ainiya", "Lin", "Mom", "全家"],
     items: [
-      { id: uid(), dateISO: "2026-05-17", time: "13:00", group: "", content: "Center shopping", links: [], participants: ["Evan", "Gonca", "Lin"], sort: 1 },
-      { id: uid(), dateISO: "2026-05-17", time: "22:00", group: "", content: "Call sister eat street foods", links: [], participants: ["Evan", "Gonca", "Lin"], sort: 2 },
-      { id: uid(), dateISO: "2026-05-17", time: "23:00", group: "", content: "Hotel", links: [], participants: ["Evan", "Gonca", "Lin"], sort: 3 },
-      { id: uid(), dateISO: "2026-05-18", time: "08:00", group: "", content: "Medical checkup", links: [], participants: ["Evan", "Gonca", "Ainiya", "Lin"], sort: 4 },
-      { id: uid(), dateISO: "2026-05-18", time: "12:00", group: "", content: "JuZiZhou head, Snack Kingdom, Wenheyou", links: ["http://xhslink.com/o/4fAotv0DtEv"], participants: ["Evan", "Gonca", "Ainiya", "Lin"], sort: 5 },
-      { id: uid(), dateISO: "2026-05-19", time: "09:00", group: "Plan 1", content: "Changsha Huayi Brothers Movie Town", links: ["http://xhslink.com/o/2SrlJCvzOXb"], participants: ["Evan", "Gonca"], sort: 6 },
-      { id: uid(), dateISO: "2026-05-19", time: "19:00", group: "Plan 1", content: "Bar and club", links: [], participants: ["Evan", "Gonca"], sort: 7 },
-      { id: uid(), dateISO: "2026-05-19", time: "22:00", group: "Plan 1", content: "Go back hotel", links: [], participants: ["Evan", "Gonca"], sort: 8 },
-      { id: uid(), dateISO: "2026-05-19", time: "09:00", group: "Plan 2", content: "株洲攸县酒仙湖", links: ["http://xhslink.com/o/70msgGQjc3q"], participants: ["Evan", "Gonca"], sort: 9 },
-      { id: uid(), dateISO: "2026-05-20", time: "11:00", group: "", content: "Go back ZhuZhou, Get glasses", links: [], participants: [], sort: 10 },
-      { id: uid(), dateISO: "2026-05-20", time: "19:00", group: "", content: "Eat frog", links: [], participants: [], sort: 11 },
-      { id: uid(), dateISO: "2026-05-21", time: "10:00", group: "", content: "Zoom", links: ["http://xhslink.com/o/2szPYKOkA9l"], participants: ["Evan", "Gonca", "Ainiya", "Mom"], sort: 12 },
-      { id: uid(), dateISO: "2026-05-21", time: "17:00", group: "", content: "Go back ZhuZhou", links: [], participants: ["Evan", "Gonca", "Ainiya", "Mom"], sort: 13 },
-      { id: uid(), dateISO: "2026-05-22", time: "", group: "", content: "BBQ, Lobster", links: [], participants: ["全家"], sort: 14 },
-      { id: uid(), dateISO: "2026-05-23", time: "", group: "", content: "株洲港湾咖啡馆 / ZhuZhou Cafe", links: ["http://xhslink.com/o/3zoe1CNfnPz"], participants: ["Evan", "Gonca"], sort: 15 },
-      { id: uid(), dateISO: "2026-05-24", time: "", group: "", content: "Rest, packing suitcase", links: [], participants: [], sort: 16 }
+      { id: "i_001", dateISO: "2026-05-17", time: "13:00", group: "", content: "Center shopping", links: [], participants: ["Evan", "Gonca", "Lin"], sort: 1 },
+      { id: "i_002", dateISO: "2026-05-17", time: "22:00", group: "", content: "Call sister eat street foods", links: [], participants: ["Evan", "Gonca", "Lin"], sort: 2 },
+      { id: "i_003", dateISO: "2026-05-17", time: "23:00", group: "", content: "Hotel", links: [], participants: ["Evan", "Gonca"], sort: 3 },
+      { id: "i_004", dateISO: "2026-05-18", time: "08:00", group: "", content: "Medical checkup", links: [], participants: ["Evan", "Gonca", "Ainiya", "Lin"], sort: 4 },
+      { id: "i_005", dateISO: "2026-05-18", time: "12:00", group: "", content: "JuZiZhou head, Snack Kingdom, Wenheyou", links: ["http://xhslink.com/o/4fAotv0DtEv"], participants: ["Evan", "Gonca", "Ainiya", "Lin"], sort: 5 },
+      { id: "i_006", dateISO: "2026-05-19", time: "09:00", group: "Plan 1", content: "Changsha Huayi Brothers Movie Town", links: ["http://xhslink.com/o/2SrIJCvzOXb"], participants: ["Evan", "Gonca"], sort: 6 }
     ]
   };
-
-  const I18N = {
-    zh: {
-      appTitle: "行程计划",
-      add: "新增安排",
-      more: "更多功能",
-      import: "导入 Excel",
-      tplZh: "中文模板",
-      tplEn: "英文模板",
-      peopleConfig: "人员配置",
-      cloudflareConfig: "Cloudflare 同步配置",
-      refresh: "刷新同步",
-      search: "搜索日期 / 内容 / 人员",
-      date: "日期",
-      datePlaceholder: "选择日期",
-      time: "时间",
-      weekday: "星期",
-      group: "分组",
-      content: "计划内容",
-      rednote: "小红书链接",
-      people: "参与人员",
-      actions: "操作",
-      edit: "编辑",
-      delete: "删除",
-      cancel: "取消",
-      save: "保存",
-      savePeople: "保存人员配置",
-      addTitle: "新增安排",
-      editTitle: "编辑安排",
-      groupPlaceholder: "例如：Plan 1",
-      contentPlaceholder: "输入计划内容",
-      linksPlaceholder: "每行一个链接",
-      linksHint: "支持多个链接，每行一个；点击列表中的链接可弹窗预览。",
-      peopleList: "人员列表",
-      peopleHint: "一行一个名字。保存后会写入 data.json 的 peopleOptions。",
-      peopleSyncNotice: "人员配置会和行程一起保存到 data.json，新设备加载后也会自动同步。已自动过滤乱码人员。",
-      workerUrl: "Worker 地址",
-      workerHint: "支持填写根地址、/data 或 /data.json。保存后会写入 data.json。",
-      writePassword: "写入密码",
-      passwordHint: "会保存到 data.json 的 settings.cloudflare.appPassword。",
-      cloudNotice: "配置会保存到 data.json，新设备加载后会自动读取并同步。",
-      testRead: "测试读取",
-      saveConfig: "保存配置",
-      preview: "链接预览",
-      iframeTip: "如果无法显示，请新窗口打开。",
-      openNew: "新窗口打开",
-      loading: "正在加载数据...",
-      loadingBootstrap: "正在读取本地 data.json 配置...",
-      loaded: "数据已加载",
-      saved: "已保存并同步",
-      configSaved: "Cloudflare 配置已保存到 data.json",
-      peopleSaved: "人员配置已保存到 data.json",
-      localSaved: "Worker 未配置或不可用，已保存到本地 localStorage",
-      imported: "Excel 已导入并保存",
-      badFile: "未识别到有效数据，请检查模板格式",
-      confirmDelete: "确定删除这条安排吗？",
-      wrongPwd: "密码错误或没有写入权限",
-      networkErr: "同步失败，请检查 Worker 地址 / CORS / 网络",
-      empty: "暂无安排，点击“新增安排”开始创建。",
-      updated: "更新时间",
-      itemCount: "项安排",
-      noTime: "待定",
-      selectPeople: "请选择",
-      testOk: "测试成功，已读取到 data.json。",
-      testFail: "测试失败，请检查 Worker 地址、CORS 或网络。"
-    },
-    en: {
-      eyebrow: "Multi-device travel planner",
-      appTitle: "Travel Plan",
-      subtitle: "Date-grouped planner with Excel import, people multi-select, Red Note preview, and Cloudflare + GitHub sync.",
-      add: "Add Item",
-      more: "More",
-      import: "Import Excel",
-      tplZh: "Chinese Template",
-      tplEn: "English Template",
-      peopleConfig: "People",
-      cloudflareConfig: "Cloudflare Sync",
-      refresh: "Refresh",
-      search: "Search by date / content / people",
-      date: "Date",
-      datePlaceholder: "Choose a date",
-      time: "Time",
-      weekday: "Weekday",
-      group: "Group",
-      content: "Plan Content",
-      rednote: "Red Note",
-      people: "People",
-      actions: "Actions",
-      edit: "Edit",
-      delete: "Delete",
-      cancel: "Cancel",
-      save: "Save",
-      savePeople: "Save People",
-      addTitle: "Add Item",
-      editTitle: "Edit Item",
-      groupPlaceholder: "For example: Plan 1",
-      contentPlaceholder: "Enter plan details",
-      linksPlaceholder: "One link per line",
-      linksHint: "Multiple links are supported. One link per line. Click a link to preview it.",
-      peopleList: "People List",
-      peopleHint: "One name per line. Saved to data.json peopleOptions.",
-      peopleSyncNotice: "People settings are saved to data.json with the itinerary and synced on new devices. Garbled names are filtered automatically.",
-      workerUrl: "Worker URL",
-      workerHint: "Root URL, /data, and /data.json are all supported. Saved to data.json.",
-      writePassword: "Write Password",
-      passwordHint: "Saved to data.json settings.cloudflare.appPassword.",
-      cloudNotice: "Settings are saved to data.json and automatically loaded on new devices.",
-      testRead: "Test Read",
-      saveConfig: "Save Config",
-      preview: "Link Preview",
-      iframeTip: "If the page does not load, open it in a new window.",
-      openNew: "Open in new window",
-      loading: "Loading data...",
-      loadingBootstrap: "Loading local data.json config...",
-      loaded: "Data loaded",
-      saved: "Saved and synced",
-      configSaved: "Cloudflare config saved to data.json",
-      peopleSaved: "People settings saved to data.json",
-      localSaved: "Worker is not configured or unavailable; data was saved to localStorage only",
-      imported: "Excel imported and saved",
-      badFile: "No valid rows found. Please check the template format",
-      confirmDelete: "Delete this item?",
-      wrongPwd: "Wrong password or no write permission",
-      networkErr: "Sync failed. Check the Worker URL / CORS / network",
-      empty: "No items yet. Click Add Item to create one.",
-      updated: "Updated",
-      itemCount: "items",
-      noTime: "TBD",
-      selectPeople: "Select people",
-      testOk: "Test succeeded. data.json was read.",
-      testFail: "Test failed. Check Worker URL, CORS, or network."
-    }
-  };
-
-  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const WEEK_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const WEEK_ZH = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
 
   let appLang = localStorage.getItem(LS_LANG) || "zh";
   let data = clone(DEFAULT_DATA);
   let selectedPeople = [];
-
   let modalScrollY = 0;
   let modalBaseHeight = 0;
+  let autoRefreshTimer = null;
+
+  function uid() {
+    return "i_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+  }
+
+  function clone(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function t(key) {
+    return (I18N[appLang] && I18N[appLang][key]) || I18N.zh[key] || key;
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function pad2(value) {
+    return String(value).padStart(2, "0");
+  }
+
+  function isMobile() {
+    return window.matchMedia("(max-width: 760px)").matches;
+  }
 
   function isStandaloneMode() {
-    return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+    return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+      window.navigator.standalone === true;
   }
 
   function refreshStandaloneClass() {
     const standalone = isStandaloneMode();
-    document.body.classList.toggle("isStandalone", standalone);
     document.documentElement.classList.toggle("isStandalone", standalone);
+    document.body.classList.toggle("isStandalone", standalone);
   }
 
   function setBottomUiOffsetVar() {
     let offset = 0;
-    const isMobile = window.matchMedia && window.matchMedia("(max-width: 760px)").matches;
-    const standalone = isStandaloneMode();
 
-    refreshStandaloneClass();
-
-    if (isMobile && standalone) {
-      // iOS 添加到主屏幕后没有 Safari 底部工具栏，但仍有 Home Indicator 安全区。
-      // 部分机型 env(safe-area-inset-bottom) 在弹窗内返回不稳定，所以这里给固定保护距离。
+    if (isMobile() && isStandaloneMode()) {
       offset = 56;
-    } else if (isMobile && window.visualViewport) {
+    } else if (isMobile() && window.visualViewport) {
       const vv = window.visualViewport;
       const base = window.innerHeight || document.documentElement.clientHeight || 0;
-      const chromeBottom = Math.max(0, Math.round(base - (vv.height + vv.offsetTop)));
-      offset = Math.min(140, chromeBottom);
+      offset = Math.min(140, Math.max(0, Math.round(base - (vv.height + vv.offsetTop))));
     }
 
-    document.documentElement.style.setProperty("--bottom-ui-offset", offset + "px");
+    document.documentElement.style.setProperty("--bottom-ui-offset", `${offset}px`);
   }
 
   function setAppHeightVar() {
-    let h;
-
+    let height;
     if (document.body.classList.contains("modalLocked") && modalBaseHeight) {
-      h = modalBaseHeight;
+      height = modalBaseHeight;
     } else {
-      h = window.innerHeight || document.documentElement.clientHeight || 0;
+      height = window.innerHeight || document.documentElement.clientHeight || 0;
     }
 
-    if (!h && window.visualViewport) h = window.visualViewport.height;
-    document.documentElement.style.setProperty("--app-height", Math.round(h) + "px");
+    if (!height && window.visualViewport) height = window.visualViewport.height;
+    document.documentElement.style.setProperty("--app-height", `${Math.round(height)}px`);
+    refreshStandaloneClass();
     setBottomUiOffsetVar();
-  }
-
-
-  
-  function isMobileView() {
-    return window.matchMedia && window.matchMedia("(max-width: 760px)").matches;
-  }  function blurDateInput(instance, shouldBlur = true) {
-    const inputs = [];
-    const input = instance && instance.input ? instance.input : document.getElementById("editDate");
-    const alt = instance && instance.altInput ? instance.altInput : null;
-    if (input) inputs.push(input);
-    if (alt) inputs.push(alt);
-
-    inputs.forEach(function (el) {
-      el.setAttribute("readonly", "readonly");
-      el.setAttribute("inputmode", "none");
-      el.setAttribute("autocomplete", "off");
-      el.setAttribute("autocorrect", "off");
-      el.setAttribute("autocapitalize", "off");
-      el.setAttribute("spellcheck", "false");
-      el.style.caretColor = "transparent";
-      if (shouldBlur && document.activeElement === el) el.blur();
-    });
-
-    if (shouldBlur && document.activeElement && inputs.includes(document.activeElement)) {
-      document.activeElement.blur();
-    }
-  }
-
-  function placeMobileCalendar(instance) {
-    if (!instance || !instance.calendarContainer || !isMobileView()) return;
-    const anchor = instance.altInput || instance.input;
-    if (!anchor) return;
-
-    const rect = anchor.getBoundingClientRect();
-    const vw = window.visualViewport ? window.visualViewport.width : window.innerWidth;
-    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    const top = Math.max(74, Math.min(rect.bottom + 8, vh - 350));
-
-    const cal = instance.calendarContainer;
-    cal.style.position = "fixed";
-    cal.style.left = "14px";
-    cal.style.right = "14px";
-    cal.style.top = Math.round(top) + "px";
-    cal.style.width = Math.round(Math.min(vw - 28, 420)) + "px";
-    cal.style.maxWidth = "calc(100vw - 28px)";
-    cal.style.zIndex = "100000";
-    cal.style.transform = "none";
-  }
-
-  function openDatePickerSafe() {
-    if (!fp) return;
-    setAppHeightVar();
-    blurDateInput(fp, true);
-    fp.open();
-    setTimeout(function () {
-      blurDateInput(fp, true);
-      placeMobileCalendar(fp);
-    }, 20);
-    setTimeout(function () {
-      blurDateInput(fp, true);
-      placeMobileCalendar(fp);
-    }, 120);
   }
 
   function lockPageScroll() {
     if (document.body.classList.contains("modalLocked")) return;
+
     modalScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
     modalBaseHeight = window.innerHeight || document.documentElement.clientHeight || 0;
     if (!modalBaseHeight && window.visualViewport) modalBaseHeight = window.visualViewport.height;
-    setAppHeightVar();
+
     document.documentElement.classList.add("modalLocked");
     document.body.classList.add("modalLocked");
-    document.body.style.top = "-" + modalScrollY + "px";
+    document.body.style.top = `-${modalScrollY}px`;
+    setAppHeightVar();
   }
 
   function unlockPageScroll() {
     if (!document.body.classList.contains("modalLocked")) return;
+
     document.documentElement.classList.remove("modalLocked");
     document.body.classList.remove("modalLocked", "keyboardOpen");
     document.body.style.top = "";
@@ -315,78 +263,57 @@
 
   function openModal(id) {
     lockPageScroll();
-    $("#" + id).addClass("show");
+    $(`#${id}`).addClass("show");
   }
 
   function closeModal(id) {
-    $("#" + id).removeClass("show");
+    $(`#${id}`).removeClass("show");
+    $("#peoplePanel").removeClass("open");
     if (!$(".mask.show").length) unlockPageScroll();
   }
 
   function closeAllModals() {
     $(".mask.show").removeClass("show");
+    $("#peoplePanel").removeClass("open");
     unlockPageScroll();
   }
 
-  let fp = null;
+  function isEditTextField(el) {
+    if (!el || !el.closest || !el.closest("#editMask")) return false;
+    if (el.id === "editDate") return false;
 
-  function clone(value) {
-    return JSON.parse(JSON.stringify(value));
+    const tag = (el.tagName || "").toLowerCase();
+    const type = (el.getAttribute("type") || "").toLowerCase();
+    return tag === "textarea" || (tag === "input" && !["date", "time", "hidden", "checkbox"].includes(type));
   }
 
-  function t(key) {
-    return (I18N[appLang] && I18N[appLang][key]) || I18N.zh[key] || key;
-  }
+  function refreshKeyboardState() {
+    if (!document.body.classList.contains("modalLocked")) return;
+    if (!window.visualViewport || !modalBaseHeight) return;
 
-  function esc(value) {
-    return String(value == null ? "" : value).replace(/[&<>"']/g, function (s) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[s];
-    });
-  }
-
-  function splitList(text) {
-    return String(text || "").split(/[\n,，;；]+/).map(function (x) {
-      return cleanText(x);
-    }).filter(Boolean);
-  }
-
-  function normalizeUrl(url) {
-    url = String(url || "").trim();
-    return /^https?:\/\//i.test(url) ? url : "";
-  }
-
-  function pad2(n) {
-    return String(n).padStart(2, "0");
-  }
-
-  function isValidDate(y, m, d) {
-    const dt = new Date(y, m - 1, d);
-    return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d;
+    if (modalBaseHeight - window.visualViewport.height < 80) {
+      document.body.classList.remove("keyboardOpen");
+    }
   }
 
   function cjkCount(s) {
-    const m = String(s || "").match(/[\u3400-\u9FFF]/g);
-    return m ? m.length : 0;
+    const match = String(s || "").match(/[\u3400-\u9FFF]/g);
+    return match ? match.length : 0;
   }
 
   function badTextScore(s) {
     s = String(s || "");
     let score = 0;
-    const replacement = s.match(/\uFFFD/g);
-    const controls = s.match(/[\u0080-\u009F]/g);
-    const classic = s.match(/[ÃÂ]/g);
-    const punctuation = s.match(/â[€€™œ“”–—¢]/g);
-    const commonUtf8Mojibake = s.match(/[ÄÅÆÇÐÑØÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ]/g);
-    score += replacement ? replacement.length * 20 : 0;
-    score += controls ? controls.length * 8 : 0;
-    score += classic ? classic.length * 6 : 0;
-    score += punctuation ? punctuation.length * 6 : 0;
-    score += commonUtf8Mojibake ? commonUtf8Mojibake.length : 0;
+    score += (s.match(/\uFFFD/g) || []).length * 20;
+    score += (s.match(/[ÃÂ]/g) || []).length * 8;
+    score += (s.match(/â[€€™œ“”–—¢]/g) || []).length * 8;
+    score += (s.match(/[\u0080-\u009F]/g) || []).length * 6;
+    score += (s.match(/[ÄÅÆÇÐÑØÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ]/g) || []).length * 2;
     score -= cjkCount(s) * 3;
     return score;
   }
 
-  function shouldTryEncodingRepair(s) {
+  function shouldRepairEncoding(s) {
     s = String(s || "");
     return /[\uFFFD\u0080-\u009FÃÂ]/.test(s) ||
       /â[€€™œ“”–—¢]/.test(s) ||
@@ -394,64 +321,55 @@
   }
 
   function latin1ToUtf8(s) {
-    if (typeof TextDecoder === "undefined" || typeof Uint8Array === "undefined") return String(s || "");
-    const arr = Array.from(String(s || ""), function (ch) {
-      return ch.charCodeAt(0) & 255;
-    });
-    return new TextDecoder("utf-8", { fatal: false }).decode(new Uint8Array(arr));
+    try {
+      const bytes = Array.from(String(s || ""), ch => ch.charCodeAt(0) & 255);
+      return new TextDecoder("utf-8", { fatal: false }).decode(new Uint8Array(bytes));
+    } catch {
+      try {
+        return decodeURIComponent(escape(String(s || "")));
+      } catch {
+        return String(s || "");
+      }
+    }
   }
 
   function cleanText(value) {
-    let best = String(value == null ? "" : value);
-    if (!best) return "";
-    if (!shouldTryEncodingRepair(best)) return best.trim();
+    if (value == null) return "";
+    let text = String(value).replace(/\u0000/g, "").trim();
+    if (!text || !shouldRepairEncoding(text)) return text;
 
-    let current = best;
-    let bestScore = badTextScore(best);
-    let bestCjk = cjkCount(best);
-
-    for (let i = 0; i < 4; i++) {
-      const next = latin1ToUtf8(current);
-      if (!next || next === current) break;
-
-      const nextScore = badTextScore(next);
-      const nextCjk = cjkCount(next);
-      if (nextScore < bestScore || (nextScore === bestScore && nextCjk > bestCjk)) {
-        best = next;
-        bestScore = nextScore;
-        bestCjk = nextCjk;
-      }
-      current = next;
-    }
-
-    return best.replace(/\uFEFF/g, "").trim();
+    const repaired = latin1ToUtf8(text).trim();
+    return badTextScore(repaired) < badTextScore(text) ? repaired : text;
   }
 
-  function cleanName(name) {
-    const s = cleanText(name);
-    if (!s || /[\uFFFD\u0080-\u009F]/.test(s)) return "";
-    return s;
+  function splitList(value) {
+    return String(value || "")
+      .split(/[\n,，;；、]+/)
+      .map(cleanText)
+      .filter(Boolean);
   }
 
   function cleanNameList(list) {
     const seen = new Set();
-    const out = [];
-    (Array.isArray(list) ? list : splitList(list)).forEach(function (name) {
-      const clean = cleanName(name);
-      if (clean && !seen.has(clean)) {
-        seen.add(clean);
-        out.push(clean);
-      }
+    const output = [];
+    (Array.isArray(list) ? list : splitList(list)).forEach(name => {
+      name = cleanText(name);
+      if (!name || seen.has(name)) return;
+      seen.add(name);
+      output.push(name);
     });
-    return out;
+    return output;
   }
 
-  function defaultSettings() {
-    return clone(DEFAULT_DATA.settings);
+  function normalizeUrl(value) {
+    value = cleanText(value);
+    if (!value) return "";
+    if (/^https?:\/\//i.test(value)) return value;
+    return `https://${value}`;
   }
 
-  function normalizeWorkerBase(input) {
-    let url = String(input || "").trim();
+  function normalizeWorkerBase(value) {
+    let url = String(value || "").trim();
     if (!url) return "";
     url = url.replace(/\/+$/, "");
     url = url.replace(/\/data\.json$/i, "");
@@ -460,22 +378,26 @@
   }
 
   function ensureSettings() {
-    if (!data.settings || typeof data.settings !== "object") data.settings = defaultSettings();
-    if (!data.settings.cloudflare || typeof data.settings.cloudflare !== "object") data.settings.cloudflare = defaultSettings().cloudflare;
-    data.settings.cloudflare.apiBase = normalizeWorkerBase(data.settings.cloudflare.apiBase || "");
-    data.settings.cloudflare.appPassword = String(data.settings.cloudflare.appPassword || "");
-    data.settings.cloudflare.configSavedInDataJson = true;
-    data.settings.cloudflare.passwordStorage = "data.json settings.cloudflare.appPassword";
+    if (!data.settings || typeof data.settings !== "object") data.settings = clone(DEFAULT_DATA.settings);
+    if (!data.settings.cloudflare || typeof data.settings.cloudflare !== "object") {
+      data.settings.cloudflare = clone(DEFAULT_DATA.settings.cloudflare);
+    }
+
+    const cf = data.settings.cloudflare;
+    cf.apiBase = normalizeWorkerBase(cf.apiBase);
+    cf.appPassword = String(cf.appPassword || "");
+    cf.configSavedInDataJson = true;
+    cf.passwordStorage = "data.json settings.cloudflare.appPassword";
   }
 
   function getApiBase() {
     ensureSettings();
-    return normalizeWorkerBase(data.settings.cloudflare.apiBase);
+    return data.settings.cloudflare.apiBase;
   }
 
-  function setCloudApiBase(url) {
-    ensureSettings();
-    data.settings.cloudflare.apiBase = normalizeWorkerBase(url);
+  function endpoint() {
+    const base = getApiBase();
+    return base ? `${base}/data.json` : "";
   }
 
   function getCloudPassword() {
@@ -483,835 +405,728 @@
     return String(data.settings.cloudflare.appPassword || "");
   }
 
-  function setCloudPassword(pwd) {
+  function setCloudSettings(apiBase, password) {
     ensureSettings();
-    data.settings.cloudflare.appPassword = String(pwd || "");
+    data.settings.cloudflare.apiBase = normalizeWorkerBase(apiBase);
+    data.settings.cloudflare.appPassword = String(password || "");
   }
 
-  function endpoint() {
-    const base = getApiBase();
-    return base ? base + "/data.json" : "";
+  function parseExcelSerial(value) {
+    if (typeof value !== "number" || !Number.isFinite(value)) return "";
+    const date = new Date(Math.round((value - 25569) * 86400 * 1000));
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toISOString().slice(0, 10);
+  }
+
+  function isValidDate(y, m, d) {
+    const date = new Date(y, m - 1, d);
+    return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d;
   }
 
   function dateToInput(value) {
-    let s = String(value || "").trim();
-    s = s.replace(/^(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|星期[日一二三四五六]|周[日天一二三四五六])\s*,?\s*/i, "");
+    if (value instanceof Date && !Number.isNaN(value.getTime())) return value.toISOString().slice(0, 10);
+    if (typeof value === "number") return parseExcelSerial(value);
+
+    let s = cleanText(value);
     if (!s) return "";
+    s = s.replace(/^(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|星期[日一二三四五六]|周[日天一二三四五六])\s*,?\s*/i, "");
 
-    let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
-    if (m && isValidDate(+m[1], +m[2], +m[3])) return m[1] + "-" + pad2(m[2]) + "-" + pad2(m[3]);
+    let m = s.match(/^(\d{4})[-/年](\d{1,2})[-/月](\d{1,2})日?$/);
+    if (m && isValidDate(+m[1], +m[2], +m[3])) return `${m[1]}-${pad2(m[2])}-${pad2(m[3])}`;
 
-    m = s.match(/^(\d{4})年(\d{1,2})月(\d{1,2})日?$/);
-    if (m && isValidDate(+m[1], +m[2], +m[3])) return m[1] + "-" + pad2(m[2]) + "-" + pad2(m[3]);
+    m = s.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
+    if (m && isValidDate(+m[3], +m[1], +m[2])) return `${m[3]}-${pad2(m[1])}-${pad2(m[2])}`;
 
-    m = s.match(/^(\d{1,2})月(\d{1,2})日?$/);
+    m = s.match(/^(\d{1,2})[-\s]?([A-Za-z]{3,9})(?:[-,\s]+)?(\d{2,4})?$/);
     if (m) {
-      const y = new Date().getFullYear();
-      if (isValidDate(y, +m[1], +m[2])) return y + "-" + pad2(m[1]) + "-" + pad2(m[2]);
-    }
-
-    const map = { jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3, apr: 4, april: 4, may: 5, jun: 6, june: 6, jul: 7, july: 7, aug: 8, august: 8, sep: 9, sept: 9, september: 9, oct: 10, october: 10, nov: 11, november: 11, dec: 12, december: 12 };
-
-    m = s.match(/^(\d{1,2})[-\s/]?([A-Za-z]{3,9})(?:[-\s,/]*(\d{4}))?$/);
-    if (m) {
-      const y = +(m[3] || new Date().getFullYear());
-      const mo = map[m[2].toLowerCase()];
-      if (mo && isValidDate(y, mo, +m[1])) return y + "-" + pad2(mo) + "-" + pad2(m[1]);
-    }
-
-    m = s.match(/^([A-Za-z]{3,9})\s+(\d{1,2})(?:,?\s*(\d{4}))?$/);
-    if (m) {
-      const y = +(m[3] || new Date().getFullYear());
-      const mo = map[m[1].toLowerCase()];
-      if (mo && isValidDate(y, mo, +m[2])) return y + "-" + pad2(mo) + "-" + pad2(m[2]);
+      const monthNames = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+      const month = monthNames.findIndex(x => m[2].toLowerCase().startsWith(x)) + 1;
+      const year = m[3] ? (+m[3] < 100 ? 2000 + +m[3] : +m[3]) : new Date().getFullYear();
+      if (month && isValidDate(year, month, +m[1])) return `${year}-${pad2(month)}-${pad2(m[1])}`;
     }
 
     return "";
   }
 
-  function formatDate(iso, withWeek) {
-    const m = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (!m) return "";
-    const dt = new Date(+m[1], +m[2] - 1, +m[3]);
-    if (appLang === "zh") {
-      const d = (dt.getMonth() + 1) + "月" + dt.getDate() + "日";
-      return withWeek ? WEEK_ZH[dt.getDay()] + " · " + d : d;
+  function weekdayText(iso) {
+    const date = new Date(`${iso}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return "";
+    return WEEK[appLang][date.getDay()];
+  }
+
+  function formatDate(iso) {
+    const date = new Date(`${iso}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return iso || "";
+    const wd = WEEK[appLang][date.getDay()];
+    if (appLang === "en") {
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      return `${wd}, ${months[date.getMonth()]} ${date.getDate()}`;
     }
-    const d = MONTHS[dt.getMonth()] + " " + dt.getDate();
-    return withWeek ? WEEK_EN[dt.getDay()] + ", " + d : d;
+    return `${wd} · ${date.getMonth() + 1}月${date.getDate()}日`;
   }
 
-  function weekday(iso) {
-    const m = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (!m) return "";
-    const dt = new Date(+m[1], +m[2] - 1, +m[3]);
-    return appLang === "zh" ? WEEK_ZH[dt.getDay()] : WEEK_EN[dt.getDay()];
+  function displayDateTime(isoString) {
+    if (!isoString) return "-";
+    const date = new Date(isoString);
+    if (Number.isNaN(date.getTime())) return isoString;
+    return date.toLocaleString(appLang === "zh" ? "zh-CN" : "en-US", { hour12: false });
   }
 
-  function formatTime(time) {
-    return String(time || "").trim() || t("noTime");
+  function itemSortValue(item) {
+    const date = item.dateISO || "9999-12-31";
+    const time = item.time || "99:99";
+    const sort = Number(item.sort || 0);
+    return `${date} ${time} ${String(sort).padStart(8, "0")}`;
   }
 
-  function setStatus(kind, message) {
-    $("#statusDot").removeClass("ok warn err").addClass(kind || "");
-    $("#statusText").text(message || "");
+  function normalizeItem(item, index) {
+    item = item && typeof item === "object" ? item : {};
+    return {
+      id: cleanText(item.id) || uid(),
+      dateISO: dateToInput(item.dateISO || item.date || item["日期"] || item["Date"]) || new Date().toISOString().slice(0, 10),
+      time: cleanText(item.time || item["时间"] || item["Time"]),
+      group: cleanText(item.group || item["分组"] || item["Group"]),
+      content: cleanText(item.content || item.plan || item["计划内容"] || item["Plan content"] || item["Plan Content"]),
+      links: (Array.isArray(item.links) ? item.links : splitList(item.links || item.link || item["小红书链接"] || item["Red note"] || item["Red Note"]))
+        .map(normalizeUrl)
+        .filter(Boolean),
+      participants: cleanNameList(item.participants || item.people || item["参与人员"] || item["People"]),
+      sort: Number(item.sort || index + 1)
+    };
   }
 
   function normalize(raw) {
-    const src = raw && typeof raw === "object" ? clone(raw) : clone(DEFAULT_DATA);
+    const base = clone(DEFAULT_DATA);
+    const input = raw && typeof raw === "object" ? raw : {};
 
-    data.version = src.version || APP_VERSION;
-    data.updatedAt = src.updatedAt || "";
-    data.settings = src.settings && typeof src.settings === "object" ? clone(src.settings) : defaultSettings();
+    base.version = APP_VERSION;
+    base.updatedAt = cleanText(input.updatedAt || "");
+    base.settings = Object.assign({}, base.settings, input.settings || {});
+    base.peopleOptions = cleanNameList(input.peopleOptions || base.peopleOptions);
+    base.items = (Array.isArray(input.items) ? input.items : []).map(normalizeItem);
+
+    if (!base.peopleOptions.length) base.peopleOptions = cleanNameList(DEFAULT_DATA.peopleOptions);
+    data = base;
     ensureSettings();
-
-    let items = Array.isArray(src.items) ? src.items : [];
-    if (!items.length && Array.isArray(src.rows)) {
-      items = src.rows.map(function (r) {
-        return {
-          id: r.id || uid(),
-          dateISO: r.dateISO || dateToInput(r.date),
-          time: cleanText(r.time || ""),
-          group: cleanText(r.group || ""),
-          content: cleanText(r.content || r.plan || ""),
-          links: Array.isArray(r.links) ? r.links : splitList(r.links || r.link),
-          participants: Array.isArray(r.participants) ? r.participants : splitList(r.participants)
-        };
-      });
-    }
-
-    let peopleOptions = cleanNameList(Array.isArray(src.peopleOptions) ? src.peopleOptions : DEFAULT_DATA.peopleOptions);
-    if (!peopleOptions.length) peopleOptions = clone(DEFAULT_DATA.peopleOptions);
-
-    const normalizedItems = items.map(function (r, idx) {
-      const participants = cleanNameList(Array.isArray(r.participants) ? r.participants : splitList(r.participants));
-      return {
-        id: String(r.id || uid()),
-        dateISO: r.dateISO || dateToInput(r.date),
-        time: cleanText(r.time || ""),
-        group: cleanText(r.group || r.section || ""),
-        content: cleanText(r.content || r.plan || ""),
-        links: (Array.isArray(r.links) ? r.links : splitList(r.links || r.link)).map(normalizeUrl).filter(Boolean),
-        participants: participants,
-        sort: typeof r.sort === "number" ? r.sort : idx
-      };
-    }).filter(function (r) {
-      return r.dateISO || r.content || r.links.length || r.participants.length;
-    });
-
-    normalizedItems.forEach(function (item) {
-      item.participants.forEach(function (p) {
-        if (!peopleOptions.includes(p)) peopleOptions.push(p);
-      });
-    });
-
-    data.peopleOptions = cleanNameList(peopleOptions);
-    data.items = normalizedItems.map(function (item) {
-      item.participants = cleanNameList(item.participants);
-      return item;
-    });
+    repairData();
+    return data;
   }
 
   function repairData() {
-    ensureSettings();
-    data.peopleOptions = cleanNameList(data.peopleOptions || []);
-    data.items = (data.items || []).map(function (item) {
-      item.time = cleanText(item.time || "");
-      item.group = cleanText(item.group || "");
-      item.content = cleanText(item.content || item.plan || "");
-      item.links = (Array.isArray(item.links) ? item.links : splitList(item.links || item.link)).map(function (u) {
-        return normalizeUrl(cleanText(u));
-      }).filter(Boolean);
-      item.participants = cleanNameList(item.participants || []);
-      return item;
+    const options = new Set(cleanNameList(data.peopleOptions));
+    data.items.forEach((item, index) => {
+      const fixed = normalizeItem(item, index);
+      Object.assign(item, fixed);
+      item.participants.forEach(name => options.add(name));
     });
+    data.peopleOptions = Array.from(options).filter(Boolean);
   }
 
-  function persist() {
-    repairData();
+  function pickNewer(current, incoming) {
+    if (!incoming) return current;
+    const a = Date.parse(current?.updatedAt || "") || 0;
+    const b = Date.parse(incoming?.updatedAt || "") || 0;
+    return b >= a ? incoming : current;
+  }
+
+  function persistLocal() {
+    data.version = APP_VERSION;
     localStorage.setItem(LS_DATA, JSON.stringify(data));
   }
 
   function loadLocal() {
     try {
-      const raw = localStorage.getItem(LS_DATA);
-      if (raw) normalize(JSON.parse(raw));
-    } catch (e) {}
+      const raw = JSON.parse(localStorage.getItem(LS_DATA) || "null");
+      if (raw) normalize(raw);
+    } catch {
+      normalize(DEFAULT_DATA);
+    }
   }
 
-  async function loadBootstrapConfigFromDataJson() {
+  async function fetchJson(url, options) {
+    const res = await fetch(url, options);
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+    return res.json();
+  }
+
+  async function loadBundledData() {
     try {
-      setStatus("warn", t("loadingBootstrap"));
-      const res = await fetch("./data.json?ts=" + Date.now(), { cache: "no-store" });
-      if (!res.ok) return false;
-      const siteData = await res.json();
-      normalize(siteData);
-      persist();
+      const bundled = await fetchJson(`./data.json?ts=${Date.now()}`);
+      normalize(pickNewer(data, bundled));
+      persistLocal();
       return true;
-    } catch (e) {
+    } catch {
       return false;
     }
   }
 
+  async function loadCloudData() {
+    const url = endpoint();
+    if (!url) return false;
+
+    try {
+      const cloud = await fetchJson(`${url}?ts=${Date.now()}`);
+      normalize(pickNewer(data, cloud));
+      persistLocal();
+      setStatus("ok", t("synced"));
+      return true;
+    } catch {
+      setStatus("warn", t("syncFailed"));
+      return false;
+    }
+  }
+
+  async function writeCloudData() {
+    const url = endpoint();
+    if (!url) {
+      setStatus("warn", t("localMode"));
+      return false;
+    }
+
+    data.version = APP_VERSION;
+    data.updatedAt = new Date().toISOString();
+    persistLocal();
+
+    try {
+      await fetchJson(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8",
+          "X-App-Password": getCloudPassword()
+        },
+        body: JSON.stringify(data)
+      });
+      setStatus("ok", t("synced"));
+      return true;
+    } catch {
+      setStatus("warn", t("syncFailed"));
+      return false;
+    }
+  }
+
+  async function saveData(sync = true) {
+    data.version = APP_VERSION;
+    data.updatedAt = new Date().toISOString();
+    repairData();
+    persistLocal();
+    render();
+    if (sync) await writeCloudData();
+  }
+
+  function setStatus(kind, message) {
+    $("#statusText").text(message);
+    $("#statusDot").attr("class", `dot ${kind || ""}`);
+    $("#updatedText").text(`${t("updatedAt")}${displayDateTime(data.updatedAt)}`);
+  }
+
   function filteredItems() {
-    const q = String($("#searchInput").val() || "").toLowerCase().trim();
-    const list = clone(data.items || []).sort(function (a, b) {
-      return (a.dateISO || "").localeCompare(b.dateISO || "") ||
-        (a.group || "").localeCompare(b.group || "") ||
-        (a.time || "").localeCompare(b.time || "") ||
-        (a.sort || 0) - (b.sort || 0);
-    });
+    const q = cleanText($("#searchInput").val()).toLowerCase();
+    const items = data.items.slice().sort((a, b) => itemSortValue(a).localeCompare(itemSortValue(b)));
 
-    if (!q) return list;
-
-    return list.filter(function (item) {
-      return [
-        formatDate(item.dateISO, true),
+    if (!q) return items;
+    return items.filter(item => {
+      const haystack = [
+        item.dateISO,
+        formatDate(item.dateISO),
         item.time,
         item.group,
         item.content,
-        (item.links || []).join(" "),
-        (item.participants || []).join(" ")
-      ].join(" ").toLowerCase().includes(q);
+        item.links.join(" "),
+        item.participants.join(" ")
+      ].join(" ").toLowerCase();
+      return haystack.includes(q);
     });
   }
 
   function groupByDate(items) {
-    const days = [];
-    items.forEach(function (item) {
-      const key = item.dateISO || "no-date";
-      let day = days.find(function (x) { return x.key === key; });
-      if (!day) {
-        day = { key: key, dateISO: item.dateISO, items: [] };
-        days.push(day);
-      }
-      day.items.push(item);
+    const groups = new Map();
+    items.forEach(item => {
+      if (!groups.has(item.dateISO)) groups.set(item.dateISO, []);
+      groups.get(item.dateISO).push(item);
     });
-    return days;
+    return Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
   }
 
-  function chips(people) {
-    return cleanNameList(people || []).map(function (p) {
-      return '<span class="chip">' + esc(p) + '</span>';
-    }).join("");
+  function chipHtml(people) {
+    if (!people || !people.length) return "-";
+    return `<div class="chips">${people.map(name => `<span>${escapeHtml(name)}</span>`).join("")}</div>`;
+  }
+
+  function linkHtml(links) {
+    if (!links || !links.length) return "-";
+    return links.map((url, index) => {
+      const text = links.length === 1 ? url : `${t("link")} ${index + 1}`;
+      return `<a class="xhsLink" href="${escapeHtml(url)}" data-url="${escapeHtml(url)}">${escapeHtml(text)}</a>`;
+    }).join("<br>");
+  }
+
+  function daySummaryHtml(dayItems) {
+    const times = dayItems.map(item => cleanText(item.time)).filter(Boolean).sort();
+    const people = cleanNameList(dayItems.flatMap(item => item.participants || []));
+    const linkCount = dayItems.reduce((count, item) => count + ((item.links || []).length), 0);
+    const parts = [];
+
+    if (times.length) {
+      parts.push(times.length === 1 ? times[0] : `${times[0]}–${times[times.length - 1]}`);
+    }
+    if (people.length) {
+      parts.push(`${people.length} ${appLang === "zh" ? "人" : (people.length === 1 ? "person" : "people")}`);
+    }
+    if (linkCount) {
+      parts.push(`${linkCount} ${appLang === "zh" ? "个链接" : (linkCount === 1 ? "link" : "links")}`);
+    }
+
+    if (!parts.length) return "";
+    return `<div class="daySummary">${parts.map(part => `<span>${escapeHtml(part)}</span>`).join("")}</div>`;
+  }
+
+  function itemCardHtml(item) {
+    const hasLinks = (item.links || []).length > 0;
+    const hasPeople = (item.participants || []).length > 0;
+
+    return `
+      <article class="planRow ${hasLinks ? "hasLinks" : ""} ${hasPeople ? "hasPeople" : ""}" data-id="${escapeHtml(item.id)}">
+        <div class="cell timeCell" data-label="${escapeHtml(t("time"))}">${escapeHtml(item.time || "-")}</div>
+        <div class="cell contentCell" data-label="${escapeHtml(t("content"))}">
+          <div class="contentText">${escapeHtml(item.content || "-")}</div>
+        </div>
+        <div class="cell linkCell ${hasLinks ? "" : "emptyCell"}" data-label="${escapeHtml(t("rednote"))}">${linkHtml(item.links)}</div>
+        <div class="cell peopleCell ${hasPeople ? "" : "emptyCell"}" data-label="${escapeHtml(t("people"))}">${chipHtml(item.participants)}</div>
+        <div class="cell actionCell">
+          <button class="secondary btnEdit" data-id="${escapeHtml(item.id)}">${escapeHtml(t("edit"))}</button>
+          <button class="danger btnDelete" data-id="${escapeHtml(item.id)}">${escapeHtml(t("delete"))}</button>
+        </div>
+      </article>`;
   }
 
   function renderBoard(items) {
-    const days = groupByDate(items);
-    if (!days.length) {
-      $("#board").html('<div class="empty">' + esc(t("empty")) + '</div>');
+    const $board = $("#board");
+    if (!data.items.length) {
+      $board.html(`<section class="empty">${escapeHtml(t("noData"))}</section>`);
+      return;
+    }
+    if (!items.length) {
+      $board.html(`<section class="empty">${escapeHtml(t("noMatch"))}</section>`);
       return;
     }
 
-    const html = days.map(function (day) {
-      const uniquePeople = cleanNameList(day.items.flatMap(function (x) { return x.participants || []; }));
-      let currentGroup = null;
+    const html = groupByDate(items).map(([dateISO, dayItems]) => {
+      const rows = [];
+      let lastGroup = null;
 
-      const rows = day.items.map(function (item) {
-        let section = "";
-        const itemGroup = item.group || "";
-        if (itemGroup !== currentGroup) {
-          currentGroup = itemGroup;
-          if (currentGroup) {
-            section = '<tr class="sectionRow"><td colspan="5"><div class="section">' + esc(currentGroup) + '</div></td></tr>';
-          }
+      dayItems.forEach(item => {
+        if (item.group && item.group !== lastGroup) {
+          rows.push(`<div class="groupDivider">${escapeHtml(item.group)}</div>`);
+          lastGroup = item.group;
         }
+        rows.push(itemCardHtml(item));
+      });
 
-        const links = (item.links || []).length
-          ? item.links.map(function (u) { return '<button class="linkBtn" data-link="' + esc(u) + '">' + esc(u) + '</button>'; }).join("")
-          : '<span class="small">-</span>';
-
-        return section + '<tr>' +
-          '<td>' + esc(formatTime(item.time)) + '</td>' +
-          '<td class="contentCell">' + esc(item.content || "-") + '</td>' +
-          '<td>' + links + '</td>' +
-          '<td><div class="chips">' + (chips(item.participants) || '<span class="small">-</span>') + '</div></td>' +
-          '<td><div class="actions">' +
-          '<button class="mini" data-edit="' + esc(item.id) + '">' + esc(t("edit")) + '</button>' +
-          '<button class="mini danger" data-del="' + esc(item.id) + '">' + esc(t("delete")) + '</button>' +
-          '</div></td>' +
-          '</tr>';
-      }).join("");
-
-      return '<article class="day">' +
-        '<div class="dayHead">' +
-        '<div><h2>' + esc(formatDate(day.dateISO, true)) + '</h2><div class="small">' + day.items.length + " " + esc(t("itemCount")) + '</div></div>' +
-        '<div class="chips dayPeople">' + chips(uniquePeople) + '</div>' +
-        '</div>' +
-        '<table class="table"><thead><tr>' +
-        '<th>' + esc(t("time")) + '</th>' +
-        '<th>' + esc(t("content")) + '</th>' +
-        '<th>' + esc(t("rednote")) + '</th>' +
-        '<th>' + esc(t("people")) + '</th>' +
-        '<th>' + esc(t("actions")) + '</th>' +
-        '</tr></thead><tbody>' + rows + '</tbody></table>' +
-        '</article>';
+      return `
+        <section class="dayCard">
+          <header class="dayHead">
+            <div>
+              <h2>${escapeHtml(formatDate(dateISO))}</h2>
+              <p>${dayItems.length} ${appLang === "zh" ? "项安排" : dayItems.length === 1 ? "item" : "items"}</p>
+              ${daySummaryHtml(dayItems)}
+            </div>
+          </header>
+          <div class="tableHead">
+            <span>${escapeHtml(t("time"))}</span>
+            <span>${escapeHtml(t("content"))}</span>
+            <span>${escapeHtml(t("rednote"))}</span>
+            <span>${escapeHtml(t("people"))}</span>
+            <span>${escapeHtml(t("action"))}</span>
+          </div>
+          ${rows.join("")}
+        </section>`;
     }).join("");
 
-    $("#board").html(html);
+    $board.html(html);
   }
 
   function applyI18n() {
     document.documentElement.lang = appLang === "zh" ? "zh-CN" : "en";
-    document.title = (appLang === "zh" ? "行程计划 " : "Travel Plan ") + APP_VERSION;
     $("[data-i18n]").each(function () {
-      $(this).text(t($(this).data("i18n")));
+      const key = $(this).data("i18n");
+      $(this).text(t(key));
     });
     $("[data-i18n-placeholder]").each(function () {
-      $(this).attr("placeholder", t($(this).data("i18n-placeholder")));
+      const key = $(this).data("i18n-placeholder");
+      $(this).attr("placeholder", t(key));
     });
-    $("#btnLang").attr("title", appLang === "zh" ? "Switch to English" : "切换到中文")
-      .attr("aria-label", appLang === "zh" ? "Switch to English" : "切换到中文");
-    $("#btnFabAdd").attr("title", t("add")).attr("aria-label", t("add"));
-    $("#updatedText").text(data.updatedAt ? t("updated") + ": " + new Date(data.updatedAt).toLocaleString(appLang === "zh" ? "zh-CN" : "en-US") : "-");
-    initDatePicker();
-    refreshWeekday();
+    $("#btnLang").attr("title", appLang === "zh" ? "Switch to English" : "切换中文");
+    $("#btnFabAdd").attr("title", t("addItem"));
+    $("#btnFabAdd").attr("aria-label", t("addItem"));
   }
 
   function render() {
-    repairData();
-    renderBoard(filteredItems());
     applyI18n();
-    setStatus("ok", t("loaded"));
-  }
-
-  async function loadData(silent) {
-    if (!silent) setStatus("warn", t("loading"));
-    const url = endpoint();
-    if (!url) {
-      loadLocal();
-      render();
-      setStatus("warn", t("localSaved"));
-      return;
-    }
-
-    try {
-      const res = await fetch(url + "?ts=" + Date.now(), { cache: "no-store" });
-      if (!res.ok) throw new Error("load failed");
-      normalize(await res.json());
-      persist();
-      render();
-    } catch (e) {
-      loadLocal();
-      render();
-      setStatus("warn", t("localSaved"));
-    }
-  }
-
-  async function saveData(message) {
-    repairData();
-    data.version = APP_VERSION;
-    data.updatedAt = new Date().toISOString();
-    persist();
-
-    const url = endpoint();
-    if (!url) {
-      render();
-      setStatus("warn", t("localSaved"));
-      return;
-    }
-
-    try {
-      const pwd = getCloudPassword();
-      const res = await fetch(url, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", "X-App-Password": pwd },
-        body: JSON.stringify(data)
-      });
-
-      if (!res.ok) {
-        if (res.status === 401) setStatus("err", t("wrongPwd"));
-        throw new Error("save failed");
-      }
-
-      render();
-      setStatus("ok", message || t("saved"));
-    } catch (e) {
-      render();
-      setStatus("err", t("networkErr"));
-    }
-  }  function initDatePicker() {
-    if (fp && typeof fp.destroy === "function") {
-      fp.destroy();
-    }
-    fp = null;
-
-    const $date = $("#editDate");
-    $date
-      .attr({
-        type: "date",
-        inputmode: "none",
-        autocomplete: "off"
-      })
-      .prop("readonly", false);
-
-    const el = $date.get(0);
-    if (el && el.value && !/^\d{4}-\d{2}-\d{2}$/.test(el.value)) {
-      const parsed = dateToInput(el.value);
-      if (parsed) el.value = parsed;
-    }
-  }
-
-  function refreshWeekday() {
-    const iso = $("#editDate").val();
-    $("#editWeekday").val(iso ? weekday(iso) : "");
-  }
-
-  function renderPicker() {
-    const opts = cleanNameList(data.peopleOptions || []);
-    $("#peopleSummary").html(
-      selectedPeople.length
-        ? '<span class="chips">' + chips(selectedPeople) + '</span>'
-        : esc(t("selectPeople"))
-    );
-    $("#peoplePanel").html(opts.map(function (p) {
-      return '<label class="peopleOption"><input type="checkbox" value="' + esc(p) + '" ' +
-        (selectedPeople.includes(p) ? "checked" : "") +
-        '> <span>' + esc(p) + '</span></label>';
-    }).join(""));
-  }
-
-  function openEdit(id) {
-    const item = id ? data.items.find(function (x) { return x.id === id; }) : { id: uid(), dateISO: todayISO(), time: "", group: "", content: "", links: [], participants: [] };
-    if (!item) return;
-    $("#editTitle").text(id ? t("editTitle") : t("addTitle"));
-    $("#editId").val(item.id);
-    $("#editDate").val(item.dateISO || "");
-    if (fp) fp.setDate(item.dateISO || "", false, "Y-m-d");
-    $("#editTime").val(item.time || "");
-    $("#editGroup").val(item.group || "");
-    $("#editContent").val(item.content || "");
-    $("#editLinks").val((item.links || []).join("\n"));
-    selectedPeople = cleanNameList(item.participants || []);
-    renderPicker();
-    refreshWeekday();
-    openModal("editMask");
+    ensureSettings();
+    renderBoard(filteredItems());
+    setStatus(getApiBase() ? "ok" : "warn", getApiBase() ? t("loaded") : t("localMode"));
   }
 
   function todayISO() {
-    const d = new Date();
-    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+    return new Date().toISOString().slice(0, 10);
   }
 
-  function saveEdit() {
+  function refreshWeekday() {
+    $("#editWeekday").val(weekdayText($("#editDate").val()));
+  }
+
+  function renderPeopleSummary() {
+    const html = selectedPeople.length
+      ? `<span class="chips">${selectedPeople.map(name => `<span>${escapeHtml(name)}</span>`).join("")}</span>`
+      : escapeHtml(t("selectPeople"));
+    $("#peopleSummary").html(html);
+  }
+
+  function renderPeoplePicker() {
+    const options = cleanNameList([...(data.peopleOptions || []), ...selectedPeople]);
+    const html = options.map(name => `
+      <label class="peopleOption">
+        <input type="checkbox" value="${escapeHtml(name)}" ${selectedPeople.includes(name) ? "checked" : ""}>
+        <span>${escapeHtml(name)}</span>
+      </label>`).join("");
+    $("#peoplePanel").html(html);
+    renderPeopleSummary();
+  }
+
+  function openEdit(id) {
+    const item = id ? data.items.find(x => x.id === id) : null;
+    $("#editTitle").text(item ? t("editItem") : t("addItem"));
+    $("#editId").val(item ? item.id : "");
+    $("#editDate").attr({ type: "date", inputmode: "none", autocomplete: "off" }).val(item ? item.dateISO : todayISO());
+    $("#editTime").attr({ type: "time", inputmode: "none" }).val(item ? item.time : "");
+    $("#editGroup").val(item ? item.group : "");
+    $("#editContent").val(item ? item.content : "");
+    $("#editLinks").val(item ? (item.links || []).join("\n") : "");
+    selectedPeople = item ? cleanNameList(item.participants) : [];
+    refreshWeekday();
+    renderPeoplePicker();
+    openModal("editMask");
+    setTimeout(() => $("#peoplePanel").removeClass("open"), 0);
+  }
+
+  async function saveEdit() {
     const id = $("#editId").val();
-    const item = {
-      id: id,
-      dateISO: dateToInput($("#editDate").val()) || $("#editDate").val(),
+    const dateISO = dateToInput($("#editDate").val());
+    if (!dateISO) {
+      alert(t("requiredDate"));
+      return;
+    }
+
+    const payload = {
+      dateISO,
       time: cleanText($("#editTime").val()),
       group: cleanText($("#editGroup").val()),
       content: cleanText($("#editContent").val()),
       links: splitList($("#editLinks").val()).map(normalizeUrl).filter(Boolean),
-      participants: cleanNameList(selectedPeople),
-      sort: Date.now()
+      participants: cleanNameList(selectedPeople)
     };
 
-    item.participants.forEach(function (p) {
-      if (!data.peopleOptions.includes(p)) data.peopleOptions.push(p);
-    });
-
-    const idx = data.items.findIndex(function (x) { return x.id === id; });
-    if (idx >= 0) {
-      item.sort = data.items[idx].sort || idx;
-      data.items[idx] = item;
+    if (id) {
+      const item = data.items.find(x => x.id === id);
+      if (item) Object.assign(item, payload);
     } else {
-      data.items.push(item);
+      const maxSort = data.items.reduce((max, item) => Math.max(max, Number(item.sort || 0)), 0);
+      data.items.push(Object.assign({ id: uid(), sort: maxSort + 1 }, payload));
     }
 
     closeModal("editMask");
-    saveData(t("saved"));
+    await saveData(true);
+    setStatus("ok", t("saved"));
   }
 
-  function importExcel(file) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      try {
-        const wb = XLSX.read(new Uint8Array(e.target.result), { type: "array", cellDates: true });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: "" });
-        const header = rows.find(function (r) {
-          return Array.isArray(r) && r.some(function (x) { return String(x).trim(); });
-        });
-        if (!header) throw new Error("bad header");
+  async function deleteItem(id) {
+    if (!confirm(t("confirmDelete"))) return;
+    data.items = data.items.filter(item => item.id !== id);
+    await saveData(true);
+    setStatus("ok", t("deleted"));
+  }
 
-        const lower = header.map(function (x) { return String(x).trim().toLowerCase(); });
-        function idx(names) {
-          return lower.findIndex(function (x) {
-            return names.map(function (n) { return n.toLowerCase(); }).includes(x);
-          });
+  function openPeopleConfig() {
+    $("#peopleText").val(cleanNameList(data.peopleOptions).join("\n"));
+    openModal("peopleMask");
+  }
+
+  async function savePeopleConfig() {
+    data.peopleOptions = cleanNameList($("#peopleText").val());
+    if (!data.peopleOptions.length) data.peopleOptions = cleanNameList(DEFAULT_DATA.peopleOptions);
+    closeModal("peopleMask");
+    await saveData(true);
+    setStatus("ok", t("saved"));
+  }
+
+  function openCloudConfig() {
+    ensureSettings();
+    $("#cloudApiBase").val(getApiBase());
+    $("#cloudPassword").val(getCloudPassword());
+    $("#cloudResult").text(t("cloudNotice")).removeClass("error");
+    openModal("cloudMask");
+  }
+
+  async function testCloudRead() {
+    const apiBase = normalizeWorkerBase($("#cloudApiBase").val());
+    const password = $("#cloudPassword").val();
+    setCloudSettings(apiBase, password);
+
+    try {
+      if (!endpoint()) throw new Error("Missing endpoint");
+      await fetchJson(`${endpoint()}?ts=${Date.now()}`);
+      $("#cloudResult").text(t("testOk")).removeClass("error");
+    } catch {
+      $("#cloudResult").text(t("testFail")).addClass("error");
+    }
+  }
+
+  async function saveCloudConfig() {
+    setCloudSettings($("#cloudApiBase").val(), $("#cloudPassword").val());
+    await saveData(true);
+    $("#cloudResult").text(t("configSaved")).removeClass("error");
+    setStatus("ok", t("configSaved"));
+  }
+
+  function headerMap(row) {
+    const map = {};
+    row.forEach((cell, index) => {
+      const key = cleanText(cell).toLowerCase().replace(/\s+/g, "");
+      if (["日期", "date"].includes(key)) map.date = index;
+      if (["时间", "time"].includes(key)) map.time = index;
+      if (["星期", "weekday", "week"].includes(key)) map.weekday = index;
+      if (["计划内容", "plancontent", "content", "plan"].includes(key)) map.content = index;
+      if (["小红书链接", "rednote", "rednotelink", "link", "links"].includes(key)) map.links = index;
+      if (["参与人员", "people", "participants"].includes(key)) map.people = index;
+      if (["分组", "group"].includes(key)) map.group = index;
+    });
+    return map;
+  }
+
+  function findHeaderRow(rows) {
+    for (let i = 0; i < Math.min(rows.length, 10); i += 1) {
+      const map = headerMap(rows[i] || []);
+      if (map.date != null && (map.content != null || map.time != null)) return { index: i, map };
+    }
+    return { index: 0, map: { date: 0, time: 1, content: 2, links: 3, people: 4 } };
+  }
+
+  function readCell(row, index) {
+    return index == null ? "" : row[index];
+  }
+
+  async function importExcel(file) {
+    if (!file) {
+      alert(t("uploadExcel"));
+      return;
+    }
+
+    try {
+      const buffer = await file.arrayBuffer();
+      const workbook = XLSX.read(buffer, { type: "array", cellDates: true });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+      const { index: headerIndex, map } = findHeaderRow(rows);
+
+      const imported = [];
+      let currentDate = "";
+      let currentGroup = "";
+
+      rows.slice(headerIndex + 1).forEach((row, rowIndex) => {
+        if (!row || row.every(cell => cleanText(cell) === "")) return;
+
+        const rawDateISO = dateToInput(readCell(row, map.date));
+        const dateISO = rawDateISO || currentDate;
+        const time = cleanText(readCell(row, map.time));
+        const content = cleanText(readCell(row, map.content));
+        const links = splitList(readCell(row, map.links)).map(normalizeUrl).filter(Boolean);
+        const people = cleanNameList(readCell(row, map.people));
+        const group = cleanText(readCell(row, map.group)) || currentGroup;
+
+        if (rawDateISO) currentDate = rawDateISO;
+
+        if (!rawDateISO && !time && content && !links.length && !people.length) {
+          currentGroup = content;
+          return;
         }
 
-        const di = idx(["日期", "date"]);
-        const ti = idx(["时间", "time"]);
-        const gi = idx(["分组", "group", "section"]);
-        const ci = idx(["计划内容", "plan content", "content"]);
-        const li = idx(["小红书链接", "red note", "xiaohongshu link", "link", "links"]);
-        const pi = idx(["参与人员", "people", "participants"]);
+        if (!dateISO || (!content && !links.length && !time)) return;
 
-        let lastDate = "";
-        let lastPeople = [];
-        const imported = [];
-        const start = rows.indexOf(header) + 1;
-
-        rows.slice(start).forEach(function (r) {
-          const rawDate = di >= 0 ? String(r[di] || "").trim() : "";
-          const rawTime = ti >= 0 ? cleanText(r[ti] || "") : "";
-          const rawGroup = gi >= 0 ? cleanText(r[gi] || "") : "";
-          const rawContent = ci >= 0 ? cleanText(r[ci] || "") : "";
-          const rawLink = li >= 0 ? String(r[li] || "").trim() : "";
-          const rawPeople = pi >= 0 ? cleanText(r[pi] || "") : "";
-
-          if (!rawDate && !rawTime && !rawGroup && !rawContent && !rawLink && !rawPeople) return;
-
-          const parsedDate = dateToInput(rawDate);
-          if (parsedDate) lastDate = parsedDate;
-          if (rawPeople) lastPeople = cleanNameList(splitList(rawPeople));
-
-          imported.push({
-            id: uid(),
-            dateISO: lastDate,
-            time: rawTime,
-            group: rawGroup,
-            content: rawContent,
-            links: splitList(rawLink).map(normalizeUrl).filter(Boolean),
-            participants: rawPeople ? cleanNameList(splitList(rawPeople)) : clone(lastPeople),
-            sort: Date.now() + imported.length
-          });
+        imported.push({
+          id: uid(),
+          dateISO,
+          time,
+          group,
+          content,
+          links,
+          participants: people,
+          sort: data.items.length + imported.length + rowIndex + 1
         });
+      });
 
-        if (!imported.length) throw new Error("no rows");
-        imported.forEach(function (item) {
-          item.participants.forEach(function (p) {
-            if (!data.peopleOptions.includes(p)) data.peopleOptions.push(p);
-          });
-        });
-
-        data.items = imported;
-        saveData(t("imported"));
-      } catch (err) {
-        alert(t("badFile"));
+      if (imported.length) {
+        data.items = data.items.concat(imported.map(normalizeItem));
+        await saveData(true);
       }
+
+      setStatus("ok", `${t("imported")}：${imported.length}`);
+    } catch (err) {
+      console.error(err);
+      alert(t("importFailed"));
+      setStatus("warn", t("importFailed"));
+    } finally {
       $("#excelFile").val("");
-    };
-    reader.readAsArrayBuffer(file);
+    }
+  }
+
+  function downloadWorkbook(workbook, filename) {
+    XLSX.writeFile(workbook, filename);
   }
 
   function downloadTemplate(lang) {
     const zh = lang === "zh";
     const header = zh
-      ? ["日期", "时间", "分组", "计划内容", "小红书链接", "参与人员"]
-      : ["Date", "Time", "Group", "Plan Content", "Red Note", "People"];
+      ? ["日期", "时间", "计划内容", "小红书链接", "参与人员"]
+      : ["Date", "Time", "Plan content", "Red note", "People"];
 
     const rows = zh
       ? [
-        ["2026-05-17", "13:00", "", "市中心逛街", "", "Evan,Gonca,Lin"],
-        ["", "22:00", "", "吃夜宵", "", ""],
-        ["2026-05-19", "09:00", "Plan 1", "长沙华谊兄弟电影小镇", "http://xhslink.com/o/example", "Evan,Gonca"],
-        ["", "19:00", "Plan 1", "酒吧和俱乐部", "", ""],
-        ["2026-05-19", "09:00", "Plan 2", "株洲攸县酒仙湖", "http://xhslink.com/o/example2", "Evan,Gonca"]
-      ]
+          header,
+          ["2026-05-17", "13:00", "市中心购物", "", "Evan,Gonca"],
+          ["2026-05-17", "22:00", "吃街头小吃", "", "Evan,Gonca,Lin"],
+          ["2026-05-18", "08:00", "体检", "", "Evan,Gonca"]
+        ]
       : [
-        ["2026-05-17", "13:00", "", "Center shopping", "", "Evan,Gonca,Lin"],
-        ["", "22:00", "", "Eat street foods", "", ""],
-        ["2026-05-19", "09:00", "Plan 1", "Changsha Huayi Brothers Movie Town", "http://xhslink.com/o/example", "Evan,Gonca"],
-        ["", "19:00", "Plan 1", "Bar and club", "", ""],
-        ["2026-05-19", "09:00", "Plan 2", "JiuXian Lake", "http://xhslink.com/o/example2", "Evan,Gonca"]
-      ];
+          header,
+          ["2026-05-17", "13:00", "Center shopping", "", "Evan,Gonca"],
+          ["2026-05-17", "22:00", "Street foods", "", "Evan,Gonca,Lin"],
+          ["2026-05-18", "08:00", "Medical checkup", "", "Evan,Gonca"]
+        ];
 
-    const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws["!cols"] = [{ wch: 16 }, { wch: 10 }, { wch: 36 }, { wch: 42 }, { wch: 24 }];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.26.0.xlsx" : "travel-plan-pro-en-v2.26.0.xlsx");
+    downloadWorkbook(wb, zh ? "travel-plan-template-zh.xlsx" : "travel-plan-template-en.xlsx");
   }
 
-  async function testCloud() {
-    const oldBase = getApiBase();
-    setCloudApiBase($("#cloudApiBase").val());
-    setCloudPassword($("#cloudPassword").val());
-    const url = endpoint();
-    if (!url) {
-      $("#cloudResult").removeClass("ok").addClass("err").text(t("testFail"));
-      setCloudApiBase(oldBase);
-      return;
-    }
-    try {
-      const res = await fetch(url + "?ts=" + Date.now(), { cache: "no-store" });
-      if (!res.ok) throw new Error("test failed");
-      await res.json();
-      $("#cloudResult").removeClass("err").addClass("ok").text(t("testOk"));
-    } catch (e) {
-      $("#cloudResult").removeClass("ok").addClass("err").text(t("testFail"));
-    }
-  }
-
-  $(document).on("click", "[data-close]", function () {
-    closeModal($(this).data("close"));
-  });
-
-  $(document).on("click", ".mask", function (e) {
-    if (e.target === this) closeModal(this.id);
-  });
-
-  $(document).on("click", "[data-edit]", function () {
-    openEdit($(this).data("edit"));
-  });
-
-  $(document).on("click", "[data-del]", function () {
-    const id = $(this).data("del");
-    if (confirm(t("confirmDelete"))) {
-      data.items = data.items.filter(function (x) { return x.id !== id; });
-      saveData(t("saved"));
-    }
-  });
-
-  $(document).on("click", ".linkBtn", function () {
-    const url = $(this).data("link");
+  function openViewer(url) {
     $("#viewerFrame").attr("src", url);
     $("#viewerOpen").attr("href", url);
     openModal("viewerMask");
-  });
-
-  $(document).on("change", "#peoplePanel input", function () {
-    const v = $(this).val();
-    if (this.checked) {
-      if (!selectedPeople.includes(v)) selectedPeople.push(v);
-    } else {
-      selectedPeople = selectedPeople.filter(function (x) { return x !== v; });
-    }
-    selectedPeople = cleanNameList(selectedPeople);
-    renderPicker();
-    $("#peoplePanel").addClass("open");
-  });
-
-
-  let activeModalScroller = null;
-  let activeModalTouchY = 0;
-  let activeModalTouchX = 0;
-
-  document.addEventListener("touchstart", function (e) {
-    if (!$(".mask.show").length || !e.touches || !e.touches.length) return;
-    activeModalScroller = e.target.closest(".modalBody, .peoplePanel");
-    activeModalTouchY = e.touches[0].clientY;
-    activeModalTouchX = e.touches[0].clientX;
-  }, { passive: true });
-
-  document.addEventListener("touchmove", function (e) {
-    if (!$(".mask.show").length || !e.touches || !e.touches.length) return;
-
-    const target = e.target;
-    const currentY = e.touches[0].clientY;
-    const currentX = e.touches[0].clientX;
-    const deltaY = currentY - activeModalTouchY;
-    const deltaX = currentX - activeModalTouchX;
-
-    if (target.closest("#viewerFrame")) return;
-
-    if (Math.abs(deltaX) > 5) {
-      e.preventDefault();
-      return;
-    }
-
-    const scroller = target.closest(".modalBody, .peoplePanel");
-    if (!scroller) {
-      e.preventDefault();
-      return;
-    }
-
-    const atTop = scroller.scrollTop <= 0;
-    const atBottom = Math.ceil(scroller.scrollTop + scroller.clientHeight) >= scroller.scrollHeight;
-
-    if ((atTop && deltaY > 0) || (atBottom && deltaY < 0)) {
-      e.preventDefault();
-      return;
-    }
-
-    activeModalTouchY = currentY;
-    activeModalTouchX = currentX;
-  }, { passive: false });
-
-  $(document).on("touchmove", ".mask.show", function (e) {
-    const $target = $(e.target);
-    if (!$target.closest(".modalBody, .peoplePanel, #viewerFrame").length) {
-      e.preventDefault();
-    }
-  });
-
-  $(window).on("resize scroll", function () {
-    positionDesktopPeoplePanel();
-  });
-
-  $(document).on("scroll", "#editMask .modalBody", function () {
-    positionDesktopPeoplePanel();
-  });
-
-  $(document).on("click", function (e) {
-    if (!$(e.target).closest("#peoplePicker").length) {
-      $("#peoplePanel").removeClass("open").removeAttr("style");
-    }
-  });
-
-  $(document).on("keydown", function (e) {
-    if (e.key === "Escape") closeAllModals();
-  });  document.addEventListener("gesturestart", function (e) {
-    if ($(".mask.show").length) e.preventDefault();
-  }, { passive: false });
-
-  document.addEventListener("touchmove", function (e) {
-    if (!$(".mask.show").length || !e.touches || !e.touches.length) return;
-    const x = e.touches[0].clientX;
-    if (typeof window.__lastModalTouchX === "number" && Math.abs(x - window.__lastModalTouchX) > 4) {
-      e.preventDefault();
-    }
-    window.__lastModalTouchX = x;
-  }, { passive: false });
-
-  document.addEventListener("touchend", function () {
-    window.__lastModalTouchX = null;
-  }, { passive: true });
-
-  $(document).on("click touchstart", "#editDate", function () {
-    const el = this;
-    el.readOnly = false;
-    el.type = "date";
-    el.inputMode = "none";
-  });
-
-  function refreshKeyboardState() {
-    if (!document.body.classList.contains("modalLocked")) return;
-    if (!window.visualViewport || !modalBaseHeight) return;
-    const diff = modalBaseHeight - window.visualViewport.height;
-    if (diff < 80) {
-      document.body.classList.remove("keyboardOpen");
-    }
   }
 
-  function isEditTextField(el) {
-    if (!el || !el.closest || !el.closest("#editMask")) return false;
-    if (el.id === "editDate") return false;
-    const tag = (el.tagName || "").toLowerCase();
-    const type = (el.getAttribute("type") || "").toLowerCase();
-    return tag === "textarea" || (tag === "input" && type !== "date" && type !== "hidden" && type !== "checkbox");
-  }
+  function bindEvents() {
+    $("#btnMore").on("click", () => $("#morePanel").toggleClass("show"));
+    $("#btnImport").on("click", () => $("#excelFile").trigger("click"));
+    $("#excelFile").on("change", e => importExcel(e.target.files[0]));
+    $("#btnTplZh").on("click", () => downloadTemplate("zh"));
+    $("#btnTplEn").on("click", () => downloadTemplate("en"));
+    $("#btnPeople").on("click", openPeopleConfig);
+    $("#btnCloudflare").on("click", openCloudConfig);
+    $("#btnRefresh").on("click", async () => { await loadCloudData(); render(); });
+    $("#btnFabAdd").on("click", () => openEdit(null));
+    $("#btnSaveEdit").on("click", saveEdit);
+    $("#btnSavePeople").on("click", savePeopleConfig);
+    $("#btnTestCloud").on("click", testCloudRead);
+    $("#btnSaveCloud").on("click", saveCloudConfig);
+    $("#searchInput").on("input", render);
 
-  $(document).on("focusin", "#editMask input, #editMask textarea", function () {
-    if (!isEditTextField(this)) return;
-    document.body.classList.add("keyboardOpen");
-    setTimeout(() => {
-      const body = document.querySelector("#editMask .modalBody");
-      if (body && this.scrollIntoView) {
-        this.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
-      }
-    }, 260);
-  });
-
-  $(document).on("focusout", "#editMask input, #editMask textarea", function () {
-    setTimeout(() => {
-      const active = document.activeElement;
-      if (!isEditTextField(active)) {
-        document.body.classList.remove("keyboardOpen");
-      }
-    }, 120);
-  });
-
-  $("#btnFabAdd").on("click", function () { openEdit(null); });
-  $("#btnMore").on("click", function () { $("#morePanel").toggleClass("show"); });
-  $("#btnSaveEdit").on("click", saveEdit);
-  $("#btnImport").on("click", function () { $("#excelFile").click(); });
-  $("#excelFile").on("change", function () {
-    if (this.files && this.files[0]) importExcel(this.files[0]);
-  });
-  $("#btnTplZh").on("click", function () { downloadTemplate("zh"); });
-  $("#btnTplEn").on("click", function () { downloadTemplate("en"); });
-  $("#btnPeople").on("click", function () {
-    repairData();
-    $("#peopleText").val(cleanNameList(data.peopleOptions || []).join("\n"));
-    openModal("peopleMask");
-  });
-  $("#btnSavePeople").on("click", function () {
-    const newOptions = cleanNameList($("#peopleText").val().split(/\n+/));
-    data.peopleOptions = newOptions;
-    data.items = (data.items || []).map(function (item) {
-      item.participants = cleanNameList(item.participants || []).filter(function (p) {
-        return newOptions.includes(p);
-      });
-      return item;
+    $("#btnLang").on("click", () => {
+      appLang = appLang === "zh" ? "en" : "zh";
+      localStorage.setItem(LS_LANG, appLang);
+      render();
+      refreshWeekday();
+      renderPeopleSummary();
     });
-    closeModal("peopleMask");
-    saveData(t("peopleSaved"));
-  });
-  $("#btnCloudflare").on("click", function () {
-    $("#cloudApiBase").val(getApiBase());
-    $("#cloudPassword").val(getCloudPassword());
-    $("#cloudResult").removeClass("ok err").text(t("cloudNotice"));
-    openModal("cloudMask");
-  });
-  $("#btnSaveCloud").on("click", function () {
-    setCloudApiBase($("#cloudApiBase").val());
-    setCloudPassword($("#cloudPassword").val());
-    closeModal("cloudMask");
-    saveData(t("configSaved"));
-  });
-  $("#btnTestCloud").on("click", testCloud);
-  $("#btnRefresh").on("click", function () { loadData(false); });
-  $("#btnLang").on("click", function () {
-    appLang = appLang === "zh" ? "en" : "zh";
-    localStorage.setItem(LS_LANG, appLang);
-    render();
-  });
-  $("#searchInput").on("input", render);
-  $("#editDate").on("input change", refreshWeekday);
-  function positionDesktopPeoplePanel() {
-    // v2.26.0: PC People 面板改为 CSS absolute，固定在下拉框正下方。
-    // 不再用 JS 计算 viewport fixed 坐标，避免跑到计划内容 / 小红书链接区域。
-    return;
+
+    $("#editDate").on("change input", refreshWeekday);
+
+    $("#peopleToggle").on("click", () => {
+      $("#peoplePanel").toggleClass("open");
+    });
+
+    $("#peoplePanel").on("change", "input[type=checkbox]", function () {
+      const value = cleanText(this.value);
+      if (this.checked) {
+        if (!selectedPeople.includes(value)) selectedPeople.push(value);
+      } else {
+        selectedPeople = selectedPeople.filter(name => name !== value);
+      }
+      renderPeopleSummary();
+    });
+
+    $(document).on("click", ".btnEdit", function () { openEdit($(this).data("id")); });
+    $(document).on("click", ".btnDelete", function () { deleteItem($(this).data("id")); });
+
+    $(document).on("click", ".xhsLink", function (e) {
+      e.preventDefault();
+      openViewer($(this).data("url") || this.href);
+    });
+
+    $(document).on("click", "[data-close]", function () {
+      closeModal($(this).data("close"));
+    });
+
+    $(".mask").on("click", function (e) {
+      if (e.target === this) closeModal(this.id);
+    });
+
+    $(document).on("keydown", function (e) {
+      if (e.key === "Escape") closeAllModals();
+    });
+
+    $(document).on("click", function (e) {
+      if (!e.target.closest("#peoplePicker")) $("#peoplePanel").removeClass("open");
+    });
+
+    $(document).on("focusin", "#editMask input, #editMask textarea", function () {
+      if (!isEditTextField(this)) return;
+      document.body.classList.add("keyboardOpen");
+      setTimeout(() => this.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" }), 180);
+    });
+
+    $(document).on("focusout", "#editMask input, #editMask textarea", function () {
+      setTimeout(() => {
+        if (!isEditTextField(document.activeElement)) document.body.classList.remove("keyboardOpen");
+      }, 120);
+    });
+
+    document.addEventListener("touchmove", function (e) {
+      if (!$(".mask.show").length) return;
+      const scrollable = e.target.closest && e.target.closest(".modalBody, .peoplePanel");
+      if (!scrollable) e.preventDefault();
+    }, { passive: false });
   }
-
-  $("#peopleToggle").on("click", function () {
-    const $panel = $("#peoplePanel");
-    $panel.toggleClass("open");
-    if ($panel.hasClass("open")) {
-      const panel = document.getElementById("peoplePanel");
-      if (panel) panel.scrollTop = 0;
-      positionDesktopPeoplePanel();
-      setTimeout(positionDesktopPeoplePanel, 30);
-      setTimeout(function () {
-        const isMobile = window.matchMedia && window.matchMedia("(max-width: 760px)").matches;
-        if (isMobile) {
-          const panel = document.getElementById("peoplePanel");
-          if (panel) panel.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
-        }
-      }, 60);
-    }
-  });
-  $("#editMask .modalBody").on("scroll", function () {
-    positionDesktopPeoplePanel();
-  });
-
-  $(window).on("scroll resize", function () {
-    positionDesktopPeoplePanel();
-  });
-
-  document.addEventListener("visibilitychange", function () { if (!document.hidden) loadData(true); });
-
-  refreshStandaloneClass();
-  setAppHeightVar();
-  window.addEventListener("resize", function () { refreshStandaloneClass(); setAppHeightVar(); });
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener("resize", function () { setAppHeightVar(); refreshKeyboardState(); });
-    window.visualViewport.addEventListener("scroll", function () { setAppHeightVar(); refreshKeyboardState(); });
-  }
-  window.addEventListener("orientationchange", function () {
-    setTimeout(function () { refreshStandaloneClass(); setAppHeightVar(); }, 250);
-  });
-
 
   async function boot() {
+    refreshStandaloneClass();
+    setAppHeightVar();
+    bindEvents();
+
     loadLocal();
     render();
-    await loadBootstrapConfigFromDataJson();
-    await loadData(false);
-    setInterval(function () { loadData(true); }, AUTO_REFRESH_MS);
+    setStatus("warn", t("loading"));
+
+    await loadBundledData();
+    await loadCloudData();
+    render();
+
+    if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+    autoRefreshTimer = setInterval(async () => {
+      if (endpoint()) {
+        await loadCloudData();
+        render();
+      }
+    }, AUTO_REFRESH_MS);
   }
 
-  boot();
+  window.addEventListener("resize", setAppHeightVar);
+  window.addEventListener("orientationchange", () => setTimeout(setAppHeightVar, 250));
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", () => { setAppHeightVar(); refreshKeyboardState(); });
+    window.visualViewport.addEventListener("scroll", () => { setAppHeightVar(); refreshKeyboardState(); });
+  }
+
+  $(boot);
 })();
