@@ -1,6 +1,6 @@
 {
-  "version": "v2.33.0",
-  "updatedAt": "2026-05-06T11:34:50.430Z",
+  "version": "v2.34.0",
+  "updatedAt": "2026-05-06T11:38:25.965Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -216,7 +216,7 @@
       "dateISO": "2026-05-18",
       "time": "19:00",
       "group": "",
-      "content": "杜甫江阁",
+      "content": "杜甫江阁/Du Fu Pavilion",
       "links": [
         "https://www.xiaohongshu.com/discovery/item/69badd1f000000002300787d?source=webshare&xhsshare=pc_web&xsec_token=ABRovdC0e0CC6g7S2nH-3tRk1X8AwcSZ1Cm7e0tlN2YVQ=&xsec_source=pc_share"
       ],
