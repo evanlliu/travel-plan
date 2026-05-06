@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.3.1";
+  const APP_VERSION = "v2.4.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const LS_API = "travel-plan-cloudflare-api-base";
@@ -433,19 +433,36 @@
 
   async function loadBootstrapConfigFromDataJson() {
     try {
-      const res = await fetch("./data.json", { cache: "no-store" });
+      const res = await fetch("./data.json?ts=" + Date.now(), { cache: "no-store" });
       if (!res.ok) return false;
+
       const boot = normalize(await res.json());
       const cloud = boot.settings && boot.settings.cloudflare ? boot.settings.cloudflare : {};
-      const api = cloud.apiBase || "";
-      const password = cloud.appPassword || "";
-      if ((api && !getApiBase()) || (password && !getCloudPassword())) {
-        data.settings = boot.settings;
-        if (api) setCloudApiBase(api);
-        if (password) setCloudPassword(password);
-        persist();
-        return true;
+      const api = normalizeWorkerBase(cloud.apiBase || "");
+      const password = String(cloud.appPassword || "");
+
+      // New device behavior:
+      // 1. Read the static data.json shipped with the site.
+      // 2. If it contains Cloudflare config, save that config into the current runtime data.
+      // 3. Then loadData() will immediately fetch the Worker /data.json for the latest synced data.
+      const hasLocalCache = Boolean(localStorage.getItem(LS_DATA));
+      if (!hasLocalCache && (boot.items.length || api || password)) {
+        data = boot;
+      } else {
+        getSettings();
+        if (boot.settings && boot.settings.cloudflare) {
+          data.settings.cloudflare.apiBase = api || data.settings.cloudflare.apiBase || "";
+          data.settings.cloudflare.appPassword = password || data.settings.cloudflare.appPassword || "";
+          data.settings.cloudflare.configSavedInDataJson = true;
+          data.settings.cloudflare.passwordStorage = "data.json settings.cloudflare.appPassword";
+        }
       }
+
+      if (api) setCloudApiBase(api);
+      if (password) setCloudPassword(password);
+
+      persist();
+      return Boolean(api || password);
     } catch (e) {}
     return false;
   }
@@ -553,20 +570,31 @@
   async function loadData(silent) {
     if (!silent) setStatus("warn", t("loading"));
 
-    if (!getApiBase()) await loadBootstrapConfigFromDataJson();
+    // Always try to read the local/static data.json first.
+    // This lets a brand-new device discover the Worker address and APP_PASSWORD
+    // from data.json before syncing the latest Worker data.
+    await loadBootstrapConfigFromDataJson();
 
-    if (!getApiBase()) {
+    const currentApi = getApiBase();
+    const currentPassword = getCloudPassword();
+
+    if (!currentApi) {
       loadLocal();
       render();
       return;
     }
+
     try {
       const res = await fetch(dataUrl(), { cache: "no-store" });
       if (!res.ok) throw new Error("load failed");
+
       const next = normalize(await res.json());
-      if (!next.settings.cloudflare.apiBase) next.settings.cloudflare.apiBase = getApiBase();
+      if (!next.settings.cloudflare.apiBase) next.settings.cloudflare.apiBase = currentApi;
+      if (!next.settings.cloudflare.appPassword) next.settings.cloudflare.appPassword = currentPassword;
+
       data = next;
-      setCloudApiBase(data.settings.cloudflare.apiBase || getApiBase());
+      setCloudApiBase(data.settings.cloudflare.apiBase || currentApi);
+      setCloudPassword(data.settings.cloudflare.appPassword || currentPassword);
       persist();
       render();
     } catch (e) {
@@ -577,6 +605,7 @@
   }
 
   async function saveData() {
+    getSettings();
     data.version = APP_VERSION;
     data.updatedAt = new Date().toISOString();
     getSettings();
@@ -739,7 +768,7 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.3.1.xlsx" : "travel-plan-pro-en-v2.3.1.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.4.0.xlsx" : "travel-plan-pro-en-v2.4.0.xlsx");
   }
 
   async function testCloud() {
@@ -835,8 +864,13 @@
 
   document.addEventListener("visibilitychange", function () { if (!document.hidden) loadData(true); });
 
-  loadLocal();
-  render();
-  loadData(false);
-  setInterval(function () { loadData(true); }, AUTO_REFRESH_MS);
+  async function boot() {
+    loadLocal();
+    render();
+    await loadBootstrapConfigFromDataJson();
+    await loadData(false);
+    setInterval(function () { loadData(true); }, AUTO_REFRESH_MS);
+  }
+
+  boot();
 })();

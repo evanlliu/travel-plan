@@ -1,6 +1,6 @@
 # Travel Plan Pro
 
-当前版本：**v2.3.1**
+当前版本：**v2.4.0**
 
 ## 本版更新
 
@@ -104,3 +104,11 @@ wrangler.toml
 ```text
 Date, Time, Group, Plan Content, Red Note, People
 ```
+
+## v2.4.0 重要同步说明
+
+- Cloudflare Worker 地址保存到 `data.json -> settings.cloudflare.apiBase`。
+- APP_PASSWORD 保存到 `data.json -> settings.cloudflare.appPassword`。
+- 每次设备打开页面时，程序会先读取当前站点的 `data.json`，拿到 Cloudflare 同步配置。
+- 拿到 Worker 地址后，程序会马上请求 `Worker /data.json`，同步最新数据。
+- 如果你使用 GitHub 模式，Worker 写入 GitHub 的 `data.json` 后，其他设备重新打开页面即可读取同一份配置和数据。

@@ -1,6 +1,14 @@
 # Changelog
 
-## v2.3.1
+## v2.4.0
+
+- 修复并强化 Cloudflare 同步配置保存逻辑。
+- Worker 地址保存到 `data.json -> settings.cloudflare.apiBase`。
+- APP_PASSWORD 保存到 `data.json -> settings.cloudflare.appPassword`。
+- 新设备首次打开时会先读取静态 `data.json`，再自动请求 Worker `/data.json` 同步最新数据。
+- 每次页面加载和重新回到页面时都会尝试同步 Worker `/data.json`。
+
+## v2.4.0
 
 - 按要求将 `APP_PASSWORD` 也保存到 `data.json` 的 `settings.cloudflare.appPassword`。
 - Worker 兼容 GitHub 存储模式：`GH_OWNER`、`GH_REPO`、`GH_BRANCH`、`DATA_PATH`、`GH_TOKEN`。
