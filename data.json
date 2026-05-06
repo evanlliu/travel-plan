@@ -1,6 +1,6 @@
 {
-  "version": "v2.4.0",
-  "updatedAt": "2026-05-06T05:59:10.235Z",
+  "version": "v2.5.0",
+  "updatedAt": "2026-05-06T06:08:27.773Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -15,7 +15,7 @@
     "Ainiya",
     "Lin",
     "Mom",
-    "全家"
+    "å¨å®¶"
   ],
   "items": [
     {
@@ -136,7 +136,7 @@
       "dateISO": "2026-05-19",
       "time": "09:00",
       "group": "Plan 2",
-      "content": "株洲攸县酒仙湖",
+      "content": "æ ªæ´²æ¸å¿éä»æ¹",
       "links": [
         "http://xhslink.com/o/70msgGQjc3q"
       ],
@@ -206,7 +206,7 @@
       "content": "BBQ, Lobster",
       "links": [],
       "participants": [
-        "全家"
+        "å¨å®¶"
       ],
       "sort": 14
     },
@@ -215,7 +215,7 @@
       "dateISO": "2026-05-23",
       "time": "",
       "group": "",
-      "content": "株洲港湾咖啡馆 / ZhuZhou Cafe",
+      "content": "æ ªæ´²æ¸¯æ¹¾åå¡é¦ / ZhuZhou Cafe",
       "links": [
         "http://xhslink.com/o/3zoe1CNfnPz"
       ],
