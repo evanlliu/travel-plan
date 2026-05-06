@@ -1,6 +1,6 @@
 {
   "version": "v2.37.0",
-  "updatedAt": "2026-05-06T13:13:35.992Z",
+  "updatedAt": "2026-05-06T13:15:51.611Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -317,6 +317,21 @@
         "Gonca"
       ],
       "sort": 27
+    },
+    {
+      "id": "i_vnw8htowa5emou2yq0x",
+      "dateISO": "2026-05-19",
+      "time": "19:00",
+      "group": "",
+      "content": "Du Fu Pavilion/杜甫江阁",
+      "links": [
+        "https://www.xiaohongshu.com/discovery/item/69badd1f000000002300787d?source=webshare&xhsshare=pc_web&xsec_token=ABRovdC0e0CC6g7S2nH-3tRk1X8AwcSZ1Cm7e0tlN2YVQ=&xsec_source=pc_share"
+      ],
+      "participants": [
+        "Evan",
+        "Gonca"
+      ],
+      "sort": 28
     }
   ]
 }
