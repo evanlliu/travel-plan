@@ -1,6 +1,6 @@
 {
   "version": "v2.40.0",
-  "updatedAt": "2026-05-06T13:40:56.389Z",
+  "updatedAt": "2026-05-06T13:40:59.036Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -356,6 +356,19 @@
         "Gonca"
       ],
       "sort": 30
+    },
+    {
+      "id": "i_pihxrnrz67mou3v14q",
+      "dateISO": "2026-05-20",
+      "time": "14:00",
+      "group": "",
+      "content": "Applicantion debt card+Get glasses+BBQ, Lobster",
+      "links": [],
+      "participants": [
+        "Evan",
+        "Gonca"
+      ],
+      "sort": 31
     }
   ]
 }
