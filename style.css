@@ -190,7 +190,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.17.0 floating action buttons */
+/* v2.18.0 floating action buttons */
 .hero{align-items:center}
 .heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
 .heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
@@ -245,7 +245,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.17.0 clean overrides */
+/* v2.18.0 clean overrides */
 .hero{align-items:center}
 .heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
 .heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
@@ -349,7 +349,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.17.0 iOS PWA top safe-area fix */
+/* v2.18.0 iOS PWA top safe-area fix */
 :root{
   --safe-top: env(safe-area-inset-top, 0px);
   --mobile-top-gap: 16px;
@@ -398,7 +398,7 @@ html.pwa .hero{
 }
 
 
-/* v2.17.0 mobile modal scroll lock */
+/* v2.18.0 mobile modal scroll lock */
 html.modalLocked,
 body.modalLocked{
   width:100%;
@@ -472,7 +472,7 @@ body.modalLocked{
 }
 
 
-/* v2.17.0 fixed mobile edit modal: no bounce / no floating */
+/* v2.18.0 fixed mobile edit modal: no bounce / no floating */
 :root{
   --app-height: 100vh;
 }
@@ -566,7 +566,7 @@ body.modalLocked{
 }
 
 
-/* v2.17.0 mobile date picker and horizontal swipe lock */
+/* v2.18.0 mobile date picker and horizontal swipe lock */
 html,
 body{
   overflow-x:hidden!important;
@@ -691,7 +691,7 @@ body{
 }
 
 
-/* v2.17.0 mobile date picker final fix */
+/* v2.18.0 mobile date picker final fix */
 body.modalLocked .fabGroup{
   display:none!important;
 }
@@ -766,7 +766,7 @@ body.modalLocked{
 }
 
 
-/* v2.17.0 native Safari date input */
+/* v2.18.0 native Safari date input */
 #editDate{
   -webkit-appearance:none;
   appearance:none;
@@ -827,7 +827,7 @@ body,
 }
 
 
-/* v2.17.0 mobile keyboard stability */
+/* v2.18.0 mobile keyboard stability */
 #editTime{
   width:auto!important;
   min-width:132px;
@@ -929,5 +929,120 @@ body.modalLocked{
     min-width:136px!important;
     max-width:160px!important;
     flex:0 0 auto!important;
+  }
+}
+
+
+/* v2.18.0 people picker mobile optimization */
+#peoplePicker{
+  position:relative;
+}
+#peopleToggle{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  width:100%!important;
+  min-height:52px;
+  padding:12px 16px!important;
+  border:1px solid var(--line)!important;
+  border-radius:18px!important;
+  background:#fff!important;
+  color:var(--text)!important;
+}
+#peopleSummary{
+  flex:1 1 auto;
+  min-width:0;
+  text-align:left;
+}
+#peopleSummary .chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+#peoplePanel{
+  display:none;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+}
+#peoplePanel.open{
+  display:block!important;
+}
+#peoplePanel .peopleOption{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:12px!important;
+  width:100%!important;
+  min-height:48px;
+  padding:12px 14px!important;
+  background:#fff!important;
+  border-radius:12px;
+  cursor:pointer;
+  overflow:visible!important;
+}
+#peoplePanel .peopleOption + .peopleOption{
+  margin-top:4px;
+}
+#peoplePanel .peopleOption:hover,
+#peoplePanel .peopleOption:active{
+  background:#f7f9fc!important;
+}
+#peoplePanel .peopleOption input{
+  flex:0 0 auto!important;
+  width:18px!important;
+  height:18px!important;
+  margin:0!important;
+}
+#peoplePanel .peopleOption span{
+  display:block!important;
+  flex:1 1 auto!important;
+  min-width:0!important;
+  color:var(--text)!important;
+  font-size:15px!important;
+  line-height:1.4!important;
+  white-space:normal!important;
+  word-break:break-word!important;
+  overflow:visible!important;
+}
+#editMask .field.full:has(#peoplePicker){
+  order:3;
+}
+#editMask .field:has(#editWeekday){
+  order:2;
+}
+#editMask .field:has(#editGroup){
+  order:4;
+}
+@media(max-width:760px){
+  #peoplePicker{
+    width:100%;
+  }
+  #peopleToggle{
+    min-height:50px;
+  }
+  #peoplePanel{
+    position:relative!important;
+    left:auto!important;
+    right:auto!important;
+    top:auto!important;
+    bottom:auto!important;
+    width:100%!important;
+    max-width:100%!important;
+    margin-top:8px!important;
+    padding:8px!important;
+    max-height:240px!important;
+    overflow:auto!important;
+    z-index:2!important;
+  }
+  #peoplePanel.open{
+    display:block!important;
+  }
+  #peoplePanel .peopleOption{
+    padding:13px 12px!important;
+  }
+  #editMask .modalBody{
+    scroll-padding-bottom:120px;
   }
 }
