@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.1.0";
+  const APP_VERSION = "v2.3.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const LS_API = "travel-plan-cloudflare-api-base";
@@ -13,6 +13,14 @@
   const DEFAULT_DATA = {
     version: APP_VERSION,
     updatedAt: "",
+    settings: {
+      cloudflare: {
+        apiBase: "",
+        appPassword: "",
+        configSavedInDataJson: true,
+        passwordStorage: "data.json settings.cloudflare.appPassword"
+      }
+    },
     peopleOptions: ["Evan", "Gonca", "Ainiya", "Lin", "Mom", "全家"],
     items: [
       { id: uid(), dateISO: "2026-05-17", time: "13:00", group: "", content: "Center shopping", links: [], participants: ["Evan", "Gonca", "Lin"], sort: 1 },
@@ -73,14 +81,14 @@
       iframeTip: "如果无法显示，请新窗口打开。",
       openNew: "新窗口打开",
       workerUrl: "Worker 地址",
-      workerUrlHint: "留空则只使用本机 localStorage；填写后会读取 /data.json 并支持多设备同步。",
+      workerUrlHint: "Worker 地址会保存到 data.json 的 settings.cloudflare.apiBase。",
       workerPassword: "写入密码",
-      passwordHint: "对应 Cloudflare Worker Secret：APP_PASSWORD。只保存在当前设备浏览器。",
+      passwordHint: "对应 Cloudflare Worker Secret：APP_PASSWORD。本版本会按你的要求保存到 data.json 的 settings.cloudflare.appPassword。",
       testCloud: "测试读取",
       saveConfig: "保存配置",
       cloudDisabled: "当前未配置 Cloudflare，同步方式：本机 localStorage。",
       cloudReady: "Cloudflare 已配置，同步地址：",
-      cloudSaved: "Cloudflare 配置已保存。",
+      cloudSaved: "Cloudflare 配置和 APP_PASSWORD 已保存到 data.json。",
       cloudTestOk: "测试成功，已从 Cloudflare 读取数据。",
       cloudTestFail: "测试失败，请检查 Worker 地址、CORS 或网络。",
       loading: "正在加载数据...",
@@ -138,14 +146,14 @@
       iframeTip: "If the page does not load, open it in a new window.",
       openNew: "Open in new window",
       workerUrl: "Worker URL",
-      workerUrlHint: "Leave it empty to use localStorage only. Fill it in to read /data.json and sync across devices.",
+      workerUrlHint: "The Worker URL is saved to data.json at settings.cloudflare.apiBase.",
       workerPassword: "Write Password",
-      passwordHint: "This matches the Cloudflare Worker Secret: APP_PASSWORD. It is saved only in this device browser.",
+      passwordHint: "This matches the Cloudflare Worker Secret: APP_PASSWORD. In this version, it is saved to data.json at settings.cloudflare.appPassword as requested.",
       testCloud: "Test Read",
       saveConfig: "Save Config",
       cloudDisabled: "Cloudflare is not configured. Sync mode: localStorage on this device.",
       cloudReady: "Cloudflare is configured. Sync URL:",
-      cloudSaved: "Cloudflare config saved.",
+      cloudSaved: "Cloudflare config and APP_PASSWORD were saved to data.json.",
       cloudTestOk: "Test succeeded. Data was loaded from Cloudflare.",
       cloudTestFail: "Test failed. Check the Worker URL, CORS, or network.",
       loading: "Loading data...",
@@ -196,8 +204,50 @@
     const dt = new Date(y, m - 1, d);
     return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d;
   }
-  function getApiBase() { return String(localStorage.getItem(LS_API) || "").trim().replace(/\/$/, ""); }
-  function getCloudPassword() { return String(localStorage.getItem(LS_PASSWORD) || ""); }
+  function defaultSettings() {
+    return {
+      cloudflare: {
+        apiBase: "",
+        appPassword: "",
+        configSavedInDataJson: true,
+        passwordStorage: "data.json settings.cloudflare.appPassword"
+      }
+    };
+  }
+
+  function getSettings() {
+    if (!data.settings || typeof data.settings !== "object") data.settings = defaultSettings();
+    if (!data.settings.cloudflare || typeof data.settings.cloudflare !== "object") data.settings.cloudflare = defaultSettings().cloudflare;
+    data.settings.cloudflare.apiBase = String(data.settings.cloudflare.apiBase || "").trim().replace(/\/$/, "");
+    data.settings.cloudflare.appPassword = String(data.settings.cloudflare.appPassword || localStorage.getItem(LS_PASSWORD) || "");
+    data.settings.cloudflare.configSavedInDataJson = true;
+    data.settings.cloudflare.passwordStorage = "data.json settings.cloudflare.appPassword";
+    return data.settings;
+  }
+
+  function setCloudApiBase(api) {
+    const clean = String(api || "").trim().replace(/\/$/, "");
+    getSettings().cloudflare.apiBase = clean;
+    if (clean) localStorage.setItem(LS_API, clean);
+    else localStorage.removeItem(LS_API);
+  }
+
+  function getApiBase() {
+    const fromDataJson = data && data.settings && data.settings.cloudflare ? data.settings.cloudflare.apiBase : "";
+    return String(fromDataJson || localStorage.getItem(LS_API) || "").trim().replace(/\/$/, "");
+  }
+
+  function setCloudPassword(password) {
+    const value = String(password || "");
+    getSettings().cloudflare.appPassword = value;
+    if (value) localStorage.setItem(LS_PASSWORD, value);
+    else localStorage.removeItem(LS_PASSWORD);
+  }
+
+  function getCloudPassword() {
+    const fromDataJson = data && data.settings && data.settings.cloudflare ? data.settings.cloudflare.appPassword : "";
+    return String(fromDataJson || localStorage.getItem(LS_PASSWORD) || "");
+  }
   function dataUrl() { return getApiBase() + "/data.json"; }
   function setStatus(kind, message) {
     $("#statusDot").removeClass("ok warn err").addClass(kind || "");
@@ -338,9 +388,18 @@
       });
     }
 
+    const srcSettings = src.settings && typeof src.settings === "object" ? src.settings : {};
+    const srcCloudflare = srcSettings.cloudflare && typeof srcSettings.cloudflare === "object" ? srcSettings.cloudflare : {};
+    const settings = defaultSettings();
+    settings.cloudflare.apiBase = String(srcCloudflare.apiBase || src.cloudflareApiBase || localStorage.getItem(LS_API) || "").trim().replace(/\/$/, "");
+    settings.cloudflare.appPassword = String(srcCloudflare.appPassword || srcCloudflare.APP_PASSWORD || src.appPassword || localStorage.getItem(LS_PASSWORD) || "");
+    settings.cloudflare.configSavedInDataJson = true;
+    settings.cloudflare.passwordStorage = "data.json settings.cloudflare.appPassword";
+
     const result = {
       version: src.version || APP_VERSION,
       updatedAt: src.updatedAt || "",
+      settings: settings,
       peopleOptions: Array.isArray(src.peopleOptions) ? src.peopleOptions.map(String).filter(Boolean) : clone(DEFAULT_DATA.peopleOptions),
       items: items.map(function (r, idx) {
         return {
@@ -362,6 +421,25 @@
       });
     });
     return result;
+  }
+
+  async function loadBootstrapConfigFromDataJson() {
+    try {
+      const res = await fetch("./data.json", { cache: "no-store" });
+      if (!res.ok) return false;
+      const boot = normalize(await res.json());
+      const cloud = boot.settings && boot.settings.cloudflare ? boot.settings.cloudflare : {};
+      const api = cloud.apiBase || "";
+      const password = cloud.appPassword || "";
+      if ((api && !getApiBase()) || (password && !getCloudPassword())) {
+        data.settings = boot.settings;
+        if (api) setCloudApiBase(api);
+        if (password) setCloudPassword(password);
+        persist();
+        return true;
+      }
+    } catch (e) {}
+    return false;
   }
 
   function persist() { localStorage.setItem(LS_DATA, JSON.stringify(data)); }
@@ -466,6 +544,9 @@
 
   async function loadData(silent) {
     if (!silent) setStatus("warn", t("loading"));
+
+    if (!getApiBase()) await loadBootstrapConfigFromDataJson();
+
     if (!getApiBase()) {
       loadLocal();
       render();
@@ -474,7 +555,10 @@
     try {
       const res = await fetch(dataUrl(), { cache: "no-store" });
       if (!res.ok) throw new Error("load failed");
-      data = normalize(await res.json());
+      const next = normalize(await res.json());
+      if (!next.settings.cloudflare.apiBase) next.settings.cloudflare.apiBase = getApiBase();
+      data = next;
+      setCloudApiBase(data.settings.cloudflare.apiBase || getApiBase());
       persist();
       render();
     } catch (e) {
@@ -487,6 +571,7 @@
   async function saveData() {
     data.version = APP_VERSION;
     data.updatedAt = new Date().toISOString();
+    getSettings();
     persist();
 
     if (!getApiBase()) {
@@ -646,7 +731,7 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.1.0.xlsx" : "travel-plan-pro-en-v2.1.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.3.0.xlsx" : "travel-plan-pro-en-v2.3.0.xlsx");
   }
 
   async function testCloud() {
@@ -658,8 +743,9 @@
     try {
       const res = await fetch(api + "/data.json", { cache: "no-store" });
       if (!res.ok) throw new Error("test failed");
-      const json = await res.json();
-      data = normalize(json);
+      data = normalize(await res.json());
+      setCloudApiBase(api);
+      setCloudPassword(String($("#cloudPassword").val() || getCloudPassword()));
       persist();
       render();
       $("#cloudState").text(t("cloudTestOk"));
@@ -710,18 +796,22 @@
     saveData();
   });
   $("#btnCloudflare").on("click", function () {
+    if (!getSettings().cloudflare.apiBase && localStorage.getItem(LS_API)) setCloudApiBase(localStorage.getItem(LS_API));
     $("#cloudApiBase").val(getApiBase());
+    if (!getSettings().cloudflare.appPassword && localStorage.getItem(LS_PASSWORD)) setCloudPassword(localStorage.getItem(LS_PASSWORD));
     $("#cloudPassword").val(getCloudPassword());
     updateCloudState();
     $("#cloudMask").addClass("show");
   });
   $("#btnSaveCloud").on("click", function () {
-    localStorage.setItem(LS_API, String($("#cloudApiBase").val() || "").trim().replace(/\/$/, ""));
-    localStorage.setItem(LS_PASSWORD, String($("#cloudPassword").val() || ""));
+    setCloudApiBase($("#cloudApiBase").val());
+    setCloudPassword($("#cloudPassword").val());
+    getSettings();
+    persist();
     updateCloudState();
-    setStatus("ok", t("cloudSaved"));
     $("#cloudMask").removeClass("show");
-    loadData(false);
+    saveData();
+    setStatus("ok", t("cloudSaved"));
   });
   $("#btnTestCloud").on("click", testCloud);
   $("#btnRefresh").on("click", function () { loadData(false); });

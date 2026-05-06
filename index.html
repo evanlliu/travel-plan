@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Travel Plan Pro v2.1.0</title>
+  <title>Travel Plan Pro v2.3.0</title>
   <link rel="stylesheet" href="./style.css">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -14,7 +14,7 @@
       <div class="heroText">
         <div class="titleRow">
           <h1 data-i18n="appTitle">行程计划 Pro</h1>
-          <span class="versionBadge">v2.1.0</span>
+          <span class="versionBadge">v2.3.0</span>
         </div>
         <p data-i18n="subtitle">按日期分组管理行程，支持 Excel 导入、小红书链接预览、人员多选和 Cloudflare 多设备同步。</p>
       </div>
@@ -141,14 +141,15 @@
         <div class="field full">
           <label data-i18n="workerUrl">Worker 地址</label>
           <input id="cloudApiBase" placeholder="https://travel-plan-pro-api.yourname.workers.dev">
-          <div class="hint" data-i18n="workerUrlHint">留空则只使用本机 localStorage；填写后会读取 /data.json 并支持多设备同步。</div>
+          <div class="hint" data-i18n="workerUrlHint">Worker 地址会保存到 data.json 的 settings.cloudflare.apiBase。</div>
         </div>
         <div class="field full">
           <label data-i18n="workerPassword">写入密码</label>
           <input id="cloudPassword" type="password" autocomplete="current-password">
-          <div class="hint" data-i18n="passwordHint">对应 Cloudflare Worker Secret：APP_PASSWORD。只保存在当前设备浏览器。</div>
+          <div class="hint" data-i18n="passwordHint">对应 Cloudflare Worker Secret：APP_PASSWORD；本版本会保存到 data.json 的 settings.cloudflare.appPassword。</div>
         </div>
         <div class="cloudState" id="cloudState"></div>
+        <div class="cloudState warning" data-i18n="passwordHint">对应 Cloudflare Worker Secret：APP_PASSWORD；本版本会保存到 data.json 的 settings.cloudflare.appPassword。</div>
       </div>
       <div class="modalFoot splitFoot">
         <button id="btnTestCloud" data-i18n="testCloud">测试读取</button>

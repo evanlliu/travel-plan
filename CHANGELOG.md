@@ -1,24 +1,29 @@
 # Changelog
 
+## v2.3.0
+
+- 按要求将 `APP_PASSWORD` 也保存到 `data.json` 的 `settings.cloudflare.appPassword`。
+- Worker 兼容 GitHub 存储模式：`GH_OWNER`、`GH_REPO`、`GH_BRANCH`、`DATA_PATH`、`GH_TOKEN`。
+- Worker 继续兼容旧版 KV 存储模式：`TRAVEL_DATA`。
+- README 更新 Cloudflare Variables and Secrets 配置说明。
+
+## v2.2.0
+
+- Cloudflare Worker 地址保存到 `data.json`。
+- 顶部统计卡片删除。
+- 除新增外的按钮折叠到更多功能。
+- 日期选择器改为自定义中英文显示。
+
 ## v2.1.0
 
-- 新增 Cloudflare 同步自定义配置弹窗。
-- 支持在页面填写 Worker 地址和 APP_PASSWORD。
-- 支持 Cloudflare 测试读取。
-- 删除顶部统计卡片栏。
-- 除“新增安排”以外，其他功能按钮全部折叠到“更多功能”。
-- 优化整体 UI，美化顶部、折叠面板、行程卡片和移动端布局。
-- 日期选择器改为自定义年 / 月 / 日选择器。
-- 修复英文模式下日期选择器仍显示中文的问题。
-- 日期选择后自动计算星期，并支持中英文切换。
-- 继续兼容 PC 和移动端，尤其是 iOS Safari。
+- 优化 Cloudflare 配置弹窗。
+- 优化移动端界面。
 
 ## v2.0.0
 
-- 全新改版为日期分组式界面。
+- 全新日期分组式界面。
 - 支持 PC / 移动端自适应。
 - 支持中英文界面切换。
 - 支持 Excel 导入和模板下载。
 - 支持小红书链接弹窗预览。
 - 支持人员下拉多选与人员配置。
-- 支持 Cloudflare Worker + KV 多设备同步。

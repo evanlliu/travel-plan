@@ -1,6 +1,14 @@
 {
-  "version": "v2.1.0",
+  "version": "v2.3.0",
   "updatedAt": "",
+  "settings": {
+    "cloudflare": {
+      "apiBase": "",
+      "appPassword": "",
+      "configSavedInDataJson": true,
+      "passwordStorage": "data.json settings.cloudflare.appPassword"
+    }
+  },
   "peopleOptions": [
     "Evan",
     "Gonca",
@@ -17,7 +25,11 @@
       "group": "",
       "content": "Center shopping",
       "links": [],
-      "participants": ["Evan", "Gonca", "Lin"],
+      "participants": [
+        "Evan",
+        "Gonca",
+        "Lin"
+      ],
       "sort": 1
     },
     {
@@ -27,7 +39,11 @@
       "group": "",
       "content": "Call sister eat street foods",
       "links": [],
-      "participants": ["Evan", "Gonca", "Lin"],
+      "participants": [
+        "Evan",
+        "Gonca",
+        "Lin"
+      ],
       "sort": 2
     },
     {
@@ -37,7 +53,11 @@
       "group": "",
       "content": "Hotel",
       "links": [],
-      "participants": ["Evan", "Gonca", "Lin"],
+      "participants": [
+        "Evan",
+        "Gonca",
+        "Lin"
+      ],
       "sort": 3
     },
     {
@@ -47,7 +67,12 @@
       "group": "",
       "content": "Medical checkup",
       "links": [],
-      "participants": ["Evan", "Gonca", "Ainiya", "Lin"],
+      "participants": [
+        "Evan",
+        "Gonca",
+        "Ainiya",
+        "Lin"
+      ],
       "sort": 4
     },
     {
@@ -56,8 +81,15 @@
       "time": "12:00",
       "group": "",
       "content": "JuZiZhou head, Snack Kingdom, Wenheyou",
-      "links": ["http://xhslink.com/o/4fAotv0DtEv"],
-      "participants": ["Evan", "Gonca", "Ainiya", "Lin"],
+      "links": [
+        "http://xhslink.com/o/4fAotv0DtEv"
+      ],
+      "participants": [
+        "Evan",
+        "Gonca",
+        "Ainiya",
+        "Lin"
+      ],
       "sort": 5
     },
     {
@@ -66,8 +98,13 @@
       "time": "09:00",
       "group": "Plan 1",
       "content": "Changsha Huayi Brothers Movie Town",
-      "links": ["http://xhslink.com/o/2SrlJCvzOXb"],
-      "participants": ["Evan", "Gonca"],
+      "links": [
+        "http://xhslink.com/o/2SrlJCvzOXb"
+      ],
+      "participants": [
+        "Evan",
+        "Gonca"
+      ],
       "sort": 6
     },
     {
@@ -77,7 +114,10 @@
       "group": "Plan 1",
       "content": "Bar and club",
       "links": [],
-      "participants": ["Evan", "Gonca"],
+      "participants": [
+        "Evan",
+        "Gonca"
+      ],
       "sort": 7
     },
     {
@@ -87,7 +127,10 @@
       "group": "Plan 1",
       "content": "Go back hotel",
       "links": [],
-      "participants": ["Evan", "Gonca"],
+      "participants": [
+        "Evan",
+        "Gonca"
+      ],
       "sort": 8
     },
     {
@@ -96,9 +139,103 @@
       "time": "09:00",
       "group": "Plan 2",
       "content": "株洲攸县酒仙湖",
-      "links": ["http://xhslink.com/o/70msgGQjc3q"],
-      "participants": ["Evan", "Gonca"],
+      "links": [
+        "http://xhslink.com/o/70msgGQjc3q"
+      ],
+      "participants": [
+        "Evan",
+        "Gonca"
+      ],
       "sort": 9
+    },
+    {
+      "id": "i_010",
+      "dateISO": "2026-05-20",
+      "time": "11:00",
+      "group": "",
+      "content": "Go back ZhuZhou, Get glasses",
+      "links": [],
+      "participants": [],
+      "sort": 10
+    },
+    {
+      "id": "i_011",
+      "dateISO": "2026-05-20",
+      "time": "19:00",
+      "group": "",
+      "content": "Eat frog",
+      "links": [],
+      "participants": [],
+      "sort": 11
+    },
+    {
+      "id": "i_012",
+      "dateISO": "2026-05-21",
+      "time": "10:00",
+      "group": "",
+      "content": "Zoom",
+      "links": [
+        "http://xhslink.com/o/2szPYKOkA9l"
+      ],
+      "participants": [
+        "Evan",
+        "Gonca",
+        "Ainiya",
+        "Mom"
+      ],
+      "sort": 12
+    },
+    {
+      "id": "i_013",
+      "dateISO": "2026-05-21",
+      "time": "17:00",
+      "group": "",
+      "content": "Go back ZhuZhou",
+      "links": [],
+      "participants": [
+        "Evan",
+        "Gonca",
+        "Ainiya",
+        "Mom"
+      ],
+      "sort": 13
+    },
+    {
+      "id": "i_014",
+      "dateISO": "2026-05-22",
+      "time": "",
+      "group": "",
+      "content": "BBQ, Lobster",
+      "links": [],
+      "participants": [
+        "全家"
+      ],
+      "sort": 14
+    },
+    {
+      "id": "i_015",
+      "dateISO": "2026-05-23",
+      "time": "",
+      "group": "",
+      "content": "株洲港湾咖啡馆 / ZhuZhou Cafe",
+      "links": [
+        "http://xhslink.com/o/3zoe1CNfnPz"
+      ],
+      "participants": [
+        "Evan",
+        "Gonca"
+      ],
+      "sort": 15
+    },
+    {
+      "id": "i_016",
+      "dateISO": "2026-05-24",
+      "time": "",
+      "group": "",
+      "content": "Rest, packing suitcase",
+      "links": [],
+      "participants": [],
+      "sort": 16
     }
   ]
 }

@@ -2,10 +2,20 @@ name = "travel-plan-pro-api"
 main = "worker.js"
 compatibility_date = "2026-05-05"
 
-[[kv_namespaces]]
-binding = "TRAVEL_DATA"
-id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
-
-# Optional: restrict the frontend domain after deployment.
-# [vars]
+# 推荐：用 GitHub 仓库里的 data.json 做多设备同步存储。
+# 这些变量也可以直接在 Cloudflare Dashboard 的 Variables and Secrets 中添加。
+[vars]
+GH_OWNER = "evanlliu"
+GH_REPO = "travel-plan"
+GH_BRANCH = "main"
+DATA_PATH = "data.json"
 # ALLOWED_ORIGIN = "https://your-project.pages.dev"
+
+# 需要在 Cloudflare Dashboard 添加 Secret：
+# APP_PASSWORD = 你的写入密码
+# GH_TOKEN = GitHub Fine-grained token，至少需要目标仓库 Contents: Read and write
+
+# 如果你不使用 GitHub，也可以继续使用 KV。
+# [[kv_namespaces]]
+# binding = "TRAVEL_DATA"
+# id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
