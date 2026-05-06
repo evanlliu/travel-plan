@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.40.0";
+  const APP_VERSION = "v2.41.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -37,6 +37,9 @@
       group: "分组",
       content: "计划内容",
       rednote: "小红书链接",
+      priority: "类型",
+      priorityMust: "必做",
+      priorityOptional: "可选",
       action: "操作",
       addItem: "新增安排",
       editItem: "编辑安排",
@@ -102,6 +105,9 @@
       group: "Group",
       content: "Plan Content",
       rednote: "Red Note",
+      priority: "Type",
+      priorityMust: "Must do",
+      priorityOptional: "Optional",
       action: "Action",
       addItem: "Add Item",
       editItem: "Edit Item",
@@ -157,12 +163,12 @@
     },
     peopleOptions: ["Evan", "Gonca", "Ainiya", "Lin", "Mom", "全家"],
     items: [
-      { id: "i_001", dateISO: "2026-05-17", time: "13:00", group: "", content: "Center shopping", links: [], participants: ["Evan", "Gonca", "Lin"], sort: 1 },
-      { id: "i_002", dateISO: "2026-05-17", time: "22:00", group: "", content: "Call sister eat street foods", links: [], participants: ["Evan", "Gonca", "Lin"], sort: 2 },
-      { id: "i_003", dateISO: "2026-05-17", time: "23:00", group: "", content: "Hotel", links: [], participants: ["Evan", "Gonca"], sort: 3 },
-      { id: "i_004", dateISO: "2026-05-18", time: "08:00", group: "", content: "Medical checkup", links: [], participants: ["Evan", "Gonca", "Ainiya", "Lin"], sort: 4 },
-      { id: "i_005", dateISO: "2026-05-18", time: "12:00", group: "", content: "JuZiZhou head, Snack Kingdom, Wenheyou", links: ["http://xhslink.com/o/4fAotv0DtEv"], participants: ["Evan", "Gonca", "Ainiya", "Lin"], sort: 5 },
-      { id: "i_006", dateISO: "2026-05-19", time: "09:00", group: "Plan 1", content: "Changsha Huayi Brothers Movie Town", links: ["http://xhslink.com/o/2SrIJCvzOXb"], participants: ["Evan", "Gonca"], sort: 6 }
+      { id: "i_001", dateISO: "2026-05-17", time: "13:00", group: "", content: "Center shopping", links: [], participants: ["Evan", "Gonca", "Lin"], priority: "must", sort: 1 },
+      { id: "i_002", dateISO: "2026-05-17", time: "22:00", group: "", content: "Call sister eat street foods", links: [], participants: ["Evan", "Gonca", "Lin"], priority: "optional", sort: 2 },
+      { id: "i_003", dateISO: "2026-05-17", time: "23:00", group: "", content: "Hotel", links: [], participants: ["Evan", "Gonca"], priority: "must", sort: 3 },
+      { id: "i_004", dateISO: "2026-05-18", time: "08:00", group: "", content: "Medical checkup", links: [], participants: ["Evan", "Gonca", "Ainiya", "Lin"], priority: "must", sort: 4 },
+      { id: "i_005", dateISO: "2026-05-18", time: "12:00", group: "", content: "JuZiZhou head, Snack Kingdom, Wenheyou", links: ["http://xhslink.com/o/4fAotv0DtEv"], participants: ["Evan", "Gonca", "Ainiya", "Lin"], priority: "optional", sort: 5 },
+      { id: "i_006", dateISO: "2026-05-19", time: "09:00", group: "Plan 1", content: "Changsha Huayi Brothers Movie Town", links: ["http://xhslink.com/o/2SrIJCvzOXb"], participants: ["Evan", "Gonca"], priority: "must", sort: 6 }
     ]
   };
 
@@ -469,6 +475,22 @@
     return `${wd} · ${date.getMonth() + 1}月${date.getDate()}日`;
   }
 
+  function normalizePriority(value) {
+    const raw = cleanText(value).toLowerCase().replace(/\s+/g, "");
+    if (["optional", "option", "maybe", "backup", "备用", "可选", "选做", "非必做"].includes(raw)) return "optional";
+    if (["must", "mustdo", "required", "important", "必做", "必须", "重要"].includes(raw)) return "must";
+    return "must";
+  }
+
+  function priorityLabel(value) {
+    return t(normalizePriority(value) === "optional" ? "priorityOptional" : "priorityMust");
+  }
+
+  function priorityBadgeHtml(value) {
+    const priority = normalizePriority(value);
+    return `<span class="priorityBadge ${priority === "optional" ? "optional" : "must"}">${escapeHtml(priorityLabel(priority))}</span>`;
+  }
+
   function displayDateTime(isoString) {
     if (!isoString) return "-";
     const date = new Date(isoString);
@@ -495,6 +517,7 @@
         .map(normalizeUrl)
         .filter(Boolean),
       participants: cleanNameList(item.participants || item.people || item["参与人员"] || item["People"]),
+      priority: normalizePriority(item.priority || item.type || item["类型"] || item["重要程度"] || item["Priority"] || item["Type"]),
       sort: Number(item.sort || index + 1)
     };
   }
@@ -636,7 +659,8 @@
         item.group,
         item.content,
         item.links.join(" "),
-        item.participants.join(" ")
+        item.participants.join(" "),
+        priorityLabel(item.priority)
       ].join(" ").toLowerCase();
       return haystack.includes(q);
     });
@@ -668,10 +692,18 @@
     const times = dayItems.map(item => cleanText(item.time)).filter(Boolean).sort();
     const people = cleanNameList(dayItems.flatMap(item => item.participants || []));
     const linkCount = dayItems.reduce((count, item) => count + ((item.links || []).length), 0);
+    const mustCount = dayItems.filter(item => normalizePriority(item.priority) === "must").length;
+    const optionalCount = dayItems.filter(item => normalizePriority(item.priority) === "optional").length;
     const parts = [];
 
     if (times.length) {
       parts.push(times.length === 1 ? times[0] : `${times[0]}–${times[times.length - 1]}`);
+    }
+    if (mustCount) {
+      parts.push(`${mustCount} ${escapeHtml(t("priorityMust"))}`);
+    }
+    if (optionalCount) {
+      parts.push(`${optionalCount} ${escapeHtml(t("priorityOptional"))}`);
     }
     if (people.length) {
       parts.push(`${people.length} ${appLang === "zh" ? "人" : (people.length === 1 ? "person" : "people")}`);
@@ -688,11 +720,12 @@
     const hasLinks = (item.links || []).length > 0;
     const hasPeople = (item.participants || []).length > 0;
 
+    const priority = normalizePriority(item.priority);
     return `
-      <article class="planRow ${hasLinks ? "hasLinks" : ""} ${hasPeople ? "hasPeople" : ""}" data-id="${escapeHtml(item.id)}">
+      <article class="planRow priority-${priority} ${hasLinks ? "hasLinks" : ""} ${hasPeople ? "hasPeople" : ""}" data-id="${escapeHtml(item.id)}">
         <div class="cell timeCell" data-label="${escapeHtml(t("time"))}">${escapeHtml(item.time || "-")}</div>
         <div class="cell contentCell" data-label="${escapeHtml(t("content"))}">
-          <div class="contentText">${escapeHtml(item.content || "-")}</div>
+          <div class="contentText">${priorityBadgeHtml(priority)}<span class="contentMain">${escapeHtml(item.content || "-")}</span></div>
         </div>
         <div class="cell linkCell ${hasLinks ? "" : "emptyCell"}" data-label="${escapeHtml(t("rednote"))}">${linkHtml(item.links)}</div>
         <div class="cell peopleCell ${hasPeople ? "" : "emptyCell"}" data-label="${escapeHtml(t("people"))}">${chipHtml(item.participants)}</div>
@@ -798,6 +831,11 @@
     renderPeopleSummary();
   }
 
+  function setEditPriority(value) {
+    const priority = normalizePriority(value);
+    $(`input[name=editPriority][value="${priority}"]`).prop("checked", true);
+  }
+
   function openEdit(id) {
     const item = id ? data.items.find(x => x.id === id) : null;
     $("#editTitle").text(item ? t("editItem") : t("addItem"));
@@ -807,6 +845,7 @@
     $("#editGroup").val(item ? item.group : "");
     $("#editContent").val(item ? item.content : "");
     $("#editLinks").val(item ? (item.links || []).join("\n") : "");
+    setEditPriority(item ? item.priority : "must");
     selectedPeople = item ? cleanNameList(item.participants) : [];
     refreshWeekday();
     renderPeoplePicker();
@@ -828,7 +867,8 @@
       group: cleanText($("#editGroup").val()),
       content: cleanText($("#editContent").val()),
       links: splitList($("#editLinks").val()).map(normalizeUrl).filter(Boolean),
-      participants: cleanNameList(selectedPeople)
+      participants: cleanNameList(selectedPeople),
+      priority: normalizePriority($("input[name=editPriority]:checked").val())
     };
 
     if (id) {
@@ -918,6 +958,7 @@
       if (["计划内容", "plancontent", "content", "plan"].includes(key)) map.content = index;
       if (["小红书链接", "rednote", "rednotelink", "link", "links"].includes(key)) map.links = index;
       if (["参与人员", "people", "participants"].includes(key)) map.people = index;
+      if (["类型", "重要程度", "priority", "type"].includes(key)) map.priority = index;
       if (["分组", "group"].includes(key)) map.group = index;
     });
     return map;
@@ -961,6 +1002,7 @@
         const content = cleanText(readCell(row, map.content));
         const links = splitList(readCell(row, map.links)).map(normalizeUrl).filter(Boolean);
         const people = cleanNameList(readCell(row, map.people));
+        const priority = normalizePriority(readCell(row, map.priority));
         const group = cleanText(readCell(row, map.group)) || currentGroup;
 
         if (rawDateISO) currentDate = rawDateISO;
@@ -980,6 +1022,7 @@
           content,
           links,
           participants: people,
+          priority,
           sort: data.items.length + imported.length + rowIndex + 1
         });
       });
@@ -1006,25 +1049,25 @@
   function downloadTemplate(lang) {
     const zh = lang === "zh";
     const header = zh
-      ? ["日期", "时间", "计划内容", "小红书链接", "参与人员"]
-      : ["Date", "Time", "Plan content", "Red note", "People"];
+      ? ["日期", "时间", "类型", "计划内容", "小红书链接", "参与人员"]
+      : ["Date", "Time", "Type", "Plan content", "Red note", "People"];
 
     const rows = zh
       ? [
           header,
-          ["2026-05-17", "13:00", "市中心购物", "", "Evan,Gonca"],
-          ["2026-05-17", "22:00", "吃街头小吃", "", "Evan,Gonca,Lin"],
-          ["2026-05-18", "08:00", "体检", "", "Evan,Gonca"]
+          ["2026-05-17", "13:00", "必做", "市中心购物", "", "Evan,Gonca"],
+          ["2026-05-17", "22:00", "可选", "吃街头小吃", "", "Evan,Gonca,Lin"],
+          ["2026-05-18", "08:00", "必做", "体检", "", "Evan,Gonca"]
         ]
       : [
           header,
-          ["2026-05-17", "13:00", "Center shopping", "", "Evan,Gonca"],
-          ["2026-05-17", "22:00", "Street foods", "", "Evan,Gonca,Lin"],
-          ["2026-05-18", "08:00", "Medical checkup", "", "Evan,Gonca"]
+          ["2026-05-17", "13:00", "Must do", "Center shopping", "", "Evan,Gonca"],
+          ["2026-05-17", "22:00", "Optional", "Street foods", "", "Evan,Gonca,Lin"],
+          ["2026-05-18", "08:00", "Must do", "Medical checkup", "", "Evan,Gonca"]
         ];
 
     const ws = XLSX.utils.aoa_to_sheet(rows);
-    ws["!cols"] = [{ wch: 16 }, { wch: 10 }, { wch: 36 }, { wch: 42 }, { wch: 24 }];
+    ws["!cols"] = [{ wch: 16 }, { wch: 10 }, { wch: 12 }, { wch: 36 }, { wch: 42 }, { wch: 24 }];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
     downloadWorkbook(wb, zh ? "travel-plan-template-zh.xlsx" : "travel-plan-template-en.xlsx");

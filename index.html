@@ -10,8 +10,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-  <title>Travel Plan v2.40.0</title>
-  <link rel="stylesheet" href="./style.css?v=v2.40.0">
+  <title>Travel Plan v2.41.0</title>
+  <link rel="stylesheet" href="./style.css?v=v2.41.0">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
@@ -19,7 +19,7 @@
   <main class="page">
     <section class="hero">
       <div class="heroText">
-        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.40.0</span></h1>
+        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.41.0</span></h1>
       </div>
 
       <div class="heroActions">
@@ -86,6 +86,19 @@
                 <span id="peopleSummary">请选择</span><span>▾</span>
               </button>
               <div class="peoplePanel" id="peoplePanel"></div>
+            </div>
+          </div>
+          <div class="field editFieldPriority">
+            <label data-i18n="priority">类型</label>
+            <div class="prioritySwitch">
+              <label>
+                <input type="radio" name="editPriority" value="must">
+                <span data-i18n="priorityMust">必做</span>
+              </label>
+              <label>
+                <input type="radio" name="editPriority" value="optional">
+                <span data-i18n="priorityOptional">可选</span>
+              </label>
             </div>
           </div>
           <div class="field editFieldGroup">
@@ -159,6 +172,6 @@
   </div>
 
   
-  <script src="./app.js?v=v2.40.0"></script>
+  <script src="./app.js?v=v2.41.0"></script>
 </body>
 </html>

@@ -790,7 +790,7 @@ body.modalLocked{
 }
 
 
-/* v2.40.0 readability + content-density optimization */
+/* v2.41.0 readability + content-density optimization */
 .daySummary{
   display:flex;
   flex-wrap:wrap;
@@ -1058,7 +1058,7 @@ body.modalLocked{
 }
 
 
-/* v2.40.0 compact density pass: PC + mobile show more content */
+/* v2.41.0 compact density pass: PC + mobile show more content */
 :root{
   --compact-radius:14px;
   --compact-gap:10px;
@@ -1386,7 +1386,7 @@ button{
 }
 
 
-/* v2.40.0: compress top cards, reduce vertical gaps, show more trip content */
+/* v2.41.0: compress top cards, reduce vertical gaps, show more trip content */
 .page{
   padding-top:10px!important;
 }
@@ -1587,7 +1587,7 @@ button{
 }
 
 
-/* v2.40.0 Red Note links open in a new window; viewer modal disabled */
+/* v2.41.0 Red Note links open in a new window; viewer modal disabled */
 #viewerMask{
   display:none!important;
 }
@@ -1596,7 +1596,7 @@ button{
 }
 
 
-/* v2.40.0 record copy button */
+/* v2.41.0 record copy button */
 .btnCopy{
   color:#0f5132!important;
   border-color:#cce8d8!important;
@@ -1640,7 +1640,7 @@ button{
 }
 
 
-/* v2.40.0 keep Edit / Copy / Delete in one row */
+/* v2.41.0 keep Edit / Copy / Delete in one row */
 .actionCell{
   display:flex!important;
   flex-direction:row!important;
@@ -1719,7 +1719,7 @@ button{
 }
 
 
-/* v2.40.0 mobile edit modal one-screen compact layout */
+/* v2.41.0 mobile edit modal one-screen compact layout */
 @media(max-width:760px){
   /*
     Goal: editing form should fit on one mobile screen without scrolling.
@@ -1997,7 +1997,7 @@ button{
 }
 
 
-/* v2.40.0 mobile edit page redesign: full screen, visual hierarchy, plan content focus */
+/* v2.41.0 mobile edit page redesign: full screen, visual hierarchy, plan content focus */
 @media(max-width:760px){
   /* Full-screen edit experience */
   #editMask{
@@ -2362,7 +2362,7 @@ button{
 }
 
 
-/* v2.40.0 mobile edit page: one-column full-screen, no empty space, no scroll by default */
+/* v2.41.0 mobile edit page: one-column full-screen, no empty space, no scroll by default */
 @media(max-width:760px){
   #editMask{
     align-items:stretch!important;
@@ -2662,7 +2662,7 @@ button{
 }
 
 
-/* v2.40.0 mobile edit: Plan Content + Red Note adaptive height, exact full-screen fill */
+/* v2.41.0 mobile edit: Plan Content + Red Note adaptive height, exact full-screen fill */
 @media(max-width:760px){
   #editMask .modal{
     height:var(--app-height,100vh)!important;
@@ -2814,7 +2814,7 @@ button{
 }
 
 
-/* v2.40.0 PC card spacing compact */
+/* v2.41.0 PC card spacing compact */
 @media(min-width:761px){
   .page{
     padding-top:8px!important;
@@ -2864,7 +2864,7 @@ button{
 }
 
 
-/* v2.40.0 PC ultra compact spacing */
+/* v2.41.0 PC ultra compact spacing */
 @media(min-width:761px){
   body{
     background:#f3f6fa!important;
@@ -3015,7 +3015,7 @@ button{
 }
 
 
-/* v2.40.0 PC date-card spacing ultra compact */
+/* v2.41.0 PC date-card spacing ultra compact */
 @media(min-width:761px){
   .board{
     gap:2px!important;
@@ -3039,5 +3039,166 @@ button{
   /* 只压缩日期卡片之间的距离，不明显影响每条记录内容可读性 */
   .dayCard:not(:last-child){
     margin-bottom:3px!important;
+  }
+}
+
+
+/* v2.41.0 Must / Optional priority design */
+.priorityBadge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  min-height:22px;
+  padding:2px 8px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+  line-height:1;
+  letter-spacing:.01em;
+  border:1px solid transparent;
+}
+.priorityBadge.must{
+  color:#067647;
+  background:#ecfdf3;
+  border-color:#abefc6;
+}
+.priorityBadge.optional{
+  color:#475467;
+  background:#f2f4f7;
+  border-color:#d0d5dd;
+}
+.contentText{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.contentMain{
+  min-width:0;
+}
+.planRow.priority-must{
+  border-left:4px solid #12b76a;
+}
+.planRow.priority-optional{
+  border-left:4px solid #98a2b3;
+}
+.daySummary span:nth-child(n){
+  white-space:nowrap;
+}
+
+.prioritySwitch{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.prioritySwitch label{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:46px;
+  padding:8px 10px;
+  border:1px solid #cfd6e2;
+  border-radius:14px;
+  background:#fff;
+  color:#344054;
+  font-size:15px;
+  font-weight:900;
+  cursor:pointer;
+  user-select:none;
+}
+.prioritySwitch input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+.prioritySwitch label:has(input:checked){
+  color:#067647;
+  border-color:#12b76a;
+  background:#ecfdf3;
+  box-shadow:0 0 0 4px rgba(18,183,106,.12);
+}
+
+@media(min-width:761px){
+  .editFieldPeople{grid-column:1/2!important;}
+  .editFieldPriority{grid-column:2/3!important;}
+  .editFieldGroup{grid-column:3/4!important;}
+  .prioritySwitch label{
+    min-height:38px!important;
+    border-radius:12px!important;
+    font-size:13px!important;
+  }
+  .priorityBadge{
+    min-height:20px!important;
+    font-size:11px!important;
+    padding:2px 7px!important;
+  }
+  .contentText{
+    gap:6px!important;
+  }
+}
+
+/* Mobile edit page: add Priority row and keep full-screen adaptive layout */
+@media(max-width:760px){
+  #editMask .grid{
+    grid-template-rows:
+      auto
+      auto
+      auto
+      auto
+      auto
+      auto
+      minmax(138px,1.45fr)
+      minmax(78px,.62fr)!important;
+  }
+
+  #editMask .editFieldDate{order:1!important;grid-column:1 / -1!important;}
+  #editMask .editFieldTime{order:2!important;grid-column:1 / -1!important;}
+  #editMask .editFieldWeekday{order:3!important;grid-column:1 / -1!important;}
+  #editMask .editFieldPeople{order:4!important;grid-column:1 / -1!important;}
+  #editMask .editFieldPriority{order:5!important;grid-column:1 / -1!important;}
+  #editMask .editFieldGroup{order:6!important;grid-column:1 / -1!important;}
+  #editMask .editFieldContent{order:7!important;grid-column:1 / -1!important;}
+  #editMask .editFieldLinks{order:8!important;grid-column:1 / -1!important;}
+
+  #editMask .prioritySwitch{
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+  }
+  #editMask .prioritySwitch label{
+    min-height:36px!important;
+    height:36px!important;
+    padding:5px 10px!important;
+    border-radius:12px!important;
+    font-size:15px!important;
+  }
+  #editMask .priorityBadge{
+    min-height:24px!important;
+    font-size:13px!important;
+  }
+  .planRow.priority-must,
+  .planRow.priority-optional{
+    border-left-width:5px;
+  }
+}
+
+@media(max-width:760px) and (max-height:740px){
+  #editMask .grid{
+    grid-template-rows:
+      auto
+      auto
+      auto
+      auto
+      auto
+      auto
+      minmax(96px,1.35fr)
+      minmax(58px,.58fr)!important;
+  }
+
+  #editMask .prioritySwitch label{
+    min-height:31px!important;
+    height:31px!important;
+    font-size:14px!important;
   }
 }
