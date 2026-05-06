@@ -1,6 +1,6 @@
 {
-  "version": "v2.26.0",
-  "updatedAt": "2026-05-06T10:52:35.918Z",
+  "version": "v2.30.0",
+  "updatedAt": "2026-05-06T11:11:35.619Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -76,7 +76,7 @@
       "dateISO": "2026-05-18",
       "time": "12:00",
       "group": "",
-      "content": "JuZiZhou head, Snack Kingdom, Wenheyou",
+      "content": "JuZiZhou head(orage island)\nSnack Kingdom\nWenheyou",
       "links": [
         "http://xhslink.com/o/4fAotv0DtEv"
       ],
