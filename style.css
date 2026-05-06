@@ -190,7 +190,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.11.0 floating action buttons */
+/* v2.12.0 floating action buttons */
 .hero{align-items:center}
 .heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
 .heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
@@ -245,7 +245,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.11.0 clean overrides */
+/* v2.12.0 clean overrides */
 .hero{align-items:center}
 .heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
 .heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
@@ -349,7 +349,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.11.0 iOS PWA top safe-area fix */
+/* v2.12.0 iOS PWA top safe-area fix */
 :root{
   --safe-top: env(safe-area-inset-top, 0px);
   --mobile-top-gap: 16px;
@@ -394,5 +394,79 @@ html.pwa .hero{
   body.isStandalone .page,
   html.pwa .page{
     padding-top:max(72px, calc(env(safe-area-inset-top, 0px) + 22px)) !important;
+  }
+}
+
+
+/* v2.12.0 mobile modal scroll lock */
+html.modalLocked,
+body.modalLocked{
+  width:100%;
+  height:100%;
+  overflow:hidden!important;
+  overscroll-behavior:none;
+}
+body.modalLocked{
+  position:fixed;
+  left:0;
+  right:0;
+}
+.mask.show{
+  position:fixed!important;
+  inset:0!important;
+  height:100vh;
+  height:100dvh;
+  overflow:hidden;
+  overscroll-behavior:contain;
+  touch-action:none;
+}
+.mask.show .modal{
+  touch-action:auto;
+  overscroll-behavior:contain;
+}
+.modal{
+  min-height:0;
+}
+.modalBody{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+.peoplePanel{
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+@media(max-width:760px){
+  .mask{
+    padding:0!important;
+    align-items:flex-end!important;
+  }
+  .modal{
+    width:100%!important;
+    max-height:calc(100dvh - env(safe-area-inset-top,0px) - 8px)!important;
+    border-radius:24px 24px 0 0!important;
+    transform:translateZ(0);
+  }
+  .modalHead,
+  .modalFoot{
+    flex:0 0 auto;
+  }
+  .modalBody{
+    flex:1 1 auto;
+    max-height:none;
+    overflow-y:auto!important;
+    padding-bottom:18px;
+  }
+  #editMask .modal{
+    height:calc(100dvh - env(safe-area-inset-top,0px) - 8px)!important;
+  }
+  #viewerMask .modal{
+    height:calc(100dvh - env(safe-area-inset-top,0px) - 8px)!important;
+  }
+  #viewerFrame{
+    flex:1 1 auto;
+    min-height:0;
   }
 }

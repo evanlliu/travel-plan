@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.11.0";
+  const APP_VERSION = "v2.12.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -180,6 +180,40 @@
   let appLang = localStorage.getItem(LS_LANG) || "zh";
   let data = clone(DEFAULT_DATA);
   let selectedPeople = [];
+
+  let modalScrollY = 0;
+
+  function lockPageScroll() {
+    if (document.body.classList.contains("modalLocked")) return;
+    modalScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    document.documentElement.classList.add("modalLocked");
+    document.body.classList.add("modalLocked");
+    document.body.style.top = "-" + modalScrollY + "px";
+  }
+
+  function unlockPageScroll() {
+    if (!document.body.classList.contains("modalLocked")) return;
+    document.documentElement.classList.remove("modalLocked");
+    document.body.classList.remove("modalLocked");
+    document.body.style.top = "";
+    window.scrollTo(0, modalScrollY);
+  }
+
+  function openModal(id) {
+    $("#" + id).addClass("show");
+    lockPageScroll();
+  }
+
+  function closeModal(id) {
+    $("#" + id).removeClass("show");
+    if (!$(".mask.show").length) unlockPageScroll();
+  }
+
+  function closeAllModals() {
+    $(".mask.show").removeClass("show");
+    unlockPageScroll();
+  }
+
   let fp = null;
 
   function clone(value) {
@@ -711,9 +745,15 @@
 
   function renderPicker() {
     const opts = cleanNameList(data.peopleOptions || []);
-    $("#peopleSummary").html(selectedPeople.length ? '<span class="chips">' + chips(selectedPeople) + '</span>' : esc(t("selectPeople")));
+    $("#peopleSummary").html(
+      selectedPeople.length
+        ? '<span class="chips">' + chips(selectedPeople) + '</span>'
+        : esc(t("selectPeople"))
+    );
     $("#peoplePanel").html(opts.map(function (p) {
-      return '<label class="peopleOption"><input type="checkbox" value="' + esc(p) + '" ' + (selectedPeople.includes(p) ? "checked" : "") + '> <span>' + esc(p) + '</span></label>';
+      return '<label class="peopleOption"><input type="checkbox" value="' + esc(p) + '" ' +
+        (selectedPeople.includes(p) ? "checked" : "") +
+        '> <span>' + esc(p) + '</span></label>';
     }).join(""));
   }
 
@@ -731,7 +771,7 @@
     selectedPeople = cleanNameList(item.participants || []);
     renderPicker();
     refreshWeekday();
-    $("#editMask").addClass("show");
+    openModal("editMask");
   }
 
   function todayISO() {
@@ -764,7 +804,7 @@
       data.items.push(item);
     }
 
-    $("#editMask").removeClass("show");
+    closeModal("editMask");
     saveData(t("saved"));
   }
 
@@ -867,7 +907,7 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.11.0.xlsx" : "travel-plan-pro-en-v2.11.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.12.0.xlsx" : "travel-plan-pro-en-v2.12.0.xlsx");
   }
 
   async function testCloud() {
@@ -891,11 +931,11 @@
   }
 
   $(document).on("click", "[data-close]", function () {
-    $("#" + $(this).data("close")).removeClass("show");
+    closeModal($(this).data("close"));
   });
 
   $(document).on("click", ".mask", function (e) {
-    if (e.target === this) $(this).removeClass("show");
+    if (e.target === this) closeModal(this.id);
   });
 
   $(document).on("click", "[data-edit]", function () {
@@ -914,7 +954,7 @@
     const url = $(this).data("link");
     $("#viewerFrame").attr("src", url);
     $("#viewerOpen").attr("href", url);
-    $("#viewerMask").addClass("show");
+    openModal("viewerMask");
   });
 
   $(document).on("change", "#peoplePanel input", function () {
@@ -929,8 +969,19 @@
     $("#peoplePanel").addClass("open");
   });
 
+  $(document).on("touchmove", ".mask.show", function (e) {
+    const $target = $(e.target);
+    if (!$target.closest(".modalBody, .peoplePanel, .flatpickr-calendar, #viewerFrame").length) {
+      e.preventDefault();
+    }
+  });
+
   $(document).on("click", function (e) {
     if (!$(e.target).closest("#peoplePicker").length) $("#peoplePanel").removeClass("open");
+  });
+
+  $(document).on("keydown", function (e) {
+    if (e.key === "Escape") closeAllModals();
   });
 
   $("#btnFabAdd").on("click", function () { openEdit(null); });
@@ -945,7 +996,7 @@
   $("#btnPeople").on("click", function () {
     repairData();
     $("#peopleText").val(cleanNameList(data.peopleOptions || []).join("\n"));
-    $("#peopleMask").addClass("show");
+    openModal("peopleMask");
   });
   $("#btnSavePeople").on("click", function () {
     const newOptions = cleanNameList($("#peopleText").val().split(/\n+/));
@@ -956,19 +1007,19 @@
       });
       return item;
     });
-    $("#peopleMask").removeClass("show");
+    closeModal("peopleMask");
     saveData(t("peopleSaved"));
   });
   $("#btnCloudflare").on("click", function () {
     $("#cloudApiBase").val(getApiBase());
     $("#cloudPassword").val(getCloudPassword());
     $("#cloudResult").removeClass("ok err").text(t("cloudNotice"));
-    $("#cloudMask").addClass("show");
+    openModal("cloudMask");
   });
   $("#btnSaveCloud").on("click", function () {
     setCloudApiBase($("#cloudApiBase").val());
     setCloudPassword($("#cloudPassword").val());
-    $("#cloudMask").removeClass("show");
+    closeModal("cloudMask");
     saveData(t("configSaved"));
   });
   $("#btnTestCloud").on("click", testCloud);
