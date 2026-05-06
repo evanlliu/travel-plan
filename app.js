@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.30.0";
+  const APP_VERSION = "v2.33.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -41,14 +41,16 @@
       addItem: "新增安排",
       editItem: "编辑安排",
       edit: "编辑",
+      copy: "复制",
       delete: "删除",
+      copied: "已复制",
       cancel: "取消",
       save: "保存",
       selectPeople: "请选择",
       groupPlaceholder: "例如：Plan 1",
       contentPlaceholder: "输入计划内容",
       linksPlaceholder: "每行一个链接",
-      linksHint: "每行一个链接，点击页面中的链接可弹窗预览。",
+      linksHint: "每行一个链接，点击页面中的链接会直接新窗口打开。",
       preview: "链接预览",
       iframeTip: "如果无法显示，请新窗口打开。",
       openNew: "新窗口打开",
@@ -104,14 +106,16 @@
       addItem: "Add Item",
       editItem: "Edit Item",
       edit: "Edit",
+      copy: "Copy",
       delete: "Delete",
+      copied: "Copied",
       cancel: "Cancel",
       save: "Save",
       selectPeople: "Select people",
       groupPlaceholder: "For example: Plan 1",
       contentPlaceholder: "Enter plan details",
       linksPlaceholder: "One link per line",
-      linksHint: "Multiple links are supported. One link per line. Click a link to preview it.",
+      linksHint: "Multiple links are supported. One link per line. Click a link to open it in a new window.",
       preview: "Link Preview",
       iframeTip: "If it cannot be displayed, open it in a new window.",
       openNew: "Open new window",
@@ -656,7 +660,7 @@
     if (!links || !links.length) return "-";
     return links.map((url, index) => {
       const text = links.length === 1 ? url : `${t("link")} ${index + 1}`;
-      return `<a class="xhsLink" href="${escapeHtml(url)}" data-url="${escapeHtml(url)}">${escapeHtml(text)}</a>`;
+      return `<a class="xhsLink" href="${escapeHtml(url)}" data-url="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(text)}</a>`;
     }).join("<br>");
   }
 
@@ -694,6 +698,7 @@
         <div class="cell peopleCell ${hasPeople ? "" : "emptyCell"}" data-label="${escapeHtml(t("people"))}">${chipHtml(item.participants)}</div>
         <div class="cell actionCell">
           <button class="secondary btnEdit" data-id="${escapeHtml(item.id)}">${escapeHtml(t("edit"))}</button>
+          <button class="secondary btnCopy" data-id="${escapeHtml(item.id)}">${escapeHtml(t("copy"))}</button>
           <button class="danger btnDelete" data-id="${escapeHtml(item.id)}">${escapeHtml(t("delete"))}</button>
         </div>
       </article>`;
@@ -837,6 +842,21 @@
     closeModal("editMask");
     await saveData(true);
     setStatus("ok", t("saved"));
+  }
+
+  async function copyItem(id) {
+    const source = data.items.find(item => item.id === id);
+    if (!source) return;
+
+    const maxSort = data.items.reduce((max, item) => Math.max(max, Number(item.sort || 0)), 0);
+    const copied = normalizeItem(Object.assign(clone(source), {
+      id: uid(),
+      sort: maxSort + 1
+    }), data.items.length);
+
+    data.items.push(copied);
+    await saveData(true);
+    setStatus("ok", t("copied"));
   }
 
   async function deleteItem(id) {
@@ -1011,9 +1031,9 @@
   }
 
   function openViewer(url) {
-    $("#viewerFrame").attr("src", url);
-    $("#viewerOpen").attr("href", url);
-    openModal("viewerMask");
+    const safeUrl = normalizeUrl(url);
+    if (!safeUrl) return;
+    window.open(safeUrl, "_blank", "noopener,noreferrer");
   }
 
   function bindEvents() {
@@ -1057,6 +1077,7 @@
     });
 
     $(document).on("click", ".btnEdit", function () { openEdit($(this).data("id")); });
+    $(document).on("click", ".btnCopy", function () { copyItem($(this).data("id")); });
     $(document).on("click", ".btnDelete", function () { deleteItem($(this).data("id")); });
 
     $(document).on("click", ".xhsLink", function (e) {

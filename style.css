@@ -790,7 +790,7 @@ body.modalLocked{
 }
 
 
-/* v2.30.0 readability + content-density optimization */
+/* v2.33.0 readability + content-density optimization */
 .daySummary{
   display:flex;
   flex-wrap:wrap;
@@ -1058,7 +1058,7 @@ body.modalLocked{
 }
 
 
-/* v2.30.0 compact density pass: PC + mobile show more content */
+/* v2.33.0 compact density pass: PC + mobile show more content */
 :root{
   --compact-radius:14px;
   --compact-gap:10px;
@@ -1386,7 +1386,7 @@ button{
 }
 
 
-/* v2.30.0: compress top cards, reduce vertical gaps, show more trip content */
+/* v2.33.0: compress top cards, reduce vertical gaps, show more trip content */
 .page{
   padding-top:10px!important;
 }
@@ -1583,5 +1583,137 @@ button{
 
   .dayHead{
     padding-bottom:7px!important;
+  }
+}
+
+
+/* v2.33.0 Red Note links open in a new window; viewer modal disabled */
+#viewerMask{
+  display:none!important;
+}
+.xhsLink{
+  cursor:pointer;
+}
+
+
+/* v2.33.0 record copy button */
+.btnCopy{
+  color:#0f5132!important;
+  border-color:#cce8d8!important;
+  background:#f3fbf6!important;
+}
+
+.actionCell{
+  flex-wrap:wrap!important;
+}
+
+.actionCell button{
+  white-space:nowrap!important;
+}
+
+@media(min-width:761px){
+  .actionCell{
+    gap:5px!important;
+  }
+
+  .actionCell button{
+    min-height:30px!important;
+    padding:5px 9px!important;
+    font-size:12px!important;
+    border-radius:10px!important;
+  }
+}
+
+@media(max-width:760px){
+  .actionCell{
+    gap:6px!important;
+    margin-top:8px!important;
+  }
+
+  .actionCell button{
+    min-width:64px!important;
+    min-height:34px!important;
+    padding:5px 9px!important;
+    font-size:13px!important;
+    border-radius:11px!important;
+  }
+}
+
+
+/* v2.33.0 keep Edit / Copy / Delete in one row */
+.actionCell{
+  display:flex!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:6px!important;
+  white-space:nowrap!important;
+}
+
+.actionCell button{
+  flex:0 0 auto!important;
+  white-space:nowrap!important;
+  min-width:0!important;
+  min-height:30px!important;
+  padding:5px 9px!important;
+  font-size:12px!important;
+  line-height:1.1!important;
+  border-radius:10px!important;
+}
+
+/* PC: give action column enough width, keep buttons side by side */
+@media(min-width:981px){
+  .tableHead,
+  .planRow{
+    grid-template-columns:90px minmax(240px,1fr) minmax(180px,.75fr) minmax(160px,.55fr) 220px!important;
+  }
+
+  .actionCell{
+    justify-content:flex-end!important;
+  }
+}
+
+/* Medium PC / tablet landscape */
+@media(min-width:761px) and (max-width:980px){
+  .tableHead,
+  .planRow{
+    grid-template-columns:82px minmax(170px,1fr) minmax(135px,.7fr) minmax(110px,.55fr) 198px!important;
+  }
+
+  .actionCell{
+    gap:5px!important;
+  }
+
+  .actionCell button{
+    padding:5px 8px!important;
+    font-size:11.5px!important;
+  }
+}
+
+/* Mobile: also keep three buttons on one line */
+@media(max-width:760px){
+  .actionCell{
+    grid-column:2!important;
+    grid-row:4!important;
+    justify-content:flex-start!important;
+    flex-wrap:nowrap!important;
+    gap:5px!important;
+    margin-top:5px!important;
+    overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    scrollbar-width:none!important;
+  }
+
+  .actionCell::-webkit-scrollbar{
+    display:none!important;
+  }
+
+  .actionCell button{
+    min-width:0!important;
+    min-height:32px!important;
+    padding:5px 8px!important;
+    font-size:12px!important;
+    border-radius:10px!important;
   }
 }
