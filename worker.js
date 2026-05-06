@@ -1,4 +1,4 @@
-const APP_VERSION = "v2.6.0";
+const APP_VERSION = "v2.7.0";
 
 const DEFAULT_DATA = {
   version: APP_VERSION,
@@ -32,12 +32,72 @@ function jsonResponse(body, status, env) {
 }
 
 function splitList(s) {
-  return String(s || "").split(/[\n,，;；]+/).map(x => x.trim()).filter(Boolean);
+  return String(s || "").split(/[\n,，;；]+/).map(x => cleanText(x)).filter(Boolean);
 }
 
-function isMojibakeName(name) {
-  const s = String(name || "");
-  return !s.trim() || /[\uFFFD\u0080-\u009F]/.test(s) || /[ÃÂ]/.test(s) || /â[€€™€œ]/.test(s);
+function cjkCount(s) {
+  const m = String(s || "").match(/[\u3400-\u9FFF]/g);
+  return m ? m.length : 0;
+}
+
+function badTextScore(s) {
+  s = String(s || "");
+  let score = 0;
+  const replacement = s.match(/\uFFFD/g);
+  const controls = s.match(/[\u0080-\u009F]/g);
+  const classic = s.match(/[ÃÂ]/g);
+  const punctuation = s.match(/â[€€™œ“”–—¢]/g);
+  const commonUtf8Mojibake = s.match(/[ÄÅÆÇÐÑØÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ]/g);
+  score += replacement ? replacement.length * 20 : 0;
+  score += controls ? controls.length * 8 : 0;
+  score += classic ? classic.length * 6 : 0;
+  score += punctuation ? punctuation.length * 6 : 0;
+  score += commonUtf8Mojibake ? commonUtf8Mojibake.length : 0;
+  score -= cjkCount(s) * 3;
+  return score;
+}
+
+function shouldTryEncodingRepair(s) {
+  s = String(s || "");
+  return /[\uFFFD\u0080-\u009FÃÂ]/.test(s) ||
+    /â[€€™œ“”–—¢]/.test(s) ||
+    /[ÄÅÆÇÐÑØÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ]/.test(s);
+}
+
+function latin1ToUtf8(s) {
+  const arr = Array.from(String(s || ""), ch => ch.charCodeAt(0) & 255);
+  return new TextDecoder("utf-8", { fatal: false }).decode(new Uint8Array(arr));
+}
+
+function cleanText(value) {
+  let best = String(value == null ? "" : value);
+  if (!best) return "";
+  if (!shouldTryEncodingRepair(best)) return best.trim();
+
+  let current = best;
+  let bestScore = badTextScore(best);
+  let bestCjk = cjkCount(best);
+
+  for (let i = 0; i < 4; i++) {
+    const next = latin1ToUtf8(current);
+    if (!next || next === current) break;
+    const nextScore = badTextScore(next);
+    const nextCjk = cjkCount(next);
+    if (nextScore < bestScore || (nextScore === bestScore && nextCjk > bestCjk)) {
+      best = next;
+      bestScore = nextScore;
+      bestCjk = nextCjk;
+    }
+    current = next;
+  }
+
+  return best.replace(/\uFEFF/g, "").trim();
+}
+
+function cleanName(name) {
+  const s = cleanText(name);
+  if (!s || /[\uFFFD\u0080-\u009F]/.test(s)) return "";
+  return s;
 }
 
 function cleanNameList(list) {
@@ -45,8 +105,8 @@ function cleanNameList(list) {
   const out = [];
   const arr = Array.isArray(list) ? list : splitList(list);
   for (const name of arr) {
-    const s = String(name || "").trim();
-    if (!s || isMojibakeName(s)) continue;
+    const s = cleanName(name);
+    if (!s) continue;
     if (!seen.has(s)) {
       seen.add(s);
       out.push(s);
@@ -63,9 +123,9 @@ function normalizePayload(payload) {
     items = payload.rows.map(r => ({
       id: r.id || crypto.randomUUID(),
       dateISO: r.dateISO || "",
-      time: r.time || "",
-      group: r.group || "",
-      content: r.content || r.plan || "",
+      time: cleanText(r.time || ""),
+      group: cleanText(r.group || ""),
+      content: cleanText(r.content || r.plan || ""),
       links: Array.isArray(r.links) ? r.links : splitList(r.links || r.link || ""),
       participants: Array.isArray(r.participants) ? r.participants : splitList(r.participants || "")
     }));
@@ -84,10 +144,10 @@ function normalizePayload(payload) {
   const normalizedItems = items.map((r, idx) => ({
     id: String(r.id || crypto.randomUUID()),
     dateISO: String(r.dateISO || ""),
-    time: String(r.time || ""),
-    group: String(r.group || r.section || ""),
-    content: String(r.content || r.plan || ""),
-    links: (Array.isArray(r.links) ? r.links : splitList(r.links || r.link || "")).map(String).filter(Boolean),
+    time: cleanText(r.time || ""),
+    group: cleanText(r.group || r.section || ""),
+    content: cleanText(r.content || r.plan || ""),
+    links: (Array.isArray(r.links) ? r.links : splitList(r.links || r.link || "")).map(x => cleanText(x)).filter(Boolean),
     participants: cleanNameList(Array.isArray(r.participants) ? r.participants : splitList(r.participants || "")),
     sort: typeof r.sort === "number" ? r.sort : idx
   }));
@@ -118,9 +178,9 @@ function b64Encode(str) {
 }
 
 function b64Decode(str) {
-  const binary = atob(String(str || "").replace(/\s/g, ""));
+  const binary = atob(String(str || "").replace(/\s/g, "").replace(/-/g, "+").replace(/_/g, "/"));
   const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-  return new TextDecoder().decode(bytes);
+  return new TextDecoder("utf-8", { fatal: false }).decode(bytes).replace(/^\uFEFF/, "");
 }
 
 function githubConfigured(env) {

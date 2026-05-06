@@ -1,6 +1,6 @@
 # Travel Plan Pro
 
-当前版本：**v2.6.0**
+当前版本：**v2.7.0**
 
 ## 本版修复
 
@@ -83,3 +83,11 @@ Date, Time, Group, Plan Content, Red Note, People
 ## 注意
 
 按你的要求，`APP_PASSWORD` 会保存到 `data.json`。这样换设备方便同步，但如果别人能访问 `data.json`，也能看到这个密码。
+
+
+## v2.7.0 说明
+
+- 修复中文保存后变成乱码的问题。
+- Worker 和前端都使用 UTF-8 安全读写 GitHub `data.json`。
+- 读取旧数据时会自动尝试修复常见 UTF-8/Latin-1 双重乱码。
+- 人员配置不会再因为乱码清理逻辑误删中文人员。

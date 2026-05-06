@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.6.0";
+  const APP_VERSION = "v2.7.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -200,7 +200,7 @@
 
   function splitList(text) {
     return String(text || "").split(/[\n,，;；]+/).map(function (x) {
-      return x.trim();
+      return cleanText(x);
     }).filter(Boolean);
   }
 
@@ -218,15 +218,72 @@
     return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d;
   }
 
-  function isMojibakeName(name) {
-    const s = String(name || "");
-    if (!s.trim()) return true;
-    return /[\uFFFD\u0080-\u009F]/.test(s) || /[ÃÂ]/.test(s) || /â[€€™€œ]/.test(s);
+  function cjkCount(s) {
+    const m = String(s || "").match(/[\u3400-\u9FFF]/g);
+    return m ? m.length : 0;
+  }
+
+  function badTextScore(s) {
+    s = String(s || "");
+    let score = 0;
+    const replacement = s.match(/\uFFFD/g);
+    const controls = s.match(/[\u0080-\u009F]/g);
+    const classic = s.match(/[ÃÂ]/g);
+    const punctuation = s.match(/â[€€™œ“”–—¢]/g);
+    const commonUtf8Mojibake = s.match(/[ÄÅÆÇÐÑØÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ]/g);
+    score += replacement ? replacement.length * 20 : 0;
+    score += controls ? controls.length * 8 : 0;
+    score += classic ? classic.length * 6 : 0;
+    score += punctuation ? punctuation.length * 6 : 0;
+    score += commonUtf8Mojibake ? commonUtf8Mojibake.length : 0;
+    score -= cjkCount(s) * 3;
+    return score;
+  }
+
+  function shouldTryEncodingRepair(s) {
+    s = String(s || "");
+    return /[\uFFFD\u0080-\u009FÃÂ]/.test(s) ||
+      /â[€€™œ“”–—¢]/.test(s) ||
+      /[ÄÅÆÇÐÑØÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ]/.test(s);
+  }
+
+  function latin1ToUtf8(s) {
+    if (typeof TextDecoder === "undefined" || typeof Uint8Array === "undefined") return String(s || "");
+    const arr = Array.from(String(s || ""), function (ch) {
+      return ch.charCodeAt(0) & 255;
+    });
+    return new TextDecoder("utf-8", { fatal: false }).decode(new Uint8Array(arr));
+  }
+
+  function cleanText(value) {
+    let best = String(value == null ? "" : value);
+    if (!best) return "";
+    if (!shouldTryEncodingRepair(best)) return best.trim();
+
+    let current = best;
+    let bestScore = badTextScore(best);
+    let bestCjk = cjkCount(best);
+
+    for (let i = 0; i < 4; i++) {
+      const next = latin1ToUtf8(current);
+      if (!next || next === current) break;
+
+      const nextScore = badTextScore(next);
+      const nextCjk = cjkCount(next);
+      if (nextScore < bestScore || (nextScore === bestScore && nextCjk > bestCjk)) {
+        best = next;
+        bestScore = nextScore;
+        bestCjk = nextCjk;
+      }
+      current = next;
+    }
+
+    return best.replace(/\uFEFF/g, "").trim();
   }
 
   function cleanName(name) {
-    const s = String(name || "").trim();
-    if (isMojibakeName(s)) return "";
+    const s = cleanText(name);
+    if (!s || /[\uFFFD\u0080-\u009F]/.test(s)) return "";
     return s;
   }
 
@@ -368,9 +425,9 @@
         return {
           id: r.id || uid(),
           dateISO: r.dateISO || dateToInput(r.date),
-          time: r.time || "",
-          group: r.group || "",
-          content: r.content || r.plan || "",
+          time: cleanText(r.time || ""),
+          group: cleanText(r.group || ""),
+          content: cleanText(r.content || r.plan || ""),
           links: Array.isArray(r.links) ? r.links : splitList(r.links || r.link),
           participants: Array.isArray(r.participants) ? r.participants : splitList(r.participants)
         };
@@ -385,9 +442,9 @@
       return {
         id: String(r.id || uid()),
         dateISO: r.dateISO || dateToInput(r.date),
-        time: String(r.time || "").trim(),
-        group: String(r.group || r.section || "").trim(),
-        content: String(r.content || r.plan || "").trim(),
+        time: cleanText(r.time || ""),
+        group: cleanText(r.group || r.section || ""),
+        content: cleanText(r.content || r.plan || ""),
         links: (Array.isArray(r.links) ? r.links : splitList(r.links || r.link)).map(normalizeUrl).filter(Boolean),
         participants: participants,
         sort: typeof r.sort === "number" ? r.sort : idx
@@ -413,6 +470,12 @@
     ensureSettings();
     data.peopleOptions = cleanNameList(data.peopleOptions || []);
     data.items = (data.items || []).map(function (item) {
+      item.time = cleanText(item.time || "");
+      item.group = cleanText(item.group || "");
+      item.content = cleanText(item.content || item.plan || "");
+      item.links = (Array.isArray(item.links) ? item.links : splitList(item.links || item.link)).map(function (u) {
+        return normalizeUrl(cleanText(u));
+      }).filter(Boolean);
       item.participants = cleanNameList(item.participants || []);
       return item;
     });
@@ -681,9 +744,9 @@
     const item = {
       id: id,
       dateISO: $("#editDate").val(),
-      time: $("#editTime").val(),
-      group: $("#editGroup").val().trim(),
-      content: $("#editContent").val().trim(),
+      time: cleanText($("#editTime").val()),
+      group: cleanText($("#editGroup").val()),
+      content: cleanText($("#editContent").val()),
       links: splitList($("#editLinks").val()).map(normalizeUrl).filter(Boolean),
       participants: cleanNameList(selectedPeople),
       sort: Date.now()
@@ -738,11 +801,11 @@
 
         rows.slice(start).forEach(function (r) {
           const rawDate = di >= 0 ? String(r[di] || "").trim() : "";
-          const rawTime = ti >= 0 ? String(r[ti] || "").trim() : "";
-          const rawGroup = gi >= 0 ? String(r[gi] || "").trim() : "";
-          const rawContent = ci >= 0 ? String(r[ci] || "").trim() : "";
+          const rawTime = ti >= 0 ? cleanText(r[ti] || "") : "";
+          const rawGroup = gi >= 0 ? cleanText(r[gi] || "") : "";
+          const rawContent = ci >= 0 ? cleanText(r[ci] || "") : "";
           const rawLink = li >= 0 ? String(r[li] || "").trim() : "";
-          const rawPeople = pi >= 0 ? String(r[pi] || "").trim() : "";
+          const rawPeople = pi >= 0 ? cleanText(r[pi] || "") : "";
 
           if (!rawDate && !rawTime && !rawGroup && !rawContent && !rawLink && !rawPeople) return;
 
@@ -804,7 +867,7 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.6.0.xlsx" : "travel-plan-pro-en-v2.6.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.7.0.xlsx" : "travel-plan-pro-en-v2.7.0.xlsx");
   }
 
   async function testCloud() {
