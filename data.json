@@ -1,6 +1,6 @@
 {
   "version": "v2.33.0",
-  "updatedAt": "2026-05-06T11:27:22.311Z",
+  "updatedAt": "2026-05-06T11:27:27.450Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -176,6 +176,22 @@
       "links": [],
       "participants": [],
       "sort": 16
+    },
+    {
+      "id": "i_70iqpwpnyiemotz3bg4",
+      "dateISO": "2026-05-18",
+      "time": "12:00",
+      "group": "",
+      "content": "JuZiZhou head(orage island)",
+      "links": [
+        "https://www.xiaohongshu.com/discovery/item/68cbb578000000000b03f699?source=webshare&xhsshare=pc_web&xsec_token=ABXrSTTwLw4E7b8UHz6wh0PZESJwmrG_hBPbNHhrPi1t4=&xsec_source=pc_share"
+      ],
+      "participants": [
+        "Evan",
+        "Gonca",
+        "Ainiya"
+      ],
+      "sort": 17
     }
   ]
 }
