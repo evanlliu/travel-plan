@@ -790,7 +790,7 @@ body.modalLocked{
 }
 
 
-/* v2.37.0 readability + content-density optimization */
+/* v2.40.0 readability + content-density optimization */
 .daySummary{
   display:flex;
   flex-wrap:wrap;
@@ -1058,7 +1058,7 @@ body.modalLocked{
 }
 
 
-/* v2.37.0 compact density pass: PC + mobile show more content */
+/* v2.40.0 compact density pass: PC + mobile show more content */
 :root{
   --compact-radius:14px;
   --compact-gap:10px;
@@ -1386,7 +1386,7 @@ button{
 }
 
 
-/* v2.37.0: compress top cards, reduce vertical gaps, show more trip content */
+/* v2.40.0: compress top cards, reduce vertical gaps, show more trip content */
 .page{
   padding-top:10px!important;
 }
@@ -1587,7 +1587,7 @@ button{
 }
 
 
-/* v2.37.0 Red Note links open in a new window; viewer modal disabled */
+/* v2.40.0 Red Note links open in a new window; viewer modal disabled */
 #viewerMask{
   display:none!important;
 }
@@ -1596,7 +1596,7 @@ button{
 }
 
 
-/* v2.37.0 record copy button */
+/* v2.40.0 record copy button */
 .btnCopy{
   color:#0f5132!important;
   border-color:#cce8d8!important;
@@ -1640,7 +1640,7 @@ button{
 }
 
 
-/* v2.37.0 keep Edit / Copy / Delete in one row */
+/* v2.40.0 keep Edit / Copy / Delete in one row */
 .actionCell{
   display:flex!important;
   flex-direction:row!important;
@@ -1719,7 +1719,7 @@ button{
 }
 
 
-/* v2.37.0 mobile edit modal one-screen compact layout */
+/* v2.40.0 mobile edit modal one-screen compact layout */
 @media(max-width:760px){
   /*
     Goal: editing form should fit on one mobile screen without scrolling.
@@ -1997,7 +1997,7 @@ button{
 }
 
 
-/* v2.37.0 mobile edit page redesign: full screen, visual hierarchy, plan content focus */
+/* v2.40.0 mobile edit page redesign: full screen, visual hierarchy, plan content focus */
 @media(max-width:760px){
   /* Full-screen edit experience */
   #editMask{
@@ -2362,7 +2362,7 @@ button{
 }
 
 
-/* v2.37.0 mobile edit page: one-column full-screen, no empty space, no scroll by default */
+/* v2.40.0 mobile edit page: one-column full-screen, no empty space, no scroll by default */
 @media(max-width:760px){
   #editMask{
     align-items:stretch!important;
@@ -2662,7 +2662,7 @@ button{
 }
 
 
-/* v2.37.0 mobile edit: Plan Content + Red Note adaptive height, exact full-screen fill */
+/* v2.40.0 mobile edit: Plan Content + Red Note adaptive height, exact full-screen fill */
 @media(max-width:760px){
   #editMask .modal{
     height:var(--app-height,100vh)!important;
@@ -2810,5 +2810,234 @@ button{
 
   #editMask .grid{
     min-height:620px!important;
+  }
+}
+
+
+/* v2.40.0 PC card spacing compact */
+@media(min-width:761px){
+  .page{
+    padding-top:8px!important;
+  }
+
+  .hero{
+    margin-bottom:6px!important;
+  }
+
+  .searchBar{
+    margin:6px 0!important;
+  }
+
+  .status{
+    margin:0 0 7px!important;
+  }
+
+  .morePanel{
+    margin:6px 0!important;
+  }
+
+  .board{
+    gap:7px!important;
+  }
+
+  .dayCard{
+    margin-bottom:7px!important;
+    padding-top:12px!important;
+    padding-bottom:12px!important;
+  }
+
+  .dayCard + .dayCard{
+    margin-top:7px!important;
+  }
+
+  .dayHead{
+    padding-bottom:7px!important;
+  }
+
+  .planRow{
+    margin-top:6px!important;
+  }
+
+  .planRow + .planRow{
+    margin-top:6px!important;
+  }
+}
+
+
+/* v2.40.0 PC ultra compact spacing */
+@media(min-width:761px){
+  body{
+    background:#f3f6fa!important;
+  }
+
+  .page{
+    padding-top:4px!important;
+    padding-bottom:28px!important;
+  }
+
+  /* Top cards: smaller and closer */
+  .hero{
+    padding:8px 16px!important;
+    margin-bottom:4px!important;
+    border-radius:13px!important;
+  }
+
+  .hero h1{
+    font-size:24px!important;
+    line-height:1!important;
+  }
+
+  .ver{
+    padding:3px 9px!important;
+    font-size:12px!important;
+  }
+
+  .heroActions button{
+    min-height:30px!important;
+    padding:5px 11px!important;
+  }
+
+  .searchBar{
+    margin:4px 0!important;
+    border-radius:13px!important;
+  }
+
+  .searchBar input{
+    min-height:34px!important;
+    height:34px!important;
+    padding:0 14px!important;
+    font-size:14px!important;
+  }
+
+  .status{
+    margin:0 0 5px!important;
+    padding:7px 14px!important;
+    border-radius:13px!important;
+    gap:8px!important;
+  }
+
+  .status,
+  #updatedText{
+    font-size:11.5px!important;
+    line-height:1.15!important;
+  }
+
+  .dot{
+    width:7px!important;
+    height:7px!important;
+    margin-right:6px!important;
+  }
+
+  .morePanel{
+    margin:4px 0!important;
+    padding:7px!important;
+  }
+
+  /* Date cards: reduce outside and inside spacing */
+  .board{
+    gap:4px!important;
+  }
+
+  .dayCard{
+    margin:0 0 5px!important;
+    padding:10px 12px!important;
+    border-radius:14px!important;
+  }
+
+  .dayCard + .dayCard{
+    margin-top:5px!important;
+  }
+
+  .dayHead{
+    padding-bottom:5px!important;
+    margin-bottom:5px!important;
+  }
+
+  .dayTitle{
+    font-size:18px!important;
+    line-height:1.05!important;
+  }
+
+  .dayMeta,
+  .daySummary{
+    font-size:11px!important;
+    line-height:1.15!important;
+  }
+
+  .dayHead .chip,
+  .chip{
+    padding:2px 6px!important;
+    font-size:10.5px!important;
+  }
+
+  /* Table header and rows: compact */
+  .tableHead{
+    padding:5px 8px!important;
+    margin-bottom:4px!important;
+    font-size:11px!important;
+  }
+
+  .planRow{
+    margin-top:4px!important;
+    padding:8px 10px!important;
+    border-radius:12px!important;
+    min-height:58px!important;
+  }
+
+  .planRow + .planRow{
+    margin-top:4px!important;
+  }
+
+  .timeCell{
+    font-size:12px!important;
+  }
+
+  .planText{
+    font-size:14px!important;
+    line-height:1.2!important;
+  }
+
+  .xhsCell,
+  .peopleCell{
+    gap:4px!important;
+  }
+
+  .actionCell{
+    gap:4px!important;
+  }
+
+  .actionCell button{
+    min-height:28px!important;
+    padding:4px 8px!important;
+    font-size:11.5px!important;
+    border-radius:9px!important;
+  }
+}
+
+
+/* v2.40.0 PC date-card spacing ultra compact */
+@media(min-width:761px){
+  .board{
+    gap:2px!important;
+    row-gap:2px!important;
+  }
+
+  .dayCard{
+    margin-top:0!important;
+    margin-bottom:3px!important;
+  }
+
+  .dayCard + .dayCard{
+    margin-top:3px!important;
+  }
+
+  .dayHead{
+    padding-bottom:4px!important;
+    margin-bottom:4px!important;
+  }
+
+  /* 只压缩日期卡片之间的距离，不明显影响每条记录内容可读性 */
+  .dayCard:not(:last-child){
+    margin-bottom:3px!important;
   }
 }
