@@ -1,6 +1,6 @@
 {
   "version": "v2.37.0",
-  "updatedAt": "2026-05-06T12:02:33.338Z",
+  "updatedAt": "2026-05-06T12:03:02.673Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -150,7 +150,7 @@
       "dateISO": "2026-05-22",
       "time": "",
       "group": "",
-      "content": "BBQ, Lobster",
+      "content": "BBQ, Lobster/Frog",
       "links": [],
       "participants": [],
       "sort": 14
