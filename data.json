@@ -1,6 +1,6 @@
 {
   "version": "v2.37.0",
-  "updatedAt": "2026-05-06T12:00:35.610Z",
+  "updatedAt": "2026-05-06T12:00:58.454Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -227,6 +227,21 @@
         "Sister"
       ],
       "sort": 19
+    },
+    {
+      "id": "i_wu7gtci57lomou0af5q",
+      "dateISO": "2026-05-21",
+      "time": "17:00",
+      "group": "",
+      "content": "Go back ZhuZhou",
+      "links": [],
+      "participants": [
+        "Evan",
+        "Gonca",
+        "Ainiya",
+        "Mom"
+      ],
+      "sort": 20
     }
   ]
 }
