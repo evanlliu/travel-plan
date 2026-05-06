@@ -1,6 +1,6 @@
 {
   "version": "v2.3.0",
-  "updatedAt": "",
+  "updatedAt": "2026-05-06T05:41:32.872Z",
   "settings": {
     "cloudflare": {
       "apiBase": "",
@@ -23,7 +23,7 @@
       "dateISO": "2026-05-17",
       "time": "13:00",
       "group": "",
-      "content": "Center shopping",
+      "content": "Center shopping1",
       "links": [],
       "participants": [
         "Evan",
