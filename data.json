@@ -1,6 +1,6 @@
 {
   "version": "v2.6.0",
-  "updatedAt": "2026-05-06T06:31:01.914Z",
+  "updatedAt": "2026-05-06T06:33:16.243Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -132,7 +132,7 @@
       "dateISO": "2026-05-19",
       "time": "09:00",
       "group": "Plan 2",
-      "content": "ÃÂ¦ÃÂ ÃÂªÃÂ¦ÃÂ´ÃÂ²ÃÂ¦ÃÂÃÂ¸ÃÂ¥ÃÂÃÂ¿ÃÂ©ÃÂÃÂÃÂ¤ÃÂ»ÃÂÃÂ¦ÃÂ¹ÃÂ",
+      "content": "株洲攸县酒仙湖",
       "links": [
         "http://xhslink.com/o/70msgGQjc3q"
       ],
