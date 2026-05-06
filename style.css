@@ -41,10 +41,8 @@ button.iconBtn{width:44px;height:44px;border-radius:16px;font-size:20px;padding:
   padding:22px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;backdrop-filter:blur(8px);
 }
 .heroText{min-width:240px;flex:1}
-.eyebrow{font-size:13px;color:var(--brand);font-weight:800;display:flex;gap:8px;align-items:center}
 .ver{display:inline-flex;padding:4px 9px;border-radius:999px;background:var(--soft);color:var(--brand);font-size:12px;font-weight:900;border:1px solid #cfe6d6}
 .hero h1{margin:10px 0 8px;font-size:34px;letter-spacing:-.03em}
-.hero p{margin:0;color:var(--muted);line-height:1.55}
 .heroActions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 
 .morePanel{
@@ -114,8 +112,7 @@ button.iconBtn{width:44px;height:44px;border-radius:16px;font-size:20px;padding:
   body{background:#f3f6fb}
   .page{padding:10px 10px 86px}
   .hero{border-radius:22px;padding:16px;display:block}
-  .hero h1{font-size:27px}.hero p{font-size:14px}
-  .heroActions{margin-top:14px;display:grid;grid-template-columns:1fr 1fr 56px;gap:8px}
+  .hero h1{font-size:27px}.heroActions{margin-top:14px;display:grid;grid-template-columns:1fr 1fr 56px;gap:8px}
   .heroActions button{width:100%;padding:10px 8px}
   .morePanel{border-radius:18px;display:none;grid-template-columns:1fr 1fr;padding:10px}
   .morePanel.show{display:grid}
@@ -190,4 +187,59 @@ body.isStandalone .page{
 }
 body.isStandalone .modal{
   max-height:calc(100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
+}
+
+
+/* v2.9.0 floating action buttons */
+.hero{align-items:center}
+.heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
+.heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
+.fabGroup{
+  position:fixed!important;
+  right:max(16px, env(safe-area-inset-right,0px));
+  bottom:max(16px, calc(env(safe-area-inset-bottom,0px) + 16px));
+  z-index:9999!important;
+  display:flex!important;
+  flex-direction:column;
+  gap:12px;
+  pointer-events:auto;
+}
+.fab{
+  width:58px;
+  height:58px;
+  min-height:58px;
+  border:0;
+  border-radius:20px;
+  padding:0;
+  color:#fff;
+  box-shadow:0 18px 36px rgba(15,23,42,.25);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.fab svg{
+  width:28px;
+  height:28px;
+  stroke:currentColor;
+  stroke-width:2.6;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.fabAdd{background:linear-gradient(135deg,#16a34a,#087443)}
+.fabLang{background:linear-gradient(135deg,#2563eb,#1d4ed8)}
+.fab:active{transform:scale(.96)}
+
+@media(max-width:760px){
+  .page{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
+  .hero{padding:16px;border-radius:22px}
+  .heroText h1{font-size:28px}
+  .heroActions{margin-top:14px;display:flex!important;justify-content:flex-start}
+  .heroActions #btnMore{width:100%;justify-content:center}
+  .desktopAdd{display:none!important}
+  .fabGroup{right:max(14px, env(safe-area-inset-right,0px));bottom:max(14px, calc(env(safe-area-inset-bottom,0px) + 14px));gap:10px}
+  .fab{width:56px;height:56px;min-height:56px;border-radius:18px}
+  .fab svg{width:27px;height:27px}
 }

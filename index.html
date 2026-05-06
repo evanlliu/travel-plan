@@ -6,13 +6,13 @@
   <meta name="theme-color" content="#166534">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Travel Plan Pro">
+  <meta name="apple-mobile-web-app-title" content="Travel Plan">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-  <title>Travel Plan Pro v2.8.0</title>
+  <title>Travel Plan v2.9.0</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <link rel="stylesheet" href="./style.css?v=v2.8.0">
+  <link rel="stylesheet" href="./style.css?v=v2.9.0">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -22,15 +22,11 @@
   <main class="page">
     <section class="hero">
       <div class="heroText">
-        <div class="eyebrow"><span data-i18n="eyebrow">多设备同步行程</span><span class="ver">v2.8.0</span></div>
-        <h1 data-i18n="appTitle">行程计划 Pro</h1>
-        <p data-i18n="subtitle">按日期分组展示，支持 Excel 导入、人员多选、小红书链接预览、Cloudflare + GitHub 多设备同步。</p>
+        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.9.0</span></h1>
       </div>
 
       <div class="heroActions">
-        <button class="primary desktopAdd" id="btnAdd" data-i18n="add">新增安排</button>
         <button id="btnMore" data-i18n="more">更多功能</button>
-        <button class="lang" id="btnLang" aria-label="language">EN</button>
       </div>
     </section>
 
@@ -55,6 +51,15 @@
     <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" hidden>
     <section class="board" id="board"></section>
   </main>
+
+  <div class="fabGroup" aria-label="Quick actions">
+    <button class="fab fabAdd" id="btnFabAdd" type="button" aria-label="新增安排" title="新增安排">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+    <button class="fab fabLang" id="btnLang" type="button" aria-label="切换语言" title="切换语言">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18M5 7h14M5 17h14"/></svg>
+    </button>
+  </div>
 
   <div class="mask" id="editMask">
     <div class="modal">
@@ -170,6 +175,6 @@
     </div>
   </div>
 
-  <script src="./app.js?v=v2.8.0"></script>
+  <script src="./app.js?v=v2.9.0"></script>
 </body>
 </html>

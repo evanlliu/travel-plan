@@ -1,5 +1,5 @@
 {
-  "name": "Travel Plan Pro",
+  "name": "Travel Plan",
   "short_name": "Travel Plan",
   "description": "Travel plan manager with Cloudflare sync",
   "start_url": "./index.html",

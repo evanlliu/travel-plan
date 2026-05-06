@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.8.0";
+  const APP_VERSION = "v2.9.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -42,9 +42,7 @@
 
   const I18N = {
     zh: {
-      eyebrow: "多设备同步行程",
-      appTitle: "行程计划 Pro",
-      subtitle: "按日期分组展示，支持 Excel 导入、人员多选、小红书链接预览、Cloudflare + GitHub 多设备同步。",
+      appTitle: "行程计划",
       add: "新增安排",
       more: "更多功能",
       import: "导入 Excel",
@@ -109,7 +107,7 @@
     },
     en: {
       eyebrow: "Multi-device travel planner",
-      appTitle: "Travel Plan Pro",
+      appTitle: "Travel Plan",
       subtitle: "Date-grouped planner with Excel import, people multi-select, Red Note preview, and Cloudflare + GitHub sync.",
       add: "Add Item",
       more: "More",
@@ -607,7 +605,7 @@
 
   function applyI18n() {
     document.documentElement.lang = appLang === "zh" ? "zh-CN" : "en";
-    document.title = (appLang === "zh" ? "行程计划 Pro " : "Travel Plan Pro ") + APP_VERSION;
+    document.title = (appLang === "zh" ? "行程计划 " : "Travel Plan ") + APP_VERSION;
     $("[data-i18n]").each(function () {
       $(this).text(t($(this).data("i18n")));
     });
@@ -869,7 +867,7 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.8.0.xlsx" : "travel-plan-pro-en-v2.8.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.9.0.xlsx" : "travel-plan-pro-en-v2.9.0.xlsx");
   }
 
   async function testCloud() {
@@ -935,7 +933,6 @@
     if (!$(e.target).closest("#peoplePicker").length) $("#peoplePanel").removeClass("open");
   });
 
-  $("#btnAdd").on("click", function () { openEdit(null); });
   $("#btnFabAdd").on("click", function () { openEdit(null); });
   $("#btnMore").on("click", function () { $("#morePanel").toggleClass("show"); });
   $("#btnSaveEdit").on("click", saveEdit);
