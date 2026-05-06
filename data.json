@@ -1,6 +1,6 @@
 {
   "version": "v2.33.0",
-  "updatedAt": "2026-05-06T11:28:54.723Z",
+  "updatedAt": "2026-05-06T11:31:39.877Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -210,6 +210,20 @@
         "Sister"
       ],
       "sort": 18
+    },
+    {
+      "id": "i_v28mpbh2r9pmotz8qoq",
+      "dateISO": "2026-05-17",
+      "time": "22:00",
+      "group": "",
+      "content": "Call sister eat street foods",
+      "links": [],
+      "participants": [
+        "Evan",
+        "Gonca",
+        "Sister"
+      ],
+      "sort": 19
     }
   ]
 }
