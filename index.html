@@ -1,349 +1,135 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Travel Plan</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Travel Plan Pro v2.0.0</title>
+  <link rel="stylesheet" href="./style.css">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <style>
-    :root{
-      --bg:#f5f7fb; --card:#ffffff; --text:#172033; --muted:#667085; --line:#d0e5d2;
-      --green:#d9f0dc; --green2:#c9e7cf; --brand:#156f3d; --brand2:#0f5d32;
-      --danger:#c93535; --shadow:0 10px 28px rgba(16,24,40,.10); --radius:16px;
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg)}
-    body{padding-bottom:calc(18px + var(--safe-bottom))}
-    a{color:#0057d8}
-    .page{max-width:1180px;margin:0 auto;padding:18px 16px 80px}
-    .topbar{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-bottom:14px}
-    .title h1{font-size:22px;line-height:1.2;margin:0 0 4px;font-weight:800}
-    .title p{margin:0;color:var(--muted);font-size:13px}
-    .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-    button,.btn{appearance:none;border:1px solid #cbd5e1;background:#fff;color:var(--text);border-radius:999px;padding:9px 13px;font-size:14px;line-height:1;cursor:pointer;box-shadow:0 1px 2px rgba(16,24,40,.04);text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:38px}
-    button.primary{background:var(--brand);border-color:var(--brand);color:#fff}
-    button.primary:hover{background:var(--brand2)}
-    button.danger{border-color:#fecaca;color:var(--danger);background:#fff5f5}
-    button.ghost{background:transparent;box-shadow:none}
-    button:disabled{opacity:.55;cursor:not-allowed}
-    .status{display:flex;align-items:center;gap:8px;margin:8px 0 14px;color:var(--muted);font-size:13px;min-height:18px}
-    .dot{width:8px;height:8px;border-radius:999px;background:#98a2b3;display:inline-block}.dot.ok{background:#16a34a}.dot.warn{background:#f59e0b}.dot.err{background:#ef4444}
-    .tableWrap{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:auto;border:1px solid #e4e7ec}
-    table{width:100%;border-collapse:collapse;min-width:980px;background:var(--green)}
-    th,td{border:1px solid var(--line);padding:9px 10px;text-align:center;vertical-align:middle;font-size:15px;line-height:1.35}
-    th{font-weight:800;background:var(--green2);position:sticky;top:0;z-index:2}
-    td.content{text-align:center;white-space:pre-line;min-width:320px}
-    td.links{min-width:250px;max-width:330px}.linkList{display:flex;flex-direction:column;gap:5px;align-items:center}.linkBtn{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-decoration:underline;background:none;border:0;color:#0057d8;cursor:pointer;padding:0;font-size:14px;box-shadow:none;min-height:auto;border-radius:0}
-    .actions{white-space:nowrap;min-width:118px}.actions button{padding:7px 9px;min-height:32px;font-size:13px}
-    .mobileList{display:none;gap:12px}.card{background:#d9f0dc;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:13px}.cardTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px}.dateLine{font-weight:800}.weekday{color:var(--muted);font-size:13px;margin-top:2px}.cardContent{white-space:pre-line;line-height:1.45;margin:10px 0;text-align:left}.meta{font-size:13px;color:var(--muted);margin-top:8px}.cardActions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.cardActions button{flex:1;justify-content:center}
-    .empty{background:#fff;border:1px dashed #cbd5e1;border-radius:16px;padding:30px;text-align:center;color:var(--muted)}
-    .fabLang{position:fixed;right:18px;bottom:calc(18px + var(--safe-bottom));z-index:20;width:54px;height:54px;border-radius:18px;background:var(--brand);color:#fff;border:0;box-shadow:0 14px 30px rgba(21,111,61,.35);font-weight:800;display:flex;align-items:center;justify-content:center;padding:0}
-    .modalMask{display:none;position:fixed;inset:0;background:rgba(15,23,42,.52);z-index:40;padding:18px;align-items:center;justify-content:center}.modalMask.show{display:flex}.modal{width:min(720px,100%);max-height:calc(100vh - 36px);background:#fff;border-radius:20px;box-shadow:0 22px 60px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column}.modalHeader{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #eaecf0}.modalHeader h2{font-size:18px;margin:0}.modalBody{padding:16px;overflow:auto}.modalFooter{display:flex;justify-content:flex-end;gap:10px;padding:14px 16px;border-top:1px solid #eaecf0;background:#fff}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:13px;color:#475467;font-weight:700}input,textarea,select{width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:10px 11px;font-size:16px;background:#fff;color:var(--text)}textarea{min-height:110px;resize:vertical}.hint{font-size:12px;color:var(--muted);margin-top:5px}.peoplePicker{position:relative}.peopleToggle{width:100%;justify-content:space-between;border-radius:12px;background:#fff;min-height:43px;padding:10px 11px;text-align:left}.peoplePanel{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid #d0d5dd;border-radius:14px;box-shadow:var(--shadow);z-index:5;max-height:240px;overflow:auto;padding:8px}.peoplePanel.open{display:block}.peopleOption{display:flex;align-items:center;gap:8px;padding:9px 8px;border-radius:10px;cursor:pointer}.peopleOption:hover{background:#f2f4f7}.peopleOption input{width:auto}.chips{display:flex;gap:5px;flex-wrap:wrap}.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:999px;background:#eef4ff;color:#175cd3;font-size:12px}.viewerModal{width:min(980px,100%);height:min(760px,92vh)}.viewerBody{padding:0;height:100%;background:#f8fafc}.viewerFrame{width:100%;height:100%;border:0;background:white}.viewerFallback{padding:12px;border-bottom:1px solid #eaecf0;background:#fff;color:#667085;font-size:13px}.viewerFallback a{font-weight:700}
-    @media (max-width:760px){.page{padding:14px 12px 90px}.topbar{display:block}.title{margin-bottom:12px}.toolbar{justify-content:flex-start;gap:7px}.toolbar button{font-size:13px;padding:9px 10px}.tableWrap{display:none}.mobileList{display:flex;flex-direction:column}.grid{grid-template-columns:1fr}.modalMask{padding:10px;align-items:flex-end}.modal{max-height:92vh;border-radius:20px 20px 0 0}.modalFooter{padding-bottom:calc(14px + var(--safe-bottom))}.viewerModal{height:88vh}.fabLang{right:14px;width:52px;height:52px}.status{font-size:12px;align-items:flex-start}.actions{min-width:0}}
-  </style>
 </head>
 <body>
   <main class="page">
-    <div class="topbar">
-      <div class="title">
-        <h1 data-i18n="appTitle">行程计划表</h1>
-        <p data-i18n="subtitle">支持 Excel 导入、在线编辑、多设备同步</p>
+    <section class="top">
+      <div class="panel title">
+        <h1><span data-i18n="appTitle">行程计划 Pro</span><span class="ver">v2.0.0</span></h1>
+        <p class="sub" data-i18n="subtitle">按日期分组的更清晰界面，支持 Excel 导入、在线编辑、链接预览和多设备同步。</p>
       </div>
-      <div class="toolbar">
-        <button class="primary" id="btnAdd" data-i18n="addRow">新增行程</button>
-        <button id="btnImport" data-i18n="importExcel">导入 Excel</button>
+      <div class="panel toolbar">
+        <button class="primary" id="btnAdd" data-i18n="add">新增安排</button>
+        <button id="btnImport" data-i18n="import">导入 Excel</button>
         <button id="btnTplZh" data-i18n="tplZh">中文模板</button>
-        <button id="btnTplEn" data-i18n="tplEn">English Template</button>
+        <button id="btnTplEn" data-i18n="tplEn">英文模板</button>
         <button id="btnPeople" data-i18n="peopleConfig">人员配置</button>
         <button id="btnRefresh" data-i18n="refresh">刷新同步</button>
+        <input class="search" id="searchInput" data-i18n-placeholder="search" placeholder="搜索日期 / 内容 / 人员">
       </div>
-    </div>
-    <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">Loading...</span></div>
-    <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" hidden />
-    <section class="tableWrap">
-      <table>
-        <thead>
-          <tr>
-            <th data-i18n="language">语言</th><th data-i18n="date">日期</th><th data-i18n="weekday">星期</th><th data-i18n="plan">计划内容</th><th data-i18n="xhs">小红书链接</th><th data-i18n="participants">参与人员</th><th data-i18n="actions">操作</th>
-          </tr>
-        </thead>
-        <tbody id="planBody"></tbody>
-      </table>
     </section>
-    <section class="mobileList" id="mobileList"></section>
+
+    <section class="stats">
+      <div class="stat"><div data-i18n="days">天数</div><b id="statDays">0</b></div>
+      <div class="stat"><div data-i18n="items">安排数</div><b id="statItems">0</b></div>
+      <div class="stat"><div data-i18n="links">链接数</div><b id="statLinks">0</b></div>
+      <div class="stat"><div data-i18n="people">参与人员</div><b id="statPeople">0</b></div>
+    </section>
+
+    <section class="status">
+      <div><span class="dot" id="statusDot"></span><span id="statusText">Loading...</span></div>
+      <div id="updatedText">-</div>
+    </section>
+
+    <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" hidden>
+    <section class="board" id="board"></section>
   </main>
 
-  <button class="fabLang" id="btnLang" title="Language">中/EN</button>
+  <button class="lang" id="btnLang">EN</button>
 
-  <div class="modalMask" id="editMask">
+  <div class="mask" id="editMask">
     <div class="modal">
-      <div class="modalHeader"><h2 id="editTitle">编辑行程</h2><button class="ghost" data-close="editMask">✕</button></div>
-      <div class="modalBody">
-        <form id="editForm" class="grid">
-          <input type="hidden" id="editId" />
-          <div class="field"><label data-i18n="language">语言</label><select id="editLang"><option value="中文">中文</option><option value="English">English</option></select></div>
-          <div class="field"><label data-i18n="date">日期</label><input id="editDate" placeholder="17-May" /></div>
-          <div class="field"><label data-i18n="weekday">星期</label><input id="editWeekday" placeholder="Sunday" /></div>
-          <div class="field"><label data-i18n="participants">参与人员</label><div class="peoplePicker" id="peoplePicker"><button class="peopleToggle" id="peopleToggle" type="button"><span id="peopleSummary">请选择</span><span>⌄</span></button><div class="peoplePanel" id="peoplePanel"></div></div></div>
-          <div class="field full"><label data-i18n="plan">计划内容</label><textarea id="editContent" placeholder="计划内容可以换行"></textarea></div>
-          <div class="field full"><label data-i18n="xhs">小红书链接</label><textarea id="editLinks" placeholder="每行一个链接，例如 http://xhslink.com/o/..."></textarea><div class="hint" data-i18n="linksHint">多个链接请一行一个；点击表格里的链接会弹窗打开。</div></div>
-        </form>
+      <div class="modalHead">
+        <h2 id="editTitle">新增安排</h2>
+        <button data-close="editMask">✕</button>
       </div>
-      <div class="modalFooter"><button data-close="editMask" data-i18n="cancel">取消</button><button class="primary" id="btnSaveEdit" data-i18n="save">保存</button></div>
-    </div>
-  </div>
-
-  <div class="modalMask" id="peopleMask">
-    <div class="modal">
-      <div class="modalHeader"><h2 data-i18n="peopleConfig">人员配置</h2><button class="ghost" data-close="peopleMask">✕</button></div>
       <div class="modalBody">
-        <div class="field full"><label data-i18n="peopleList">人员列表</label><textarea id="peopleText"></textarea><div class="hint" data-i18n="peopleHint">一行一个名字，保存后会用于行程编辑里的下拉多选。</div></div>
+        <input type="hidden" id="editId">
+        <div class="grid">
+          <div class="field">
+            <label data-i18n="date">日期</label>
+            <input type="date" id="editDate">
+          </div>
+          <div class="field">
+            <label data-i18n="time">时间</label>
+            <input type="time" id="editTime">
+          </div>
+          <div class="field">
+            <label data-i18n="weekday">星期</label>
+            <input id="editWeekday" readonly>
+          </div>
+          <div class="field">
+            <label data-i18n="group">分组</label>
+            <input id="editGroup" data-i18n-placeholder="groupPlaceholder" placeholder="例如：Plan 1">
+          </div>
+          <div class="field full">
+            <label data-i18n="content">计划内容</label>
+            <textarea id="editContent" data-i18n-placeholder="contentPlaceholder"></textarea>
+          </div>
+          <div class="field full">
+            <label data-i18n="rednote">小红书链接</label>
+            <textarea id="editLinks" data-i18n-placeholder="linksPlaceholder"></textarea>
+            <div class="hint" data-i18n="linksHint">支持多个链接，每行一个；点击列表中的链接可弹窗预览。</div>
+          </div>
+          <div class="field full">
+            <label data-i18n="people">参与人员</label>
+            <div class="peoplePicker" id="peoplePicker">
+              <button type="button" class="peopleToggle" id="peopleToggle">
+                <span id="peopleSummary">请选择</span><span>▾</span>
+              </button>
+              <div class="peoplePanel" id="peoplePanel"></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="modalFooter"><button data-close="peopleMask" data-i18n="cancel">取消</button><button class="primary" id="btnSavePeople" data-i18n="save">保存</button></div>
+      <div class="modalFoot">
+        <button data-close="editMask" data-i18n="cancel">取消</button>
+        <button class="primary" id="btnSaveEdit" data-i18n="save">保存</button>
+      </div>
     </div>
   </div>
 
-  <div class="modalMask" id="viewerMask">
-    <div class="modal viewerModal">
-      <div class="modalHeader"><h2 data-i18n="linkViewer">链接预览</h2><button class="ghost" data-close="viewerMask">✕</button></div>
-      <div class="viewerFallback"><span data-i18n="iframeTip">如果页面无法在弹窗中显示，说明对方网站禁止嵌入。</span> <a id="viewerOpen" target="_blank" rel="noopener" data-i18n="openNew">新窗口打开</a></div>
-      <div class="viewerBody"><iframe class="viewerFrame" id="viewerFrame" referrerpolicy="no-referrer"></iframe></div>
+  <div class="mask" id="peopleMask">
+    <div class="modal smallModal">
+      <div class="modalHead">
+        <h2 data-i18n="peopleConfig">人员配置</h2>
+        <button data-close="peopleMask">✕</button>
+      </div>
+      <div class="modalBody">
+        <div class="field full">
+          <label data-i18n="peopleList">人员列表</label>
+          <textarea id="peopleText" class="peopleText"></textarea>
+          <div class="hint" data-i18n="peopleHint">一行一个名字。</div>
+        </div>
+      </div>
+      <div class="modalFoot">
+        <button data-close="peopleMask" data-i18n="cancel">取消</button>
+        <button class="primary" id="btnSavePeople" data-i18n="save">保存</button>
+      </div>
     </div>
   </div>
 
-<script>
-(function(){
-  // 1) 部署 Worker 后，把这里改成你的 Worker 地址，例如：https://travel-plan-api.yourname.workers.dev
-  // 2) 如果留空，会只读取同目录 data.json；编辑保存会降级为本机 localStorage，不能多设备同步。
-  const CONFIG = {
-    apiBase: "",
-    autoRefreshMs: 15000,
-    localKey: "travel-plan-local-data-v1",
-    passwordKey: "travel-plan-write-password"
-  };
+  <div class="mask" id="viewerMask">
+    <div class="modal viewer">
+      <div class="modalHead">
+        <h2 data-i18n="preview">链接预览</h2>
+        <button data-close="viewerMask">✕</button>
+      </div>
+      <div class="viewerTip">
+        <span data-i18n="iframeTip">如果无法显示，请新窗口打开。</span>
+        <a id="viewerOpen" target="_blank" rel="noopener noreferrer" data-i18n="openNew">新窗口打开</a>
+      </div>
+      <iframe id="viewerFrame" referrerpolicy="no-referrer"></iframe>
+    </div>
+  </div>
 
-  const DEFAULT_DATA = {
-    version: 1,
-    updatedAt: "",
-    peopleOptions: ["Evan", "Gonca", "Ainiya", "Lin", "Mom", "全家"],
-    rows: [
-      {id: uid(), lang:"中文", date:"17-May", weekday:"Sunday", content:"午饭后去市中心逛街，晚上住酒店", links:[], participants:["Evan","Gonca"]},
-      {id: uid(), lang:"中文", date:"18-May", weekday:"Monday", content:"早上去体检，午饭后出发去橘子洲头,零食王国", links:["http://xhslink.com/o/4fAotv0DtEv"], participants:["Evan","Gonca","Ainiya","Lin"]},
-      {id: uid(), lang:"中文", date:"19-May", weekday:"Tuesday", content:"早上去办银行卡，然后出发长沙华谊兄弟电影小镇", links:["http://xhslink.com/o/2SrlJCvzOXb"], participants:["Evan","Gonca"]},
-      {id: uid(), lang:"中文", date:"20-May", weekday:"Wednesday", content:"株洲小众南法庄园\n株洲攸县酒仙湖", links:["http://xhslink.com/o/ACQvZz4bh7U","http://xhslink.com/o/70msgGQjc3q"], participants:["Evan","Gonca"]},
-      {id: uid(), lang:"中文", date:"21-May", weekday:"Thursday", content:"早点吃午饭然后去动物园", links:["http://xhslink.com/o/2szPYKOkA9l"], participants:["Evan","Gonca","Ainiya","Mom"]},
-      {id: uid(), lang:"中文", date:"22-May", weekday:"Friday", content:"一起去吃龙虾或者烧烤", links:[], participants:["全家"]},
-      {id: uid(), lang:"中文", date:"23-May", weekday:"Saturday", content:"株洲港湾咖啡馆", links:["http://xhslink.com/o/3zoe1CNfnPz"], participants:["Evan","Gonca"]},
-      {id: uid(), lang:"中文", date:"24-May", weekday:"Sunday", content:"休息，准备行李", links:[], participants:[]}
-    ]
-  };
-
-  const I18N = {
-    zh: {appTitle:"行程计划表",subtitle:"支持 Excel 导入、在线编辑、多设备同步",addRow:"新增行程",importExcel:"导入 Excel",tplZh:"中文模板",tplEn:"英文模板",peopleConfig:"人员配置",refresh:"刷新同步",language:"语言",date:"日期",weekday:"星期",plan:"计划内容",xhs:"小红书链接",participants:"参与人员",actions:"操作",edit:"编辑",delete:"删除",cancel:"取消",save:"保存",editTrip:"编辑行程",newTrip:"新增行程",selectPeople:"请选择",linksHint:"多个链接请一行一个；点击表格里的链接会弹窗打开。",peopleList:"人员列表",peopleHint:"一行一个名字，保存后会用于行程编辑里的下拉多选。",linkViewer:"链接预览",iframeTip:"如果页面无法在弹窗中显示，说明对方网站禁止嵌入。",openNew:"新窗口打开",loading:"正在加载数据...",loaded:"数据已加载",saved:"已保存并同步",localSaved:"Worker 未配置或不可用，已保存到本机 localStorage",imported:"Excel 已导入并保存",badFile:"未识别到有效行，请检查表头",confirmDelete:"确定删除这一行程吗？",needPwd:"请输入 Cloudflare Worker 写入密码",wrongPwd:"密码错误或没有写入权限",networkErr:"同步失败，请检查 Worker 地址/CORS/网络",empty:"暂无行程，点击“新增行程”创建。",open:"打开",updated:"更新时间"},
-    en: {appTitle:"Travel Plan",subtitle:"Excel import, inline editing, multi-device sync",addRow:"Add",importExcel:"Import Excel",tplZh:"Chinese Template",tplEn:"English Template",peopleConfig:"People",refresh:"Refresh",language:"Language",date:"Date",weekday:"Weekday",plan:"Plan",xhs:"Xiaohongshu Links",participants:"Participants",actions:"Actions",edit:"Edit",delete:"Delete",cancel:"Cancel",save:"Save",editTrip:"Edit Plan",newTrip:"Add Plan",selectPeople:"Select people",linksHint:"Use one link per line. Click a link in the table to open it in a popup.",peopleList:"People List",peopleHint:"One name per line. The list will be used in the participant multi-select.",linkViewer:"Link Preview",iframeTip:"If the page does not display, the website blocks embedded pages.",openNew:"Open in new window",loading:"Loading data...",loaded:"Data loaded",saved:"Saved and synced",localSaved:"Worker is not configured or unavailable; saved to localStorage only",imported:"Excel imported and saved",badFile:"No valid rows found. Please check headers.",confirmDelete:"Delete this plan?",needPwd:"Enter Cloudflare Worker write password",wrongPwd:"Wrong password or no write permission",networkErr:"Sync failed. Check Worker URL, CORS, or network.",empty:"No plans yet. Click Add to create one.",open:"Open",updated:"Updated"}
-  };
-
-  let appLang = localStorage.getItem("travel-plan-ui-lang") || "zh";
-  let data = clone(DEFAULT_DATA);
-  let selectedPeople = [];
-  let autoTimer = null;
-
-  function uid(){return "r_" + Math.random().toString(36).slice(2) + Date.now().toString(36)}
-  function clone(v){return JSON.parse(JSON.stringify(v))}
-  function t(k){return (I18N[appLang] && I18N[appLang][k]) || I18N.zh[k] || k}
-  function esc(s){return String(s == null ? "" : s).replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]))}
-  function normalizeUrl(u){u = String(u||"").trim(); return /^https?:\/\//i.test(u) ? u : ""}
-  function dataUrl(){return (CONFIG.apiBase ? CONFIG.apiBase.replace(/\/$/,"") : "") + "/data.json"}
-  function splitList(s){return String(s||"").split(/[\n,，;；]+/).map(x=>x.trim()).filter(Boolean)}
-  function setStatus(kind,msg){$("#statusDot").removeClass("ok warn err").addClass(kind||""); $("#statusText").text(msg)}
-  function stamp(){return data.updatedAt ? `${t("updated")}: ${new Date(data.updatedAt).toLocaleString()}` : ""}
-
-  function normalizeData(raw){
-    const d = raw && typeof raw === "object" ? raw : clone(DEFAULT_DATA);
-    d.version = d.version || 1;
-    d.peopleOptions = Array.isArray(d.peopleOptions) ? d.peopleOptions.map(String).filter(Boolean) : clone(DEFAULT_DATA.peopleOptions);
-    d.rows = Array.isArray(d.rows) ? d.rows : [];
-    d.rows = d.rows.map(r => ({
-      id: r.id || uid(), lang: r.lang || r.language || "中文", date: r.date || "", weekday: r.weekday || "", content: r.content || r.plan || "",
-      links: Array.isArray(r.links) ? r.links.map(normalizeUrl).filter(Boolean) : splitList(r.links || r.link).map(normalizeUrl).filter(Boolean),
-      participants: Array.isArray(r.participants) ? r.participants.map(String).filter(Boolean) : splitList(r.participants)
-    }));
-    d.rows.forEach(r => r.participants.forEach(p => { if(!d.peopleOptions.includes(p)) d.peopleOptions.push(p); }));
-    d.updatedAt = d.updatedAt || "";
-    return d;
-  }
-
-  function applyI18n(){
-    document.documentElement.lang = appLang === "zh" ? "zh-CN" : "en";
-    $("[data-i18n]").each(function(){ const key=$(this).data("i18n"); $(this).text(t(key)); });
-    $("#btnLang").text(appLang === "zh" ? "EN" : "中");
-    $("#statusText").text(stamp() || t("loaded"));
-  }
-
-  function render(){
-    applyI18n();
-    const rows = data.rows || [];
-    if(!rows.length){
-      $("#planBody").html(`<tr><td colspan="7"><div class="empty">${esc(t("empty"))}</div></td></tr>`);
-      $("#mobileList").html(`<div class="empty">${esc(t("empty"))}</div>`);
-      return;
-    }
-    $("#planBody").html(rows.map(row => {
-      const links = row.links.length ? `<div class="linkList">${row.links.map(l=>`<button class="linkBtn" data-link="${esc(l)}" title="${esc(l)}">${esc(l)}</button>`).join("")}</div>` : "";
-      return `<tr>
-        <td>${esc(row.lang)}</td><td>${esc(row.date)}</td><td>${esc(row.weekday)}</td><td class="content">${esc(row.content)}</td><td class="links">${links}</td><td>${esc(row.participants.join(","))}</td>
-        <td class="actions"><button data-edit="${esc(row.id)}">${esc(t("edit"))}</button> <button class="danger" data-del="${esc(row.id)}">${esc(t("delete"))}</button></td>
-      </tr>`;
-    }).join(""));
-    $("#mobileList").html(rows.map(row => {
-      const links = row.links.length ? `<div class="linkList" style="align-items:flex-start">${row.links.map(l=>`<button class="linkBtn" data-link="${esc(l)}">${esc(l)}</button>`).join("")}</div>` : "";
-      return `<article class="card">
-        <div class="cardTop"><div><div class="dateLine">${esc(row.date)}</div><div class="weekday">${esc(row.weekday)} · ${esc(row.lang)}</div></div><div class="chips">${row.participants.map(p=>`<span class="chip">${esc(p)}</span>`).join("")}</div></div>
-        <div class="cardContent">${esc(row.content)}</div>${links}<div class="cardActions"><button data-edit="${esc(row.id)}">${esc(t("edit"))}</button><button class="danger" data-del="${esc(row.id)}">${esc(t("delete"))}</button></div>
-      </article>`;
-    }).join(""));
-    setStatus("ok", stamp() || t("loaded"));
-  }
-
-  async function loadData(silent){
-    if(!silent) setStatus("warn", t("loading"));
-    try{
-      let raw;
-      const res = await fetch(dataUrl() + "?t=" + Date.now(), {cache:"no-store"});
-      if(!res.ok) throw new Error("load failed");
-      raw = await res.json();
-      data = normalizeData(raw);
-      localStorage.setItem(CONFIG.localKey, JSON.stringify(data));
-      render();
-    }catch(e){
-      const local = localStorage.getItem(CONFIG.localKey);
-      data = normalizeData(local ? JSON.parse(local) : DEFAULT_DATA);
-      render();
-      setStatus(CONFIG.apiBase ? "err" : "warn", CONFIG.apiBase ? t("networkErr") : t("localSaved"));
-    }
-  }
-
-  async function saveData(){
-    data.updatedAt = new Date().toISOString();
-    data = normalizeData(data);
-    localStorage.setItem(CONFIG.localKey, JSON.stringify(data));
-    if(!CONFIG.apiBase){ render(); setStatus("warn", t("localSaved")); return; }
-    const doPut = async (pwd) => fetch(dataUrl(), {method:"PUT", headers:{"Content-Type":"application/json","X-App-Password":pwd||""}, body:JSON.stringify(data)});
-    try{
-      let pwd = sessionStorage.getItem(CONFIG.passwordKey) || "";
-      let res = await doPut(pwd);
-      if(res.status === 401){
-        pwd = prompt(t("needPwd")) || "";
-        if(!pwd) throw new Error("no password");
-        res = await doPut(pwd);
-        if(res.ok) sessionStorage.setItem(CONFIG.passwordKey, pwd);
-      }
-      if(!res.ok) throw new Error("save failed " + res.status);
-      render(); setStatus("ok", t("saved"));
-    }catch(e){ render(); setStatus("err", e.message && e.message.includes("401") ? t("wrongPwd") : t("networkErr")); }
-  }
-
-  function openEdit(id){
-    const row = id ? data.rows.find(x=>x.id===id) : {id:uid(), lang:"中文", date:"", weekday:"", content:"", links:[], participants:[]};
-    if(!row) return;
-    $("#editTitle").text(id ? t("editTrip") : t("newTrip"));
-    $("#editId").val(row.id); $("#editLang").val(row.lang); $("#editDate").val(row.date); $("#editWeekday").val(row.weekday); $("#editContent").val(row.content); $("#editLinks").val((row.links||[]).join("\n"));
-    selectedPeople = clone(row.participants || []); renderPeoplePicker(); showModal("editMask");
-  }
-
-  function renderPeoplePicker(){
-    const opts = data.peopleOptions || [];
-    $("#peopleSummary").html(selectedPeople.length ? `<span class="chips">${selectedPeople.map(p=>`<span class="chip">${esc(p)}</span>`).join("")}</span>` : esc(t("selectPeople")));
-    $("#peoplePanel").html(opts.map(p=>`<label class="peopleOption"><input type="checkbox" value="${esc(p)}" ${selectedPeople.includes(p)?"checked":""}> <span>${esc(p)}</span></label>`).join(""));
-  }
-
-  function saveEdit(){
-    const id = $("#editId").val();
-    const row = {id, lang:$("#editLang").val(), date:$("#editDate").val().trim(), weekday:$("#editWeekday").val().trim(), content:$("#editContent").val().trim(), links:splitList($("#editLinks").val()).map(normalizeUrl).filter(Boolean), participants:clone(selectedPeople)};
-    row.participants.forEach(p=>{ if(!data.peopleOptions.includes(p)) data.peopleOptions.push(p); });
-    const i = data.rows.findIndex(x=>x.id===id);
-    if(i >= 0) data.rows[i] = row; else data.rows.push(row);
-    hideModal("editMask"); saveData();
-  }
-
-  function deleteRow(id){
-    if(!confirm(t("confirmDelete"))) return;
-    data.rows = data.rows.filter(x=>x.id!==id); saveData();
-  }
-
-  function showModal(id){ $("#"+id).addClass("show"); }
-  function hideModal(id){ $("#"+id).removeClass("show"); if(id==="viewerMask") $("#viewerFrame").attr("src","about:blank"); }
-  function openLink(link){ link = normalizeUrl(link); if(!link) return; $("#viewerOpen").attr("href", link); $("#viewerFrame").attr("src", link); showModal("viewerMask"); }
-
-  function headerVal(obj, keys){
-    const lower = {}; Object.keys(obj).forEach(k=> lower[String(k).trim().toLowerCase()] = obj[k]);
-    for(const k of keys){ const v = lower[String(k).trim().toLowerCase()]; if(v !== undefined && v !== null && String(v).trim() !== "") return v; }
-    return "";
-  }
-  function fmtCell(v){
-    if(v instanceof Date && !isNaN(v)) return v.toLocaleDateString("en-US", {day:"2-digit", month:"short"}).replace(",","");
-    return String(v == null ? "" : v).trim();
-  }
-  function importExcel(file){
-    const reader = new FileReader();
-    reader.onload = e => {
-      try{
-        const wb = XLSX.read(new Uint8Array(e.target.result), {type:"array", cellDates:true});
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const arr = XLSX.utils.sheet_to_json(ws, {defval:"", raw:false});
-        const rows = arr.map(o => {
-          const lang = fmtCell(headerVal(o,["语言","Language","Lang"]));
-          const date = fmtCell(headerVal(o,["日期","Date"]));
-          const weekday = fmtCell(headerVal(o,["星期","Weekday","Day"]));
-          const content = fmtCell(headerVal(o,["计划内容","Plan Content","Plan","Content"]));
-          const links = splitList(fmtCell(headerVal(o,["小红书链接","Xiaohongshu Link","XHS Link","Link","Links"]))).map(normalizeUrl).filter(Boolean);
-          const participants = splitList(fmtCell(headerVal(o,["参与人员","Participants","People"]))) ;
-          if(!date && !weekday && !content && !links.length && !participants.length) return null;
-          return {id:uid(), lang:lang || (appLang==="zh" ? "中文" : "English"), date, weekday, content, links, participants};
-        }).filter(Boolean);
-        if(!rows.length) { alert(t("badFile")); return; }
-        rows.forEach(r => r.participants.forEach(p => { if(!data.peopleOptions.includes(p)) data.peopleOptions.push(p); }));
-        data.rows = rows; saveData(); setStatus("ok", t("imported"));
-      }catch(err){ alert(t("badFile")); }
-      $("#excelFile").val("");
-    };
-    reader.readAsArrayBuffer(file);
-  }
-
-  function downloadTemplate(lang){
-    const zh = lang === "zh";
-    const header = zh ? ["语言","日期","星期","计划内容","小红书链接","参与人员"] : ["Language","Date","Weekday","Plan Content","Xiaohongshu Link","Participants"];
-    const sample = zh ? ["中文","17-May","Sunday","午饭后去市中心逛街，晚上住酒店","http://xhslink.com/o/example","Evan,Gonca"] : ["English","17-May","Sunday","Go shopping downtown after lunch, stay at hotel at night","http://xhslink.com/o/example","Evan,Gonca"];
-    const ws = XLSX.utils.aoa_to_sheet([header, sample]);
-    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-cn-template.xlsx" : "travel-plan-en-template.xlsx");
-  }
-
-  $(document).on("click","[data-close]", function(){ hideModal($(this).data("close")); });
-  $(document).on("click", ".modalMask", function(e){ if(e.target === this) hideModal(this.id); });
-  $(document).on("click","[data-edit]", function(){ openEdit($(this).data("edit")); });
-  $(document).on("click","[data-del]", function(){ deleteRow($(this).data("del")); });
-  $(document).on("click",".linkBtn", function(){ openLink($(this).data("link")); });
-  $("#btnAdd").on("click", () => openEdit(null));
-  $("#btnSaveEdit").on("click", saveEdit);
-  $("#btnImport").on("click", () => $("#excelFile").click());
-  $("#excelFile").on("change", function(){ if(this.files && this.files[0]) importExcel(this.files[0]); });
-  $("#btnTplZh").on("click", () => downloadTemplate("zh"));
-  $("#btnTplEn").on("click", () => downloadTemplate("en"));
-  $("#btnRefresh").on("click", () => loadData(false));
-  $("#btnLang").on("click", () => { appLang = appLang === "zh" ? "en" : "zh"; localStorage.setItem("travel-plan-ui-lang", appLang); render(); });
-  $("#btnPeople").on("click", () => { $("#peopleText").val((data.peopleOptions||[]).join("\n")); showModal("peopleMask"); });
-  $("#btnSavePeople").on("click", () => { data.peopleOptions = $("#peopleText").val().split(/\n+/).map(x=>x.trim()).filter(Boolean); hideModal("peopleMask"); saveData(); });
-  $("#peopleToggle").on("click", () => $("#peoplePanel").toggleClass("open"));
-  $(document).on("change", "#peoplePanel input", function(){ const v=$(this).val(); if(this.checked){ if(!selectedPeople.includes(v)) selectedPeople.push(v); } else { selectedPeople = selectedPeople.filter(x=>x!==v); } renderPeoplePicker(); $("#peoplePanel").addClass("open"); });
-  $(document).on("click", function(e){ if(!$(e.target).closest("#peoplePicker").length) $("#peoplePanel").removeClass("open"); });
-  document.addEventListener("visibilitychange", () => { if(!document.hidden) loadData(true); });
-
-  loadData(false);
-  autoTimer = setInterval(() => loadData(true), CONFIG.autoRefreshMs);
-})();
-</script>
+  <script src="./app.js"></script>
 </body>
 </html>
