@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.25.0";
+  const APP_VERSION = "v2.26.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -184,12 +184,28 @@
   let modalScrollY = 0;
   let modalBaseHeight = 0;
 
+  function isStandaloneMode() {
+    return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+  }
+
+  function refreshStandaloneClass() {
+    const standalone = isStandaloneMode();
+    document.body.classList.toggle("isStandalone", standalone);
+    document.documentElement.classList.toggle("isStandalone", standalone);
+  }
+
   function setBottomUiOffsetVar() {
     let offset = 0;
     const isMobile = window.matchMedia && window.matchMedia("(max-width: 760px)").matches;
-    const standalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone;
+    const standalone = isStandaloneMode();
 
-    if (isMobile && window.visualViewport && !standalone) {
+    refreshStandaloneClass();
+
+    if (isMobile && standalone) {
+      // iOS 添加到主屏幕后没有 Safari 底部工具栏，但仍有 Home Indicator 安全区。
+      // 部分机型 env(safe-area-inset-bottom) 在弹窗内返回不稳定，所以这里给固定保护距离。
+      offset = 56;
+    } else if (isMobile && window.visualViewport) {
       const vv = window.visualViewport;
       const base = window.innerHeight || document.documentElement.clientHeight || 0;
       const chromeBottom = Math.max(0, Math.round(base - (vv.height + vv.offsetTop)));
@@ -1005,7 +1021,7 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.25.0.xlsx" : "travel-plan-pro-en-v2.25.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.26.0.xlsx" : "travel-plan-pro-en-v2.26.0.xlsx");
   }
 
   async function testCloud() {
@@ -1245,7 +1261,7 @@
   $("#searchInput").on("input", render);
   $("#editDate").on("input change", refreshWeekday);
   function positionDesktopPeoplePanel() {
-    // v2.25.0: PC People 面板改为 CSS absolute，固定在下拉框正下方。
+    // v2.26.0: PC People 面板改为 CSS absolute，固定在下拉框正下方。
     // 不再用 JS 计算 viewport fixed 坐标，避免跑到计划内容 / 小红书链接区域。
     return;
   }
@@ -1277,14 +1293,15 @@
 
   document.addEventListener("visibilitychange", function () { if (!document.hidden) loadData(true); });
 
+  refreshStandaloneClass();
   setAppHeightVar();
-  window.addEventListener("resize", setAppHeightVar);
+  window.addEventListener("resize", function () { refreshStandaloneClass(); setAppHeightVar(); });
   if (window.visualViewport) {
     window.visualViewport.addEventListener("resize", function () { setAppHeightVar(); refreshKeyboardState(); });
     window.visualViewport.addEventListener("scroll", function () { setAppHeightVar(); refreshKeyboardState(); });
   }
   window.addEventListener("orientationchange", function () {
-    setTimeout(setAppHeightVar, 250);
+    setTimeout(function () { refreshStandaloneClass(); setAppHeightVar(); }, 250);
   });
 
 

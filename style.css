@@ -190,7 +190,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.25.0 floating action buttons */
+/* v2.26.0 floating action buttons */
 .hero{align-items:center}
 .heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
 .heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
@@ -245,7 +245,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.25.0 clean overrides */
+/* v2.26.0 clean overrides */
 .hero{align-items:center}
 .heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
 .heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
@@ -349,7 +349,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.25.0 iOS PWA top safe-area fix */
+/* v2.26.0 iOS PWA top safe-area fix */
 :root{
   --safe-top: env(safe-area-inset-top, 0px);
   --mobile-top-gap: 16px;
@@ -398,7 +398,7 @@ html.pwa .hero{
 }
 
 
-/* v2.25.0 mobile modal scroll lock */
+/* v2.26.0 mobile modal scroll lock */
 html.modalLocked,
 body.modalLocked{
   width:100%;
@@ -472,7 +472,7 @@ body.modalLocked{
 }
 
 
-/* v2.25.0 fixed mobile edit modal: no bounce / no floating */
+/* v2.26.0 fixed mobile edit modal: no bounce / no floating */
 :root{
   --app-height: 100vh;
 }
@@ -566,7 +566,7 @@ body.modalLocked{
 }
 
 
-/* v2.25.0 mobile date picker and horizontal swipe lock */
+/* v2.26.0 mobile date picker and horizontal swipe lock */
 html,
 body{
   overflow-x:hidden!important;
@@ -691,7 +691,7 @@ body{
 }
 
 
-/* v2.25.0 mobile date picker final fix */
+/* v2.26.0 mobile date picker final fix */
 body.modalLocked .fabGroup{
   display:none!important;
 }
@@ -766,7 +766,7 @@ body.modalLocked{
 }
 
 
-/* v2.25.0 native Safari date input */
+/* v2.26.0 native Safari date input */
 #editDate{
   -webkit-appearance:none;
   appearance:none;
@@ -827,7 +827,7 @@ body,
 }
 
 
-/* v2.25.0 mobile keyboard stability */
+/* v2.26.0 mobile keyboard stability */
 #editTime{
   width:auto!important;
   min-width:132px;
@@ -933,7 +933,7 @@ body.modalLocked{
 }
 
 
-/* v2.25.0 people picker mobile optimization */
+/* v2.26.0 people picker mobile optimization */
 #peoplePicker{
   position:relative;
 }
@@ -1048,7 +1048,7 @@ body.modalLocked{
 }
 
 
-/* v2.25.0 edit form order and Rednote height */
+/* v2.26.0 edit form order and Rednote height */
 #editMask .editFieldDate{order:1;}
 #editMask .editFieldTime{order:2;}
 #editMask .editFieldWeekday{order:3;}
@@ -1084,7 +1084,7 @@ body.modalLocked{
 }
 
 
-/* v2.25.0 PC edit modal and people dropdown optimization */
+/* v2.26.0 PC edit modal and people dropdown optimization */
 @media(min-width:761px){
   #editMask{
     align-items:center!important;
@@ -1266,7 +1266,7 @@ body.modalLocked{
 }
 
 
-/* v2.25.0 PC people picker + edit modal final layout */
+/* v2.26.0 PC people picker + edit modal final layout */
 @media(min-width:761px){
   #editMask{
     padding:18px!important;
@@ -1418,7 +1418,7 @@ body.modalLocked{
   }
 }
 
-/* v2.25.0 mobile footer: never disappear after keyboard / scrolling */
+/* v2.26.0 mobile footer: never disappear after keyboard / scrolling */
 @media(max-width:760px){
   #editMask .modalFoot{
     display:flex!important;
@@ -1448,7 +1448,7 @@ body.modalLocked{
 }
 
 
-/* v2.25.0 PC people picker floating dropdown */
+/* v2.26.0 PC people picker floating dropdown */
 @media(min-width:761px){
   /* PC 端 People 面板改回悬浮，不再撑高编辑弹窗 */
   #peoplePicker{
@@ -1524,7 +1524,7 @@ body.modalLocked{
 }
 
 
-/* v2.25.0 PC people dropdown: always float directly below the clicked dropdown */
+/* v2.26.0 PC people dropdown: always float directly below the clicked dropdown */
 @media(min-width:761px){
   #peoplePicker{
     position:relative!important;
@@ -1569,7 +1569,7 @@ body.modalLocked{
 }
 
 
-/* v2.25.0 PC People dropdown final: float directly under the dropdown */
+/* v2.26.0 PC People dropdown final: float directly under the dropdown */
 @media(min-width:761px){
   #editMask .modal,
   #editMask .modalBody,
@@ -1622,7 +1622,7 @@ body.modalLocked{
 }
 
 
-/* v2.25.0 mobile footer visible above Safari bottom toolbar */
+/* v2.26.0 mobile footer visible above Safari bottom toolbar */
 :root{
   --bottom-ui-offset:0px;
 }
@@ -1650,5 +1650,52 @@ body.modalLocked{
 
   body.keyboardOpen #editMask .modalBody{
     padding-bottom:calc(150px + var(--bottom-ui-offset,0px) + env(safe-area-inset-bottom,0px))!important;
+  }
+}
+
+
+/* v2.26.0 iOS PWA standalone footer fix */
+:root{
+  --standalone-bottom-guard:56px;
+}
+
+@media(max-width:760px){
+  html.isStandalone,
+  body.isStandalone{
+    background:#f3f6fb!important;
+  }
+
+  html.isStandalone #editMask .modal,
+  body.isStandalone #editMask .modal{
+    height:calc(var(--app-height) - env(safe-area-inset-top,0px) - var(--standalone-bottom-guard) - 8px)!important;
+    max-height:calc(var(--app-height) - env(safe-area-inset-top,0px) - var(--standalone-bottom-guard) - 8px)!important;
+    bottom:var(--standalone-bottom-guard)!important;
+  }
+
+  html.isStandalone #editMask .modalBody,
+  body.isStandalone #editMask .modalBody{
+    padding-bottom:calc(170px + var(--standalone-bottom-guard) + env(safe-area-inset-bottom,0px))!important;
+  }
+
+  html.isStandalone #editMask .modalFoot,
+  body.isStandalone #editMask .modalFoot{
+    position:sticky!important;
+    bottom:calc(var(--standalone-bottom-guard) + env(safe-area-inset-bottom,0px))!important;
+    padding-bottom:18px!important;
+    margin-bottom:0!important;
+    background:#fff!important;
+    box-shadow:0 -10px 28px rgba(15,23,42,.08)!important;
+    z-index:50!important;
+  }
+
+  html.isStandalone body.keyboardOpen #editMask .modalFoot,
+  body.isStandalone.keyboardOpen #editMask .modalFoot{
+    bottom:calc(var(--standalone-bottom-guard) + env(safe-area-inset-bottom,0px))!important;
+    display:flex!important;
+  }
+
+  html.isStandalone body.keyboardOpen #editMask .modalBody,
+  body.isStandalone.keyboardOpen #editMask .modalBody{
+    padding-bottom:calc(170px + var(--standalone-bottom-guard) + env(safe-area-inset-bottom,0px))!important;
   }
 }
