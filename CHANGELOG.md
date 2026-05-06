@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.3.0
+## v2.3.1
 
 - 按要求将 `APP_PASSWORD` 也保存到 `data.json` 的 `settings.cloudflare.appPassword`。
 - Worker 兼容 GitHub 存储模式：`GH_OWNER`、`GH_REPO`、`GH_BRANCH`、`DATA_PATH`、`GH_TOKEN`。

@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.3.0";
+  const APP_VERSION = "v2.3.1";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const LS_API = "travel-plan-cloudflare-api-base";
@@ -81,7 +81,7 @@
       iframeTip: "如果无法显示，请新窗口打开。",
       openNew: "新窗口打开",
       workerUrl: "Worker 地址",
-      workerUrlHint: "Worker 地址会保存到 data.json 的 settings.cloudflare.apiBase。",
+      workerUrlHint: "Worker 地址会保存到 data.json 的 settings.cloudflare.apiBase。可填写根地址、/data 或 /data.json，系统会自动兼容。",
       workerPassword: "写入密码",
       passwordHint: "对应 Cloudflare Worker Secret：APP_PASSWORD。本版本会按你的要求保存到 data.json 的 settings.cloudflare.appPassword。",
       testCloud: "测试读取",
@@ -90,7 +90,7 @@
       cloudReady: "Cloudflare 已配置，同步地址：",
       cloudSaved: "Cloudflare 配置和 APP_PASSWORD 已保存到 data.json。",
       cloudTestOk: "测试成功，已从 Cloudflare 读取数据。",
-      cloudTestFail: "测试失败，请检查 Worker 地址、CORS 或网络。",
+      cloudTestFail: "测试失败，请检查 Worker 地址、路径、CORS、GitHub Token 权限或网络。",
       loading: "正在加载数据...",
       loaded: "数据已加载",
       saved: "已保存并同步",
@@ -146,7 +146,7 @@
       iframeTip: "If the page does not load, open it in a new window.",
       openNew: "Open in new window",
       workerUrl: "Worker URL",
-      workerUrlHint: "The Worker URL is saved to data.json at settings.cloudflare.apiBase.",
+      workerUrlHint: "The Worker URL is saved to data.json at settings.cloudflare.apiBase. Root URL, /data, and /data.json are supported.",
       workerPassword: "Write Password",
       passwordHint: "This matches the Cloudflare Worker Secret: APP_PASSWORD. In this version, it is saved to data.json at settings.cloudflare.appPassword as requested.",
       testCloud: "Test Read",
@@ -155,7 +155,7 @@
       cloudReady: "Cloudflare is configured. Sync URL:",
       cloudSaved: "Cloudflare config and APP_PASSWORD were saved to data.json.",
       cloudTestOk: "Test succeeded. Data was loaded from Cloudflare.",
-      cloudTestFail: "Test failed. Check the Worker URL, CORS, or network.",
+      cloudTestFail: "Test failed. Check the Worker URL/path, CORS, GitHub token permissions, or network.",
       loading: "Loading data...",
       loaded: "Data loaded",
       saved: "Saved and synced",
@@ -215,10 +215,18 @@
     };
   }
 
+  function normalizeWorkerBase(api) {
+    let clean = String(api || "").trim().replace(/\/+$/, "");
+    // Compatible with users pasting the full endpoint, for example:
+    // https://xxx.workers.dev/data or https://xxx.workers.dev/data.json
+    clean = clean.replace(/\/data\.json$/i, "").replace(/\/data$/i, "");
+    return clean;
+  }
+
   function getSettings() {
     if (!data.settings || typeof data.settings !== "object") data.settings = defaultSettings();
     if (!data.settings.cloudflare || typeof data.settings.cloudflare !== "object") data.settings.cloudflare = defaultSettings().cloudflare;
-    data.settings.cloudflare.apiBase = String(data.settings.cloudflare.apiBase || "").trim().replace(/\/$/, "");
+    data.settings.cloudflare.apiBase = normalizeWorkerBase(data.settings.cloudflare.apiBase || "");
     data.settings.cloudflare.appPassword = String(data.settings.cloudflare.appPassword || localStorage.getItem(LS_PASSWORD) || "");
     data.settings.cloudflare.configSavedInDataJson = true;
     data.settings.cloudflare.passwordStorage = "data.json settings.cloudflare.appPassword";
@@ -226,7 +234,7 @@
   }
 
   function setCloudApiBase(api) {
-    const clean = String(api || "").trim().replace(/\/$/, "");
+    const clean = normalizeWorkerBase(api);
     getSettings().cloudflare.apiBase = clean;
     if (clean) localStorage.setItem(LS_API, clean);
     else localStorage.removeItem(LS_API);
@@ -234,7 +242,7 @@
 
   function getApiBase() {
     const fromDataJson = data && data.settings && data.settings.cloudflare ? data.settings.cloudflare.apiBase : "";
-    return String(fromDataJson || localStorage.getItem(LS_API) || "").trim().replace(/\/$/, "");
+    return normalizeWorkerBase(fromDataJson || localStorage.getItem(LS_API) || "");
   }
 
   function setCloudPassword(password) {
@@ -391,7 +399,7 @@
     const srcSettings = src.settings && typeof src.settings === "object" ? src.settings : {};
     const srcCloudflare = srcSettings.cloudflare && typeof srcSettings.cloudflare === "object" ? srcSettings.cloudflare : {};
     const settings = defaultSettings();
-    settings.cloudflare.apiBase = String(srcCloudflare.apiBase || src.cloudflareApiBase || localStorage.getItem(LS_API) || "").trim().replace(/\/$/, "");
+    settings.cloudflare.apiBase = normalizeWorkerBase(srcCloudflare.apiBase || src.cloudflareApiBase || localStorage.getItem(LS_API) || "");
     settings.cloudflare.appPassword = String(srcCloudflare.appPassword || srcCloudflare.APP_PASSWORD || src.appPassword || localStorage.getItem(LS_PASSWORD) || "");
     settings.cloudflare.configSavedInDataJson = true;
     settings.cloudflare.passwordStorage = "data.json settings.cloudflare.appPassword";
@@ -731,11 +739,11 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.3.0.xlsx" : "travel-plan-pro-en-v2.3.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.3.1.xlsx" : "travel-plan-pro-en-v2.3.1.xlsx");
   }
 
   async function testCloud() {
-    const api = String($("#cloudApiBase").val() || "").trim().replace(/\/$/, "");
+    const api = normalizeWorkerBase($("#cloudApiBase").val());
     if (!api) {
       $("#cloudState").text(t("cloudDisabled"));
       return;

@@ -1,4 +1,4 @@
-const APP_VERSION = "v2.3.0";
+const APP_VERSION = "v2.3.1";
 
 const DEFAULT_DATA = {
   version: APP_VERSION,
@@ -202,7 +202,8 @@ export default {
     const headers = corsHeaders(env);
 
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers });
-    if (url.pathname !== "/" && url.pathname !== "/data.json") return jsonResponse({ ok: false, error: "Not found" }, 404, env);
+    const allowedPaths = new Set(["/", "/data", "/data.json"]);
+    if (!allowedPaths.has(url.pathname)) return jsonResponse({ ok: false, error: "Not found", path: url.pathname, supported: ["/", "/data", "/data.json"] }, 404, env);
 
     if (request.method === "GET") {
       try {
