@@ -1,6 +1,6 @@
 {
   "version": "v2.40.0",
-  "updatedAt": "2026-05-06T13:41:35.466Z",
+  "updatedAt": "2026-05-06T13:49:48.186Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -74,7 +74,7 @@
       "dateISO": "2026-05-19",
       "time": "12:00",
       "group": "",
-      "content": "JuZiZhou head(orage island)/橘子洲头",
+      "content": "Orage island/橘子洲头",
       "links": [
         "https://www.xiaohongshu.com/discovery/item/68cbb578000000000b03f699?source=webshare&xhsshare=pc_web&xsec_token=ABXrSTTwLw4E7b8UHz6wh0PZESJwmrG_hBPbNHhrPi1t4=&xsec_source=pc_share"
       ],
