@@ -1,6 +1,6 @@
 {
-  "version": "v2.41.0",
-  "updatedAt": "2026-05-06T13:59:13.173Z",
+  "version": "v2.42.0",
+  "updatedAt": "2026-05-06T14:02:14.556Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -28,6 +28,7 @@
         "Evan",
         "Gonca"
       ],
+      "priority": "optional",
       "sort": 1
     },
     {
@@ -42,6 +43,7 @@
         "Gonca",
         "Sister"
       ],
+      "priority": "must",
       "sort": 2
     },
     {
@@ -55,6 +57,7 @@
         "Evan",
         "Gonca"
       ],
+      "priority": "must",
       "sort": 3
     },
     {
@@ -67,6 +70,7 @@
       "participants": [
         "Evan"
       ],
+      "priority": "must",
       "sort": 4
     },
     {
@@ -84,6 +88,7 @@
         "Ainiya",
         "Sister"
       ],
+      "priority": "must",
       "sort": 5
     },
     {
@@ -97,6 +102,7 @@
         "Evan",
         "Gonca"
       ],
+      "priority": "must",
       "sort": 10
     },
     {
@@ -114,6 +120,7 @@
         "Ainiya",
         "Mom"
       ],
+      "priority": "must",
       "sort": 12
     },
     {
@@ -129,6 +136,7 @@
         "Ainiya",
         "Mom"
       ],
+      "priority": "must",
       "sort": 13
     },
     {
@@ -142,6 +150,7 @@
         "Evan",
         "Gonca"
       ],
+      "priority": "must",
       "sort": 14
     },
     {
@@ -157,6 +166,7 @@
         "Evan",
         "Gonca"
       ],
+      "priority": "must",
       "sort": 15
     },
     {
@@ -167,6 +177,7 @@
       "content": "Rest, packing suitcase",
       "links": [],
       "participants": [],
+      "priority": "must",
       "sort": 16
     },
     {
@@ -184,6 +195,7 @@
         "Ainiya",
         "Sister"
       ],
+      "priority": "must",
       "sort": 17
     },
     {
@@ -201,6 +213,7 @@
         "Ainiya",
         "Sister"
       ],
+      "priority": "must",
       "sort": 18
     },
     {
@@ -216,6 +229,7 @@
         "Evan",
         "Gonca"
       ],
+      "priority": "must",
       "sort": 19
     },
     {
@@ -226,6 +240,7 @@
       "content": "BBQ, Lobster",
       "links": [],
       "participants": [],
+      "priority": "must",
       "sort": 20
     },
     {
@@ -236,6 +251,7 @@
       "content": "BBQ, Lobster",
       "links": [],
       "participants": [],
+      "priority": "must",
       "sort": 21
     },
     {
@@ -249,6 +265,7 @@
         "Evan",
         "Sister"
       ],
+      "priority": "must",
       "sort": 22
     },
     {
@@ -262,6 +279,7 @@
         "Evan",
         "Gonca"
       ],
+      "priority": "must",
       "sort": 23
     },
     {
@@ -274,6 +292,7 @@
       "participants": [
         "Evan"
       ],
+      "priority": "must",
       "sort": 24
     },
     {
@@ -287,6 +306,7 @@
         "Evan",
         "Gonca"
       ],
+      "priority": "must",
       "sort": 25
     },
     {
@@ -301,6 +321,7 @@
         "Gonca",
         "Ainiya"
       ],
+      "priority": "must",
       "sort": 26
     },
     {
@@ -316,6 +337,7 @@
         "Evan",
         "Gonca"
       ],
+      "priority": "must",
       "sort": 27
     },
     {
@@ -329,6 +351,7 @@
         "Evan",
         "Gonca"
       ],
+      "priority": "must",
       "sort": 28
     },
     {
@@ -342,6 +365,7 @@
         "Evan",
         "Gonca"
       ],
+      "priority": "must",
       "sort": 29
     },
     {
@@ -355,6 +379,7 @@
         "Evan",
         "Gonca"
       ],
+      "priority": "must",
       "sort": 30
     },
     {
@@ -368,6 +393,7 @@
         "Evan",
         "Gonca"
       ],
+      "priority": "must",
       "sort": 31
     }
   ]
