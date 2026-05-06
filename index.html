@@ -3,59 +3,74 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Travel Plan Pro v2.0.0</title>
+  <title>Travel Plan Pro v2.1.0</title>
   <link rel="stylesheet" href="./style.css">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
   <main class="page">
-    <section class="top">
-      <div class="panel title">
-        <h1><span data-i18n="appTitle">行程计划 Pro</span><span class="ver">v2.0.0</span></h1>
-        <p class="sub" data-i18n="subtitle">按日期分组的更清晰界面，支持 Excel 导入、在线编辑、链接预览和多设备同步。</p>
+    <section class="hero">
+      <div class="heroText">
+        <div class="titleRow">
+          <h1 data-i18n="appTitle">行程计划 Pro</h1>
+          <span class="versionBadge">v2.1.0</span>
+        </div>
+        <p data-i18n="subtitle">按日期分组管理行程，支持 Excel 导入、小红书链接预览、人员多选和 Cloudflare 多设备同步。</p>
       </div>
-      <div class="panel toolbar">
-        <button class="primary" id="btnAdd" data-i18n="add">新增安排</button>
-        <button id="btnImport" data-i18n="import">导入 Excel</button>
-        <button id="btnTplZh" data-i18n="tplZh">中文模板</button>
-        <button id="btnTplEn" data-i18n="tplEn">英文模板</button>
-        <button id="btnPeople" data-i18n="peopleConfig">人员配置</button>
-        <button id="btnRefresh" data-i18n="refresh">刷新同步</button>
-        <input class="search" id="searchInput" data-i18n-placeholder="search" placeholder="搜索日期 / 内容 / 人员">
+      <div class="heroActions">
+        <button class="primary addButton" id="btnAdd">＋ <span data-i18n="add">新增安排</span></button>
+        <button class="ghost moreButton" id="btnMore">☰ <span data-i18n="more">更多功能</span></button>
+        <button class="langButton" id="btnLang" title="Language">EN</button>
       </div>
     </section>
 
-    <section class="stats">
-      <div class="stat"><div data-i18n="days">天数</div><b id="statDays">0</b></div>
-      <div class="stat"><div data-i18n="items">安排数</div><b id="statItems">0</b></div>
-      <div class="stat"><div data-i18n="links">链接数</div><b id="statLinks">0</b></div>
-      <div class="stat"><div data-i18n="people">参与人员</div><b id="statPeople">0</b></div>
+    <section class="morePanel" id="morePanel" aria-hidden="true">
+      <div class="moreGrid">
+        <button id="btnImport">📥 <span data-i18n="import">导入 Excel</span></button>
+        <button id="btnTplZh">📄 <span data-i18n="tplZh">中文模板</span></button>
+        <button id="btnTplEn">📄 <span data-i18n="tplEn">英文模板</span></button>
+        <button id="btnPeople">👥 <span data-i18n="peopleConfig">人员配置</span></button>
+        <button id="btnCloudflare">☁️ <span data-i18n="cloudConfig">Cloudflare 同步配置</span></button>
+        <button id="btnRefresh">🔄 <span data-i18n="refresh">刷新同步</span></button>
+      </div>
+      <p class="moreHint" data-i18n="moreHint">除“新增安排”外，其他功能已折叠在这里，移动端更清爽。</p>
     </section>
 
-    <section class="status">
-      <div><span class="dot" id="statusDot"></span><span id="statusText">Loading...</span></div>
-      <div id="updatedText">-</div>
+    <section class="searchStatus">
+      <div class="searchWrap">
+        <span>🔎</span>
+        <input id="searchInput" data-i18n-placeholder="search" placeholder="搜索日期 / 内容 / 人员 / 分组">
+      </div>
+      <div class="statusWrap">
+        <span class="dot" id="statusDot"></span>
+        <span id="statusText">Loading...</span>
+        <span class="statusDivider">·</span>
+        <span id="updatedText">-</span>
+      </div>
     </section>
 
     <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" hidden>
     <section class="board" id="board"></section>
   </main>
 
-  <button class="lang" id="btnLang">EN</button>
-
   <div class="mask" id="editMask">
-    <div class="modal">
+    <div class="modal sheetModal">
       <div class="modalHead">
         <h2 id="editTitle">新增安排</h2>
-        <button data-close="editMask">✕</button>
+        <button class="iconBtn" data-close="editMask">✕</button>
       </div>
       <div class="modalBody">
         <input type="hidden" id="editId">
-        <div class="grid">
-          <div class="field">
+        <div class="formGrid">
+          <div class="field full">
             <label data-i18n="date">日期</label>
-            <input type="date" id="editDate">
+            <div class="customDate" id="customDate">
+              <select id="editYear" aria-label="Year"></select>
+              <select id="editMonth" aria-label="Month"></select>
+              <select id="editDay" aria-label="Day"></select>
+            </div>
+            <div class="hint" data-i18n="dateHint">日期选择器已自定义处理，切换中英文后月份和显示格式会一起变化。</div>
           </div>
           <div class="field">
             <label data-i18n="time">时间</label>
@@ -65,17 +80,17 @@
             <label data-i18n="weekday">星期</label>
             <input id="editWeekday" readonly>
           </div>
-          <div class="field">
+          <div class="field full">
             <label data-i18n="group">分组</label>
             <input id="editGroup" data-i18n-placeholder="groupPlaceholder" placeholder="例如：Plan 1">
           </div>
           <div class="field full">
             <label data-i18n="content">计划内容</label>
-            <textarea id="editContent" data-i18n-placeholder="contentPlaceholder"></textarea>
+            <textarea id="editContent" data-i18n-placeholder="contentPlaceholder" placeholder="输入计划内容"></textarea>
           </div>
           <div class="field full">
             <label data-i18n="rednote">小红书链接</label>
-            <textarea id="editLinks" data-i18n-placeholder="linksPlaceholder"></textarea>
+            <textarea id="editLinks" data-i18n-placeholder="linksPlaceholder" placeholder="每行一个链接"></textarea>
             <div class="hint" data-i18n="linksHint">支持多个链接，每行一个；点击列表中的链接可弹窗预览。</div>
           </div>
           <div class="field full">
@@ -100,13 +115,13 @@
     <div class="modal smallModal">
       <div class="modalHead">
         <h2 data-i18n="peopleConfig">人员配置</h2>
-        <button data-close="peopleMask">✕</button>
+        <button class="iconBtn" data-close="peopleMask">✕</button>
       </div>
       <div class="modalBody">
         <div class="field full">
           <label data-i18n="peopleList">人员列表</label>
           <textarea id="peopleText" class="peopleText"></textarea>
-          <div class="hint" data-i18n="peopleHint">一行一个名字。</div>
+          <div class="hint" data-i18n="peopleHint">一行一个名字，保存后用于参与人员下拉多选。</div>
         </div>
       </div>
       <div class="modalFoot">
@@ -116,11 +131,40 @@
     </div>
   </div>
 
+  <div class="mask" id="cloudMask">
+    <div class="modal smallModal">
+      <div class="modalHead">
+        <h2 data-i18n="cloudConfig">Cloudflare 同步配置</h2>
+        <button class="iconBtn" data-close="cloudMask">✕</button>
+      </div>
+      <div class="modalBody">
+        <div class="field full">
+          <label data-i18n="workerUrl">Worker 地址</label>
+          <input id="cloudApiBase" placeholder="https://travel-plan-pro-api.yourname.workers.dev">
+          <div class="hint" data-i18n="workerUrlHint">留空则只使用本机 localStorage；填写后会读取 /data.json 并支持多设备同步。</div>
+        </div>
+        <div class="field full">
+          <label data-i18n="workerPassword">写入密码</label>
+          <input id="cloudPassword" type="password" autocomplete="current-password">
+          <div class="hint" data-i18n="passwordHint">对应 Cloudflare Worker Secret：APP_PASSWORD。只保存在当前设备浏览器。</div>
+        </div>
+        <div class="cloudState" id="cloudState"></div>
+      </div>
+      <div class="modalFoot splitFoot">
+        <button id="btnTestCloud" data-i18n="testCloud">测试读取</button>
+        <div class="footRight">
+          <button data-close="cloudMask" data-i18n="cancel">取消</button>
+          <button class="primary" id="btnSaveCloud" data-i18n="saveConfig">保存配置</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="mask" id="viewerMask">
     <div class="modal viewer">
       <div class="modalHead">
         <h2 data-i18n="preview">链接预览</h2>
-        <button data-close="viewerMask">✕</button>
+        <button class="iconBtn" data-close="viewerMask">✕</button>
       </div>
       <div class="viewerTip">
         <span data-i18n="iframeTip">如果无法显示，请新窗口打开。</span>

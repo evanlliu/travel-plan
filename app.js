@@ -1,10 +1,10 @@
 (function () {
-  const APP_VERSION = "v2.0.0";
-  const CONFIG = {
-    apiBase: "",
-    autoRefreshMs: 60000,
-    passwordKey: "travel-plan-pro-password"
-  };
+  const APP_VERSION = "v2.1.0";
+  const LS_DATA = "travel-plan-local-data";
+  const LS_LANG = "travel-plan-ui-lang";
+  const LS_API = "travel-plan-cloudflare-api-base";
+  const LS_PASSWORD = "travel-plan-cloudflare-password";
+  const AUTO_REFRESH_MS = 60000;
 
   function uid() {
     return "i_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -37,24 +37,25 @@
   const I18N = {
     zh: {
       appTitle: "行程计划 Pro",
-      subtitle: "按日期分组的更清晰界面，支持 Excel 导入、在线编辑、链接预览和多设备同步。",
+      subtitle: "按日期分组管理行程，支持 Excel 导入、小红书链接预览、人员多选和 Cloudflare 多设备同步。",
       add: "新增安排",
+      more: "更多功能",
       import: "导入 Excel",
       tplZh: "中文模板",
       tplEn: "英文模板",
       peopleConfig: "人员配置",
+      cloudConfig: "Cloudflare 同步配置",
       refresh: "刷新同步",
-      search: "搜索日期 / 内容 / 人员",
-      days: "天数",
-      items: "安排数",
-      links: "链接数",
-      people: "参与人员",
+      moreHint: "除“新增安排”外，其他功能已折叠在这里，移动端更清爽。",
+      search: "搜索日期 / 内容 / 人员 / 分组",
       date: "日期",
+      dateHint: "日期选择器已自定义处理，切换中英文后月份和显示格式会一起变化。",
       time: "时间",
       weekday: "星期",
       group: "分组",
       content: "计划内容",
       rednote: "小红书链接",
+      people: "参与人员",
       actions: "操作",
       edit: "编辑",
       delete: "删除",
@@ -67,46 +68,59 @@
       linksPlaceholder: "每行一个链接",
       linksHint: "支持多个链接，每行一个；点击列表中的链接可弹窗预览。",
       peopleList: "人员列表",
-      peopleHint: "一行一个名字。",
+      peopleHint: "一行一个名字，保存后用于参与人员下拉多选。",
       preview: "链接预览",
       iframeTip: "如果无法显示，请新窗口打开。",
       openNew: "新窗口打开",
+      workerUrl: "Worker 地址",
+      workerUrlHint: "留空则只使用本机 localStorage；填写后会读取 /data.json 并支持多设备同步。",
+      workerPassword: "写入密码",
+      passwordHint: "对应 Cloudflare Worker Secret：APP_PASSWORD。只保存在当前设备浏览器。",
+      testCloud: "测试读取",
+      saveConfig: "保存配置",
+      cloudDisabled: "当前未配置 Cloudflare，同步方式：本机 localStorage。",
+      cloudReady: "Cloudflare 已配置，同步地址：",
+      cloudSaved: "Cloudflare 配置已保存。",
+      cloudTestOk: "测试成功，已从 Cloudflare 读取数据。",
+      cloudTestFail: "测试失败，请检查 Worker 地址、CORS 或网络。",
       loading: "正在加载数据...",
       loaded: "数据已加载",
       saved: "已保存并同步",
-      localSaved: "Worker 未配置或不可用，已保存到本地 localStorage",
+      localSaved: "未配置 Cloudflare，已保存到本机 localStorage",
       imported: "Excel 已导入并保存",
       badFile: "未识别到有效数据，请检查模板格式",
       confirmDelete: "确定删除这条安排吗？",
-      needPwd: "请输入 Cloudflare Worker 写入密码",
       wrongPwd: "密码错误或没有写入权限",
       networkErr: "同步失败，请检查 Worker 地址 / CORS / 网络",
       empty: "暂无安排，点击“新增安排”开始创建。",
       updated: "更新时间",
       itemCount: "项安排",
       noTime: "待定",
-      selectPeople: "请选择"
+      selectPeople: "请选择",
+      year: "年",
+      day: "日"
     },
     en: {
       appTitle: "Travel Plan Pro",
-      subtitle: "A clearer date-grouped planner with Excel import, inline editing, link preview, and multi-device sync.",
+      subtitle: "Manage plans by date with Excel import, Red Note link preview, multi-select people, and Cloudflare sync.",
       add: "Add Item",
+      more: "More",
       import: "Import Excel",
       tplZh: "Chinese Template",
       tplEn: "English Template",
       peopleConfig: "People",
+      cloudConfig: "Cloudflare Sync",
       refresh: "Refresh",
-      search: "Search by date / content / people",
-      days: "Days",
-      items: "Items",
-      links: "Links",
-      people: "People",
+      moreHint: "All tools except Add Item are folded here to keep the mobile UI clean.",
+      search: "Search date / content / people / group",
       date: "Date",
+      dateHint: "The date picker is custom-built, so month names and display formats update when you switch languages.",
       time: "Time",
       weekday: "Weekday",
       group: "Group",
       content: "Plan Content",
       rednote: "Red Note",
+      people: "People",
       actions: "Actions",
       edit: "Edit",
       delete: "Delete",
@@ -119,68 +133,75 @@
       linksPlaceholder: "One link per line",
       linksHint: "Multiple links are supported. One link per line. Click a link to preview it.",
       peopleList: "People List",
-      peopleHint: "One name per line.",
+      peopleHint: "One name per line. Saved names will be used in the participant multi-select.",
       preview: "Link Preview",
       iframeTip: "If the page does not load, open it in a new window.",
       openNew: "Open in new window",
+      workerUrl: "Worker URL",
+      workerUrlHint: "Leave it empty to use localStorage only. Fill it in to read /data.json and sync across devices.",
+      workerPassword: "Write Password",
+      passwordHint: "This matches the Cloudflare Worker Secret: APP_PASSWORD. It is saved only in this device browser.",
+      testCloud: "Test Read",
+      saveConfig: "Save Config",
+      cloudDisabled: "Cloudflare is not configured. Sync mode: localStorage on this device.",
+      cloudReady: "Cloudflare is configured. Sync URL:",
+      cloudSaved: "Cloudflare config saved.",
+      cloudTestOk: "Test succeeded. Data was loaded from Cloudflare.",
+      cloudTestFail: "Test failed. Check the Worker URL, CORS, or network.",
       loading: "Loading data...",
       loaded: "Data loaded",
       saved: "Saved and synced",
-      localSaved: "Worker is not configured or unavailable; data was saved to localStorage only",
+      localSaved: "Cloudflare is not configured; saved to localStorage only",
       imported: "Excel imported and saved",
       badFile: "No valid rows found. Please check the template format",
       confirmDelete: "Delete this item?",
-      needPwd: "Enter the Cloudflare Worker write password",
       wrongPwd: "Wrong password or no write permission",
       networkErr: "Sync failed. Check the Worker URL / CORS / network",
       empty: "No items yet. Click Add Item to create one.",
       updated: "Updated",
       itemCount: "items",
       noTime: "TBD",
-      selectPeople: "Select people"
+      selectPeople: "Select people",
+      year: "Year",
+      day: "Day"
     }
   };
 
-  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const MONTHS_FULL_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const WEEK_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const WEEK_ZH = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
 
-  let appLang = localStorage.getItem("travel-plan-ui-lang") || "zh";
+  let appLang = localStorage.getItem(LS_LANG) || "zh";
   let data = clone(DEFAULT_DATA);
   let selectedPeople = [];
 
-  function clone(value) {
-    return JSON.parse(JSON.stringify(value));
-  }
-
-  function t(key) {
-    return (I18N[appLang] && I18N[appLang][key]) || I18N.zh[key] || key;
-  }
-
+  function clone(value) { return JSON.parse(JSON.stringify(value)); }
+  function t(key) { return (I18N[appLang] && I18N[appLang][key]) || I18N.zh[key] || key; }
   function esc(value) {
     return String(value == null ? "" : value).replace(/[&<>"']/g, function (s) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[s];
     });
   }
-
   function splitList(text) {
-    return String(text || "").split(/[\n,，;；]+/).map(function (x) {
-      return x.trim();
-    }).filter(Boolean);
+    return String(text || "").split(/[\n,，;；]+/).map(function (x) { return x.trim(); }).filter(Boolean);
   }
-
   function normalizeUrl(url) {
     url = String(url || "").trim();
     return /^https?:\/\//i.test(url) ? url : "";
   }
-
-  function pad2(n) {
-    return String(n).padStart(2, "0");
-  }
-
+  function pad2(n) { return String(n).padStart(2, "0"); }
+  function daysInMonth(y, m) { return new Date(y, m, 0).getDate(); }
   function isValidDate(y, m, d) {
     const dt = new Date(y, m - 1, d);
     return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d;
+  }
+  function getApiBase() { return String(localStorage.getItem(LS_API) || "").trim().replace(/\/$/, ""); }
+  function getCloudPassword() { return String(localStorage.getItem(LS_PASSWORD) || ""); }
+  function dataUrl() { return getApiBase() + "/data.json"; }
+  function setStatus(kind, message) {
+    $("#statusDot").removeClass("ok warn err").addClass(kind || "");
+    $("#statusText").text(message || "");
   }
 
   function dateToInput(value) {
@@ -200,7 +221,12 @@
       if (isValidDate(y, +m[1], +m[2])) return y + "-" + pad2(m[1]) + "-" + pad2(m[2]);
     }
 
-    const map = { jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3, apr: 4, april: 4, may: 5, jun: 6, june: 6, jul: 7, july: 7, aug: 8, august: 8, sep: 9, sept: 9, september: 9, oct: 10, october: 10, nov: 11, november: 11, dec: 12, december: 12 };
+    const map = {
+      jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3,
+      apr: 4, april: 4, may: 5, jun: 6, june: 6, jul: 7, july: 7,
+      aug: 8, august: 8, sep: 9, sept: 9, september: 9,
+      oct: 10, october: 10, nov: 11, november: 11, dec: 12, december: 12
+    };
 
     m = s.match(/^(\d{1,2})[-\s/]?([A-Za-z]{3,9})(?:[-\s,/]*(\d{4}))?$/);
     if (m) {
@@ -227,7 +253,7 @@
       const d = (dt.getMonth() + 1) + "月" + dt.getDate() + "日";
       return withWeek ? WEEK_ZH[dt.getDay()] + " · " + d : d;
     }
-    const d = MONTHS[dt.getMonth()] + " " + dt.getDate();
+    const d = MONTHS_EN[dt.getMonth()] + " " + dt.getDate();
     return withWeek ? WEEK_EN[dt.getDay()] + ", " + d : d;
   }
 
@@ -238,17 +264,60 @@
     return appLang === "zh" ? WEEK_ZH[dt.getDay()] : WEEK_EN[dt.getDay()];
   }
 
-  function formatTime(time) {
-    return String(time || "").trim() || t("noTime");
+  function formatTime(time) { return String(time || "").trim() || t("noTime"); }
+
+  function getSelectedDateISO() {
+    const y = +$("#editYear").val();
+    const m = +$("#editMonth").val();
+    const d = +$("#editDay").val();
+    if (!y || !m || !d) return "";
+    return y + "-" + pad2(m) + "-" + pad2(d);
   }
 
-  function dataUrl() {
-    return (CONFIG.apiBase ? CONFIG.apiBase.replace(/\/$/, "") : "") + "/data.json";
+  function populateDatePicker(iso) {
+    const parsed = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const now = new Date();
+    const selected = parsed ? new Date(+parsed[1], +parsed[2] - 1, +parsed[3]) : now;
+    const selectedYear = selected.getFullYear();
+    const selectedMonth = selected.getMonth() + 1;
+    const selectedDay = selected.getDate();
+    const startYear = Math.min(now.getFullYear() - 3, selectedYear - 1);
+    const endYear = Math.max(now.getFullYear() + 6, selectedYear + 1);
+
+    let yearHtml = "";
+    for (let y = startYear; y <= endYear; y++) {
+      yearHtml += '<option value="' + y + '"' + (y === selectedYear ? " selected" : "") + '>' + (appLang === "zh" ? y + "年" : y) + '</option>';
+    }
+    $("#editYear").html(yearHtml);
+
+    let monthHtml = "";
+    for (let m = 1; m <= 12; m++) {
+      const label = appLang === "zh" ? m + "月" : MONTHS_FULL_EN[m - 1];
+      monthHtml += '<option value="' + m + '"' + (m === selectedMonth ? " selected" : "") + '>' + label + '</option>';
+    }
+    $("#editMonth").html(monthHtml);
+
+    refreshDayOptions(selectedDay);
+    refreshWeekday();
   }
 
-  function setStatus(kind, message) {
-    $("#statusDot").removeClass("ok warn err").addClass(kind || "");
-    $("#statusText").text(message || "");
+  function refreshDayOptions(preferredDay) {
+    const y = +$("#editYear").val();
+    const m = +$("#editMonth").val();
+    const max = daysInMonth(y, m);
+    const current = preferredDay || +$("#editDay").val() || 1;
+    const safeDay = Math.min(current, max);
+    let dayHtml = "";
+    for (let d = 1; d <= max; d++) {
+      const label = appLang === "zh" ? d + "日" : d;
+      dayHtml += '<option value="' + d + '"' + (d === safeDay ? " selected" : "") + '>' + label + '</option>';
+    }
+    $("#editDay").html(dayHtml);
+  }
+
+  function refreshWeekday() {
+    const iso = getSelectedDateISO();
+    $("#editWeekday").val(iso ? weekday(iso) : "");
   }
 
   function normalize(raw) {
@@ -284,9 +353,7 @@
           participants: (Array.isArray(r.participants) ? r.participants : splitList(r.participants)).map(String).filter(Boolean),
           sort: typeof r.sort === "number" ? r.sort : idx
         };
-      }).filter(function (r) {
-        return r.dateISO || r.content || r.links.length || r.participants.length;
-      })
+      }).filter(function (r) { return r.dateISO || r.content || r.links.length || r.participants.length; })
     };
 
     result.items.forEach(function (item) {
@@ -294,17 +361,13 @@
         if (!result.peopleOptions.includes(p)) result.peopleOptions.push(p);
       });
     });
-
     return result;
   }
 
-  function persist() {
-    localStorage.setItem("travel-plan-local-data", JSON.stringify(data));
-  }
-
+  function persist() { localStorage.setItem(LS_DATA, JSON.stringify(data)); }
   function loadLocal() {
     try {
-      const raw = localStorage.getItem("travel-plan-local-data");
+      const raw = localStorage.getItem(LS_DATA);
       if (raw) data = normalize(JSON.parse(raw));
     } catch (e) {}
   }
@@ -317,18 +380,9 @@
         (a.time || "").localeCompare(b.time || "") ||
         (a.sort || 0) - (b.sort || 0);
     });
-
     if (!q) return list;
-
     return list.filter(function (item) {
-      return [
-        formatDate(item.dateISO, true),
-        item.time,
-        item.group,
-        item.content,
-        (item.links || []).join(" "),
-        (item.participants || []).join(" ")
-      ].join(" ").toLowerCase().includes(q);
+      return [formatDate(item.dateISO, true), item.time, item.group, item.content, (item.links || []).join(" "), (item.participants || []).join(" ")].join(" ").toLowerCase().includes(q);
     });
   }
 
@@ -346,21 +400,12 @@
     return days;
   }
 
-  function chips(people) {
-    return (people || []).map(function (p) {
-      return '<span class="chip">' + esc(p) + '</span>';
-    }).join("");
+  function chips(people, cls) {
+    return (people || []).map(function (p) { return '<span class="chip ' + (cls || "person") + '">' + esc(p) + '</span>'; }).join("");
   }
 
-  function renderStats(items) {
-    $("#statDays").text(new Set(items.filter(function (x) { return x.dateISO; }).map(function (x) { return x.dateISO; })).size);
-    $("#statItems").text(items.length);
-    $("#statLinks").text(items.reduce(function (n, item) { return n + (item.links || []).length; }, 0));
-    $("#statPeople").text(new Set(items.flatMap(function (x) { return x.participants || []; })).size);
-  }
-
-  function renderBoard(items) {
-    const days = groupByDate(items);
+  function renderBoard() {
+    const days = groupByDate(filteredItems());
     if (!days.length) {
       $("#board").html('<div class="empty">' + esc(t("empty")) + '</div>');
       return;
@@ -369,81 +414,63 @@
     const html = days.map(function (day) {
       const uniquePeople = Array.from(new Set(day.items.flatMap(function (x) { return x.participants || []; })));
       let currentGroup = null;
-
       const rows = day.items.map(function (item) {
         let section = "";
         const itemGroup = item.group || "";
         if (itemGroup !== currentGroup) {
           currentGroup = itemGroup;
-          if (currentGroup) {
-            section = '<tr class="sectionRow"><td colspan="5"><div class="section">' + esc(currentGroup) + '</div></td></tr>';
-          }
+          if (currentGroup) section = '<tr class="sectionRow"><td colspan="5"><div class="section">' + esc(currentGroup) + '</div></td></tr>';
         }
-
         const links = (item.links || []).length
           ? item.links.map(function (u) { return '<button class="linkBtn" data-link="' + esc(u) + '">' + esc(u) + '</button>'; }).join("")
           : '<span class="small">-</span>';
-
         return section + '<tr>' +
           '<td>' + esc(formatTime(item.time)) + '</td>' +
           '<td class="contentCell">' + esc(item.content || "-") + '</td>' +
           '<td>' + links + '</td>' +
           '<td><div class="chips">' + (chips(item.participants) || '<span class="small">-</span>') + '</div></td>' +
-          '<td><div class="actions">' +
-          '<button class="mini" data-edit="' + esc(item.id) + '">' + esc(t("edit")) + '</button>' +
-          '<button class="mini danger" data-del="' + esc(item.id) + '">' + esc(t("delete")) + '</button>' +
-          '</div></td>' +
+          '<td><div class="actions"><button class="mini" data-edit="' + esc(item.id) + '">' + esc(t("edit")) + '</button><button class="mini danger" data-del="' + esc(item.id) + '">' + esc(t("delete")) + '</button></div></td>' +
           '</tr>';
       }).join("");
-
       return '<article class="day">' +
-        '<div class="dayHead">' +
-        '<div><h2>' + esc(formatDate(day.dateISO, true)) + '</h2><div class="small">' + day.items.length + " " + esc(t("itemCount")) + '</div></div>' +
-        '<div class="chips">' + chips(uniquePeople) + '</div>' +
-        '</div>' +
-        '<table class="table"><thead><tr>' +
-        '<th>' + esc(t("time")) + '</th>' +
-        '<th>' + esc(t("content")) + '</th>' +
-        '<th>' + esc(t("rednote")) + '</th>' +
-        '<th>' + esc(t("people")) + '</th>' +
-        '<th>' + esc(t("actions")) + '</th>' +
-        '</tr></thead><tbody>' + rows + '</tbody></table>' +
+        '<div class="dayHead"><div><h2>' + esc(formatDate(day.dateISO, true)) + '</h2><div class="small">' + day.items.length + ' ' + esc(t("itemCount")) + '</div></div><div class="chips">' + chips(uniquePeople) + '</div></div>' +
+        '<div class="tableWrap"><table class="table"><thead><tr><th>' + esc(t("time")) + '</th><th>' + esc(t("content")) + '</th><th>' + esc(t("rednote")) + '</th><th>' + esc(t("people")) + '</th><th>' + esc(t("actions")) + '</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
         '</article>';
     }).join("");
-
     $("#board").html(html);
+  }
+
+  function updateCloudState() {
+    const api = getApiBase();
+    if (api) $("#cloudState").text(t("cloudReady") + " " + api);
+    else $("#cloudState").text(t("cloudDisabled"));
   }
 
   function applyI18n() {
     document.documentElement.lang = appLang === "zh" ? "zh-CN" : "en";
     document.title = (appLang === "zh" ? "行程计划 Pro " : "Travel Plan Pro ") + APP_VERSION;
-    $("[data-i18n]").each(function () {
-      $(this).text(t($(this).data("i18n")));
-    });
-    $("[data-i18n-placeholder]").each(function () {
-      $(this).attr("placeholder", t($(this).data("i18n-placeholder")));
-    });
+    $("[data-i18n]").each(function () { $(this).text(t($(this).data("i18n"))); });
+    $("[data-i18n-placeholder]").each(function () { $(this).attr("placeholder", t($(this).data("i18n-placeholder"))); });
     $("#btnLang").text(appLang === "zh" ? "EN" : "中");
     $("#updatedText").text(data.updatedAt ? t("updated") + ": " + new Date(data.updatedAt).toLocaleString(appLang === "zh" ? "zh-CN" : "en-US") : "-");
-    refreshWeekday();
+    updateCloudState();
+    const currentIso = getSelectedDateISO();
+    if ($("#editMask").hasClass("show")) populateDatePicker(currentIso || undefined);
   }
 
   function render() {
-    const items = filteredItems();
-    renderStats(items);
-    renderBoard(items);
+    renderBoard();
     applyI18n();
     setStatus("ok", t("loaded"));
   }
 
   async function loadData(silent) {
     if (!silent) setStatus("warn", t("loading"));
-    if (!CONFIG.apiBase) {
+    if (!getApiBase()) {
       loadLocal();
       render();
       return;
     }
-
     try {
       const res = await fetch(dataUrl(), { cache: "no-store" });
       if (!res.ok) throw new Error("load failed");
@@ -453,7 +480,7 @@
     } catch (e) {
       loadLocal();
       render();
-      setStatus("warn", t("localSaved"));
+      setStatus("err", t("networkErr"));
     }
   }
 
@@ -462,30 +489,22 @@
     data.updatedAt = new Date().toISOString();
     persist();
 
-    if (!CONFIG.apiBase) {
+    if (!getApiBase()) {
       render();
       setStatus("warn", t("localSaved"));
       return;
     }
 
     try {
-      let pwd = sessionStorage.getItem(CONFIG.passwordKey) || "";
-      let res = await fetch(dataUrl(), {
+      const res = await fetch(dataUrl(), {
         method: "PUT",
-        headers: { "Content-Type": "application/json", "X-App-Password": pwd },
+        headers: { "Content-Type": "application/json", "X-App-Password": getCloudPassword() },
         body: JSON.stringify(data)
       });
-
       if (res.status === 401) {
-        pwd = prompt(t("needPwd")) || "";
-        res = await fetch(dataUrl(), {
-          method: "PUT",
-          headers: { "Content-Type": "application/json", "X-App-Password": pwd },
-          body: JSON.stringify(data)
-        });
-        if (res.ok) sessionStorage.setItem(CONFIG.passwordKey, pwd);
+        setStatus("err", t("wrongPwd"));
+        return;
       }
-
       if (!res.ok) throw new Error("save failed");
       render();
       setStatus("ok", t("saved"));
@@ -493,11 +512,6 @@
       render();
       setStatus("err", t("networkErr"));
     }
-  }
-
-  function refreshWeekday() {
-    const iso = $("#editDate").val();
-    $("#editWeekday").val(iso ? weekday(iso) : "");
   }
 
   function renderPicker() {
@@ -509,11 +523,11 @@
   }
 
   function openEdit(id) {
-    const item = id ? data.items.find(function (x) { return x.id === id; }) : { id: uid(), dateISO: "", time: "", group: "", content: "", links: [], participants: [] };
+    const item = id ? data.items.find(function (x) { return x.id === id; }) : { id: uid(), dateISO: todayISO(), time: "", group: "", content: "", links: [], participants: [] };
     if (!item) return;
     $("#editTitle").text(id ? t("editTitle") : t("addTitle"));
     $("#editId").val(item.id);
-    $("#editDate").val(item.dateISO || "");
+    populateDatePicker(item.dateISO || todayISO());
     $("#editTime").val(item.time || "");
     $("#editGroup").val(item.group || "");
     $("#editContent").val(item.content || "");
@@ -524,11 +538,16 @@
     $("#editMask").addClass("show");
   }
 
+  function todayISO() {
+    const now = new Date();
+    return now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate());
+  }
+
   function saveEdit() {
     const id = $("#editId").val();
     const item = {
       id: id,
-      dateISO: $("#editDate").val(),
+      dateISO: getSelectedDateISO(),
       time: $("#editTime").val(),
       group: $("#editGroup").val().trim(),
       content: $("#editContent").val().trim(),
@@ -536,11 +555,7 @@
       participants: clone(selectedPeople),
       sort: Date.now()
     };
-
-    item.participants.forEach(function (p) {
-      if (!data.peopleOptions.includes(p)) data.peopleOptions.push(p);
-    });
-
+    item.participants.forEach(function (p) { if (!data.peopleOptions.includes(p)) data.peopleOptions.push(p); });
     const idx = data.items.findIndex(function (x) { return x.id === id; });
     if (idx >= 0) {
       item.sort = data.items[idx].sort || idx;
@@ -548,7 +563,6 @@
     } else {
       data.items.push(item);
     }
-
     $("#editMask").removeClass("show");
     saveData();
   }
@@ -560,18 +574,13 @@
         const wb = XLSX.read(new Uint8Array(e.target.result), { type: "array", cellDates: true });
         const ws = wb.Sheets[wb.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: "" });
-        const header = rows.find(function (r) {
-          return Array.isArray(r) && r.some(function (x) { return String(x).trim(); });
-        });
+        const header = rows.find(function (r) { return Array.isArray(r) && r.some(function (x) { return String(x).trim(); }); });
         if (!header) throw new Error("bad header");
 
         const lower = header.map(function (x) { return String(x).trim().toLowerCase(); });
         function idx(names) {
-          return lower.findIndex(function (x) {
-            return names.map(function (n) { return n.toLowerCase(); }).includes(x);
-          });
+          return lower.findIndex(function (x) { return names.map(function (n) { return n.toLowerCase(); }).includes(x); });
         }
-
         const di = idx(["日期", "date"]);
         const ti = idx(["时间", "time"]);
         const gi = idx(["分组", "group", "section"]);
@@ -583,7 +592,6 @@
         let lastPeople = [];
         const imported = [];
         const start = rows.indexOf(header) + 1;
-
         rows.slice(start).forEach(function (r) {
           const rawDate = di >= 0 ? String(r[di] || "").trim() : "";
           const rawTime = ti >= 0 ? String(r[ti] || "").trim() : "";
@@ -591,13 +599,10 @@
           const rawContent = ci >= 0 ? String(r[ci] || "").trim() : "";
           const rawLink = li >= 0 ? String(r[li] || "").trim() : "";
           const rawPeople = pi >= 0 ? String(r[pi] || "").trim() : "";
-
           if (!rawDate && !rawTime && !rawGroup && !rawContent && !rawLink && !rawPeople) return;
-
           const parsedDate = dateToInput(rawDate);
           if (parsedDate) lastDate = parsedDate;
           if (rawPeople) lastPeople = splitList(rawPeople);
-
           imported.push({
             id: uid(),
             dateISO: lastDate,
@@ -609,14 +614,8 @@
             sort: Date.now() + imported.length
           });
         });
-
         if (!imported.length) throw new Error("no rows");
-        imported.forEach(function (item) {
-          item.participants.forEach(function (p) {
-            if (!data.peopleOptions.includes(p)) data.peopleOptions.push(p);
-          });
-        });
-
+        imported.forEach(function (item) { item.participants.forEach(function (p) { if (!data.peopleOptions.includes(p)) data.peopleOptions.push(p); }); });
         data.items = imported;
         saveData();
         setStatus("ok", t("imported"));
@@ -630,44 +629,48 @@
 
   function downloadTemplate(lang) {
     const zh = lang === "zh";
-    const header = zh
-      ? ["日期", "时间", "分组", "计划内容", "小红书链接", "参与人员"]
-      : ["Date", "Time", "Group", "Plan Content", "Red Note", "People"];
-
-    const rows = zh
-      ? [
-        ["2026-05-17", "13:00", "", "市中心逛街", "", "Evan,Gonca,Lin"],
-        ["", "22:00", "", "吃夜宵", "", ""],
-        ["2026-05-19", "09:00", "Plan 1", "长沙华谊兄弟电影小镇", "http://xhslink.com/o/example", "Evan,Gonca"],
-        ["", "19:00", "Plan 1", "酒吧和俱乐部", "", ""],
-        ["2026-05-19", "09:00", "Plan 2", "株洲攸县酒仙湖", "http://xhslink.com/o/example2", "Evan,Gonca"]
-      ]
-      : [
-        ["2026-05-17", "13:00", "", "Center shopping", "", "Evan,Gonca,Lin"],
-        ["", "22:00", "", "Eat street foods", "", ""],
-        ["2026-05-19", "09:00", "Plan 1", "Changsha Huayi Brothers Movie Town", "http://xhslink.com/o/example", "Evan,Gonca"],
-        ["", "19:00", "Plan 1", "Bar and club", "", ""],
-        ["2026-05-19", "09:00", "Plan 2", "JiuXian Lake", "http://xhslink.com/o/example2", "Evan,Gonca"]
-      ];
-
+    const header = zh ? ["日期", "时间", "分组", "计划内容", "小红书链接", "参与人员"] : ["Date", "Time", "Group", "Plan Content", "Red Note", "People"];
+    const rows = zh ? [
+      ["2026-05-17", "13:00", "", "市中心逛街", "", "Evan,Gonca,Lin"],
+      ["", "22:00", "", "吃夜宵", "", ""],
+      ["2026-05-19", "09:00", "Plan 1", "长沙华谊兄弟电影小镇", "http://xhslink.com/o/example", "Evan,Gonca"],
+      ["", "19:00", "Plan 1", "酒吧和俱乐部", "", ""],
+      ["2026-05-19", "09:00", "Plan 2", "株洲攸县酒仙湖", "http://xhslink.com/o/example2", "Evan,Gonca"]
+    ] : [
+      ["2026-05-17", "13:00", "", "Center shopping", "", "Evan,Gonca,Lin"],
+      ["", "22:00", "", "Eat street foods", "", ""],
+      ["2026-05-19", "09:00", "Plan 1", "Changsha Huayi Brothers Movie Town", "http://xhslink.com/o/example", "Evan,Gonca"],
+      ["", "19:00", "Plan 1", "Bar and club", "", ""],
+      ["2026-05-19", "09:00", "Plan 2", "JiuXian Lake", "http://xhslink.com/o/example2", "Evan,Gonca"]
+    ];
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.0.0.xlsx" : "travel-plan-pro-en-v2.0.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.1.0.xlsx" : "travel-plan-pro-en-v2.1.0.xlsx");
   }
 
-  $(document).on("click", "[data-close]", function () {
-    $("#" + $(this).data("close")).removeClass("show");
-  });
+  async function testCloud() {
+    const api = String($("#cloudApiBase").val() || "").trim().replace(/\/$/, "");
+    if (!api) {
+      $("#cloudState").text(t("cloudDisabled"));
+      return;
+    }
+    try {
+      const res = await fetch(api + "/data.json", { cache: "no-store" });
+      if (!res.ok) throw new Error("test failed");
+      const json = await res.json();
+      data = normalize(json);
+      persist();
+      render();
+      $("#cloudState").text(t("cloudTestOk"));
+    } catch (e) {
+      $("#cloudState").text(t("cloudTestFail"));
+    }
+  }
 
-  $(document).on("click", ".mask", function (e) {
-    if (e.target === this) $(this).removeClass("show");
-  });
-
-  $(document).on("click", "[data-edit]", function () {
-    openEdit($(this).data("edit"));
-  });
-
+  $(document).on("click", "[data-close]", function () { $("#" + $(this).data("close")).removeClass("show"); });
+  $(document).on("click", ".mask", function (e) { if (e.target === this) $(this).removeClass("show"); });
+  $(document).on("click", "[data-edit]", function () { openEdit($(this).data("edit")); });
   $(document).on("click", "[data-del]", function () {
     const id = $(this).data("del");
     if (confirm(t("confirmDelete"))) {
@@ -675,14 +678,12 @@
       saveData();
     }
   });
-
   $(document).on("click", ".linkBtn", function () {
     const url = $(this).data("link");
     $("#viewerFrame").attr("src", url);
     $("#viewerOpen").attr("href", url);
     $("#viewerMask").addClass("show");
   });
-
   $(document).on("change", "#peoplePanel input", function () {
     const v = $(this).val();
     if (this.checked) {
@@ -693,48 +694,51 @@
     renderPicker();
     $("#peoplePanel").addClass("open");
   });
-
-  $(document).on("click", function (e) {
-    if (!$(e.target).closest("#peoplePicker").length) $("#peoplePanel").removeClass("open");
-  });
+  $(document).on("click", function (e) { if (!$(e.target).closest("#peoplePicker").length) $("#peoplePanel").removeClass("open"); });
 
   $("#btnAdd").on("click", function () { openEdit(null); });
+  $("#btnMore").on("click", function () { $("#morePanel").toggleClass("open"); });
   $("#btnSaveEdit").on("click", saveEdit);
   $("#btnImport").on("click", function () { $("#excelFile").click(); });
-  $("#excelFile").on("change", function () {
-    if (this.files && this.files[0]) importExcel(this.files[0]);
-  });
+  $("#excelFile").on("change", function () { if (this.files && this.files[0]) importExcel(this.files[0]); });
   $("#btnTplZh").on("click", function () { downloadTemplate("zh"); });
   $("#btnTplEn").on("click", function () { downloadTemplate("en"); });
-  $("#btnPeople").on("click", function () {
-    $("#peopleText").val((data.peopleOptions || []).join("\n"));
-    $("#peopleMask").addClass("show");
-  });
+  $("#btnPeople").on("click", function () { $("#peopleText").val((data.peopleOptions || []).join("\n")); $("#peopleMask").addClass("show"); });
   $("#btnSavePeople").on("click", function () {
-    data.peopleOptions = $("#peopleText").val().split(/\n+/).map(function (x) {
-      return x.trim();
-    }).filter(Boolean);
+    data.peopleOptions = $("#peopleText").val().split(/\n+/).map(function (x) { return x.trim(); }).filter(Boolean);
     $("#peopleMask").removeClass("show");
     saveData();
   });
+  $("#btnCloudflare").on("click", function () {
+    $("#cloudApiBase").val(getApiBase());
+    $("#cloudPassword").val(getCloudPassword());
+    updateCloudState();
+    $("#cloudMask").addClass("show");
+  });
+  $("#btnSaveCloud").on("click", function () {
+    localStorage.setItem(LS_API, String($("#cloudApiBase").val() || "").trim().replace(/\/$/, ""));
+    localStorage.setItem(LS_PASSWORD, String($("#cloudPassword").val() || ""));
+    updateCloudState();
+    setStatus("ok", t("cloudSaved"));
+    $("#cloudMask").removeClass("show");
+    loadData(false);
+  });
+  $("#btnTestCloud").on("click", testCloud);
   $("#btnRefresh").on("click", function () { loadData(false); });
   $("#btnLang").on("click", function () {
     appLang = appLang === "zh" ? "en" : "zh";
-    localStorage.setItem("travel-plan-ui-lang", appLang);
+    localStorage.setItem(LS_LANG, appLang);
     render();
   });
-  $("#searchInput").on("input", render);
-  $("#editDate").on("input change", refreshWeekday);
-  $("#peopleToggle").on("click", function () {
-    $("#peoplePanel").toggleClass("open");
-  });
+  $("#searchInput").on("input", renderBoard);
+  $("#editYear,#editMonth").on("change", function () { refreshDayOptions(); refreshWeekday(); });
+  $("#editDay").on("change", refreshWeekday);
+  $("#peopleToggle").on("click", function () { $("#peoplePanel").toggleClass("open"); });
 
-  document.addEventListener("visibilitychange", function () {
-    if (!document.hidden) loadData(true);
-  });
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) loadData(true); });
 
   loadLocal();
   render();
   loadData(false);
-  setInterval(function () { loadData(true); }, CONFIG.autoRefreshMs);
+  setInterval(function () { loadData(true); }, AUTO_REFRESH_MS);
 })();
