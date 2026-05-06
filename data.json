@@ -1,6 +1,6 @@
 {
   "version": "v2.37.0",
-  "updatedAt": "2026-05-06T13:09:37.268Z",
+  "updatedAt": "2026-05-06T13:10:03.944Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -295,7 +295,7 @@
       "dateISO": "2026-05-22",
       "time": "09:00",
       "group": "",
-      "content": "kindergarten",
+      "content": "kindergarden",
       "links": [],
       "participants": [
         "Evan",
