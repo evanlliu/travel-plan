@@ -1,4 +1,4 @@
-const APP_VERSION = "v2.41.0";
+const APP_VERSION = "v2.42.0";
 
 const DEFAULT_DATA = {
   version: APP_VERSION,
@@ -70,6 +70,13 @@ function normalizeSettings(settings) {
   };
 }
 
+function normalizePriority(value) {
+  const raw = cleanText(value).toLowerCase().replace(/\s+/g, "");
+  if (["optional", "option", "maybe", "backup", "备用", "可选", "选做", "非必做"].includes(raw)) return "optional";
+  if (["must", "mustdo", "required", "important", "必做", "必须", "重要"].includes(raw)) return "must";
+  return "must";
+}
+
 function normalizeItem(item, index) {
   item = item && typeof item === "object" ? item : {};
   return {
@@ -80,6 +87,7 @@ function normalizeItem(item, index) {
     content: cleanText(item.content || item.plan),
     links: (Array.isArray(item.links) ? item.links : cleanList(item.links)).map(normalizeUrl).filter(Boolean),
     participants: cleanList(item.participants || item.people),
+    priority: normalizePriority(item.priority || item.type || item["类型"] || item["重要程度"] || item["Priority"] || item["Type"]),
     sort: Number(item.sort || index + 1)
   };
 }
