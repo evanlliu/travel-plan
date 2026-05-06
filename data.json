@@ -1,6 +1,6 @@
 {
-  "version": "v2.19.0",
-  "updatedAt": "2026-05-06T09:39:57.160Z",
+  "version": "v2.26.0",
+  "updatedAt": "2026-05-06T10:50:24.029Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -86,21 +86,6 @@
         "Ainiya"
       ],
       "sort": 5
-    },
-    {
-      "id": "i_006",
-      "dateISO": "2026-05-19",
-      "time": "09:00",
-      "group": "Plan 1",
-      "content": "Changsha Huayi Brothers Movie Town",
-      "links": [
-        "http://xhslink.com/o/2SrlJCvzOXb"
-      ],
-      "participants": [
-        "Evan",
-        "Gonca"
-      ],
-      "sort": 6
     },
     {
       "id": "i_007",
