@@ -1,6 +1,6 @@
 {
   "version": "v2.5.0",
-  "updatedAt": "2026-05-06T06:08:27.773Z",
+  "updatedAt": "2026-05-06T06:09:24.297Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -15,7 +15,7 @@
     "Ainiya",
     "Lin",
     "Mom",
-    "å¨å®¶"
+    "Ã¥ÂÂ¨Ã¥Â®Â¶"
   ],
   "items": [
     {
@@ -136,7 +136,7 @@
       "dateISO": "2026-05-19",
       "time": "09:00",
       "group": "Plan 2",
-      "content": "æ ªæ´²æ¸å¿éä»æ¹",
+      "content": "Ã¦Â ÂªÃ¦Â´Â²Ã¦ÂÂ¸Ã¥ÂÂ¿Ã©ÂÂÃ¤Â»ÂÃ¦Â¹Â",
       "links": [
         "http://xhslink.com/o/70msgGQjc3q"
       ],
@@ -206,7 +206,7 @@
       "content": "BBQ, Lobster",
       "links": [],
       "participants": [
-        "å¨å®¶"
+        "Ã¥ÂÂ¨Ã¥Â®Â¶"
       ],
       "sort": 14
     },
@@ -215,7 +215,7 @@
       "dateISO": "2026-05-23",
       "time": "",
       "group": "",
-      "content": "æ ªæ´²æ¸¯æ¹¾åå¡é¦ / ZhuZhou Cafe",
+      "content": "Ã¦Â ÂªÃ¦Â´Â²Ã¦Â¸Â¯Ã¦Â¹Â¾Ã¥ÂÂÃ¥ÂÂ¡Ã©Â¦Â / ZhuZhou Cafe",
       "links": [
         "http://xhslink.com/o/3zoe1CNfnPz"
       ],
