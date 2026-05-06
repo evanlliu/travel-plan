@@ -1,12 +1,26 @@
 {
-  "version": "v2.42.1",
-  "updatedAt": "2026-05-06T14:48:51.374Z",
+  "version": "v2.42.7",
+  "updatedAt": "2026-05-06T16:53:36.408Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
       "appPassword": "1123",
       "configSavedInDataJson": true,
       "passwordStorage": "data.json settings.cloudflare.appPassword"
+    },
+    "displayOptions": {
+      "cardPeople": {
+        "pc": true,
+        "mobile": false
+      },
+      "dayItemCount": {
+        "pc": true,
+        "mobile": false
+      },
+      "daySummary": {
+        "pc": true,
+        "mobile": false
+      }
     }
   },
   "peopleOptions": [
