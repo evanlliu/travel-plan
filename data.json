@@ -1,6 +1,6 @@
 {
-  "version": "v2.6.0",
-  "updatedAt": "2026-05-06T06:34:03.284Z",
+  "version": "v2.7.0",
+  "updatedAt": "2026-05-06T06:46:03.021Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -132,7 +132,7 @@
       "dateISO": "2026-05-19",
       "time": "09:00",
       "group": "Plan 2",
-      "content": "株洲攸县酒仙湖",
+      "content": "ZhuZhou lake place",
       "links": [
         "http://xhslink.com/o/70msgGQjc3q"
       ],
