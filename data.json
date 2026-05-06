@@ -1,6 +1,6 @@
 {
   "version": "v2.37.0",
-  "updatedAt": "2026-05-06T12:49:05.108Z",
+  "updatedAt": "2026-05-06T12:49:12.153Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -90,7 +90,7 @@
     {
       "id": "i_010",
       "dateISO": "2026-05-20",
-      "time": "20:00",
+      "time": "12:00",
       "group": "",
       "content": "Go back to ZhuZhou",
       "links": [],
