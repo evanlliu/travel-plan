@@ -190,7 +190,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.16.0 floating action buttons */
+/* v2.17.0 floating action buttons */
 .hero{align-items:center}
 .heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
 .heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
@@ -245,7 +245,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.16.0 clean overrides */
+/* v2.17.0 clean overrides */
 .hero{align-items:center}
 .heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
 .heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
@@ -349,7 +349,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.16.0 iOS PWA top safe-area fix */
+/* v2.17.0 iOS PWA top safe-area fix */
 :root{
   --safe-top: env(safe-area-inset-top, 0px);
   --mobile-top-gap: 16px;
@@ -398,7 +398,7 @@ html.pwa .hero{
 }
 
 
-/* v2.16.0 mobile modal scroll lock */
+/* v2.17.0 mobile modal scroll lock */
 html.modalLocked,
 body.modalLocked{
   width:100%;
@@ -472,7 +472,7 @@ body.modalLocked{
 }
 
 
-/* v2.16.0 fixed mobile edit modal: no bounce / no floating */
+/* v2.17.0 fixed mobile edit modal: no bounce / no floating */
 :root{
   --app-height: 100vh;
 }
@@ -566,7 +566,7 @@ body.modalLocked{
 }
 
 
-/* v2.16.0 mobile date picker and horizontal swipe lock */
+/* v2.17.0 mobile date picker and horizontal swipe lock */
 html,
 body{
   overflow-x:hidden!important;
@@ -691,7 +691,7 @@ body{
 }
 
 
-/* v2.16.0 mobile date picker final fix */
+/* v2.17.0 mobile date picker final fix */
 body.modalLocked .fabGroup{
   display:none!important;
 }
@@ -766,7 +766,7 @@ body.modalLocked{
 }
 
 
-/* v2.16.0 native Safari date input */
+/* v2.17.0 native Safari date input */
 #editDate{
   -webkit-appearance:none;
   appearance:none;
@@ -823,5 +823,111 @@ body,
   #editDate{
     font-size:16px!important;
     min-height:52px;
+  }
+}
+
+
+/* v2.17.0 mobile keyboard stability */
+#editTime{
+  width:auto!important;
+  min-width:132px;
+  max-width:180px;
+  align-self:flex-start;
+  text-align:center;
+}
+html.modalLocked,
+body.modalLocked{
+  overflow:hidden!important;
+  width:100vw!important;
+  max-width:100vw!important;
+  overscroll-behavior:none!important;
+}
+body.modalLocked{
+  position:fixed!important;
+  left:0!important;
+  right:0!important;
+}
+@media(max-width:760px){
+  #editMask.show{
+    position:fixed!important;
+    inset:0!important;
+    width:100vw!important;
+    height:var(--app-height)!important;
+    max-height:var(--app-height)!important;
+    overflow:hidden!important;
+    display:block!important;
+    touch-action:none!important;
+  }
+
+  #editMask .modal{
+    position:fixed!important;
+    left:0!important;
+    right:0!important;
+    top:calc(env(safe-area-inset-top,0px) + 8px)!important;
+    bottom:0!important;
+    width:100vw!important;
+    max-width:100vw!important;
+    height:calc(var(--app-height) - env(safe-area-inset-top,0px) - 8px)!important;
+    max-height:calc(var(--app-height) - env(safe-area-inset-top,0px) - 8px)!important;
+    margin:0!important;
+    transform:none!important;
+    transition:none!important;
+    animation:none!important;
+    overflow:hidden!important;
+    border-radius:24px 24px 0 0!important;
+    display:flex!important;
+    flex-direction:column!important;
+  }
+
+  #editMask .modalHead{
+    flex:0 0 auto!important;
+  }
+
+  #editMask .modalBody{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    height:auto!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior:contain!important;
+    touch-action:pan-y!important;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:calc(26px + env(safe-area-inset-bottom,0px))!important;
+  }
+
+  #editMask .modalFoot{
+    flex:0 0 auto!important;
+    position:relative!important;
+    left:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    width:100%!important;
+    background:#fff!important;
+    z-index:3!important;
+    padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
+  }
+
+  body.keyboardOpen #editMask{
+    height:var(--app-height)!important;
+  }
+
+  body.keyboardOpen #editMask .modal{
+    height:calc(var(--app-height) - env(safe-area-inset-top,0px) - 8px)!important;
+    max-height:calc(var(--app-height) - env(safe-area-inset-top,0px) - 8px)!important;
+  }
+
+  body.keyboardOpen #editMask .modalFoot{
+    display:none!important;
+  }
+
+  body.keyboardOpen #editMask .modalBody{
+    padding-bottom:32px!important;
+  }
+
+  #editTime{
+    width:136px!important;
+    min-width:136px!important;
+    max-width:160px!important;
+    flex:0 0 auto!important;
   }
 }

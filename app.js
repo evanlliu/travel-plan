@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.16.0";
+  const APP_VERSION = "v2.17.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -182,9 +182,18 @@
   let selectedPeople = [];
 
   let modalScrollY = 0;
+  let modalBaseHeight = 0;
 
   function setAppHeightVar() {
-    const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    let h;
+
+    if (document.body.classList.contains("modalLocked") && modalBaseHeight) {
+      h = modalBaseHeight;
+    } else {
+      h = window.innerHeight || document.documentElement.clientHeight || 0;
+    }
+
+    if (!h && window.visualViewport) h = window.visualViewport.height;
     document.documentElement.style.setProperty("--app-height", Math.round(h) + "px");
   }
 
@@ -254,6 +263,9 @@
   function lockPageScroll() {
     if (document.body.classList.contains("modalLocked")) return;
     modalScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    modalBaseHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+    if (!modalBaseHeight && window.visualViewport) modalBaseHeight = window.visualViewport.height;
+    setAppHeightVar();
     document.documentElement.classList.add("modalLocked");
     document.body.classList.add("modalLocked");
     document.body.style.top = "-" + modalScrollY + "px";
@@ -262,16 +274,16 @@
   function unlockPageScroll() {
     if (!document.body.classList.contains("modalLocked")) return;
     document.documentElement.classList.remove("modalLocked");
-    document.body.classList.remove("modalLocked");
+    document.body.classList.remove("modalLocked", "keyboardOpen");
     document.body.style.top = "";
+    modalBaseHeight = 0;
+    setAppHeightVar();
     window.scrollTo(0, modalScrollY);
   }
 
   function openModal(id) {
-    setAppHeightVar();
     lockPageScroll();
     $("#" + id).addClass("show");
-    setTimeout(setAppHeightVar, 80);
   }
 
   function closeModal(id) {
@@ -977,7 +989,7 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.16.0.xlsx" : "travel-plan-pro-en-v2.16.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.17.0.xlsx" : "travel-plan-pro-en-v2.17.0.xlsx");
   }
 
   async function testCloud() {
@@ -1120,6 +1132,34 @@
     el.readOnly = false;
     el.type = "date";
     el.inputMode = "none";
+  });
+
+  function isEditTextField(el) {
+    if (!el || !el.closest || !el.closest("#editMask")) return false;
+    if (el.id === "editDate") return false;
+    const tag = (el.tagName || "").toLowerCase();
+    const type = (el.getAttribute("type") || "").toLowerCase();
+    return tag === "textarea" || (tag === "input" && type !== "date" && type !== "hidden" && type !== "checkbox");
+  }
+
+  $(document).on("focusin", "#editMask input, #editMask textarea", function () {
+    if (!isEditTextField(this)) return;
+    document.body.classList.add("keyboardOpen");
+    setTimeout(() => {
+      const body = document.querySelector("#editMask .modalBody");
+      if (body && this.scrollIntoView) {
+        this.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
+      }
+    }, 260);
+  });
+
+  $(document).on("focusout", "#editMask input, #editMask textarea", function () {
+    setTimeout(() => {
+      const active = document.activeElement;
+      if (!isEditTextField(active)) {
+        document.body.classList.remove("keyboardOpen");
+      }
+    }, 120);
   });
 
   $("#btnFabAdd").on("click", function () { openEdit(null); });
