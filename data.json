@@ -1,6 +1,6 @@
 {
   "version": "v2.26.0",
-  "updatedAt": "2026-05-06T10:51:11.632Z",
+  "updatedAt": "2026-05-06T10:51:22.628Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -90,7 +90,7 @@
     {
       "id": "i_009",
       "dateISO": "2026-05-19",
-      "time": "09:00",
+      "time": "08:30",
       "group": "",
       "content": "Wuhan",
       "links": [],
