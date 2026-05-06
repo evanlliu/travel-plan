@@ -1,6 +1,6 @@
 {
   "version": "v2.37.0",
-  "updatedAt": "2026-05-06T13:06:16.788Z",
+  "updatedAt": "2026-05-06T13:06:31.860Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -137,7 +137,7 @@
       "dateISO": "2026-05-22",
       "time": "09:00",
       "group": "",
-      "content": "Get glasses",
+      "content": "Go to Zhuzhou some place",
       "links": [],
       "participants": [
         "Evan"
