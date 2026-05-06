@@ -190,7 +190,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.10.0 floating action buttons */
+/* v2.11.0 floating action buttons */
 .hero{align-items:center}
 .heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
 .heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
@@ -245,7 +245,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.10.0 clean overrides */
+/* v2.11.0 clean overrides */
 .hero{align-items:center}
 .heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
 .heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
@@ -345,5 +345,54 @@ body.isStandalone .modal{
     margin-top:10px;
     justify-content:flex-start;
     max-width:none;
+  }
+}
+
+
+/* v2.11.0 iOS PWA top safe-area fix */
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --mobile-top-gap: 16px;
+}
+body.isStandalone{
+  min-height:100vh;
+  min-height:100dvh;
+}
+body.isStandalone .page,
+html.pwa .page{
+  padding-top:calc(var(--safe-top) + 18px) !important;
+}
+body.isStandalone .hero,
+html.pwa .hero{
+  margin-top:0 !important;
+}
+@supports (padding-top: max(1px, 2px)){
+  body.isStandalone .page,
+  html.pwa .page{
+    padding-top:max(18px, calc(env(safe-area-inset-top, 0px) + 18px)) !important;
+  }
+}
+@media(max-width:760px){
+  .page{
+    padding-top:max(18px, calc(env(safe-area-inset-top, 0px) + 18px)) !important;
+  }
+  body.isStandalone .page,
+  html.pwa .page{
+    padding-top:max(68px, calc(env(safe-area-inset-top, 0px) + 22px)) !important;
+  }
+  body.isStandalone .hero,
+  html.pwa .hero{
+    margin-top:0 !important;
+  }
+  .heroText h1{
+    line-height:1.12;
+  }
+}
+
+/* Extra guard for iPhone standalone where env() is reported late on first paint */
+@media(max-width:760px) and (orientation:portrait){
+  body.isStandalone .page,
+  html.pwa .page{
+    padding-top:max(72px, calc(env(safe-area-inset-top, 0px) + 22px)) !important;
   }
 }

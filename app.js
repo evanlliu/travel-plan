@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.10.0";
+  const APP_VERSION = "v2.11.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -867,7 +867,7 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.10.0.xlsx" : "travel-plan-pro-en-v2.10.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.11.0.xlsx" : "travel-plan-pro-en-v2.11.0.xlsx");
   }
 
   async function testCloud() {
