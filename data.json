@@ -1,6 +1,6 @@
 {
   "version": "v2.37.0",
-  "updatedAt": "2026-05-06T12:37:36.630Z",
+  "updatedAt": "2026-05-06T12:38:29.463Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -218,7 +218,7 @@
     },
     {
       "id": "i_5o7ul6nnow6motzcbiw",
-      "dateISO": "2026-05-18",
+      "dateISO": "2026-05-19",
       "time": "19:00",
       "group": "",
       "content": "杜甫江阁/Du Fu Pavilion",
