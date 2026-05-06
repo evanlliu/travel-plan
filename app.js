@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.19.0";
+  const APP_VERSION = "v2.24.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -989,7 +989,7 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.19.0.xlsx" : "travel-plan-pro-en-v2.19.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.24.0.xlsx" : "travel-plan-pro-en-v2.24.0.xlsx");
   }
 
   async function testCloud() {
@@ -1104,8 +1104,18 @@
     }
   });
 
+  $(window).on("resize scroll", function () {
+    positionDesktopPeoplePanel();
+  });
+
+  $(document).on("scroll", "#editMask .modalBody", function () {
+    positionDesktopPeoplePanel();
+  });
+
   $(document).on("click", function (e) {
-    if (!$(e.target).closest("#peoplePicker").length) $("#peoplePanel").removeClass("open");
+    if (!$(e.target).closest("#peoplePicker").length) {
+      $("#peoplePanel").removeClass("open").removeAttr("style");
+    }
   });
 
   $(document).on("keydown", function (e) {
@@ -1133,6 +1143,15 @@
     el.type = "date";
     el.inputMode = "none";
   });
+
+  function refreshKeyboardState() {
+    if (!document.body.classList.contains("modalLocked")) return;
+    if (!window.visualViewport || !modalBaseHeight) return;
+    const diff = modalBaseHeight - window.visualViewport.height;
+    if (diff < 80) {
+      document.body.classList.remove("keyboardOpen");
+    }
+  }
 
   function isEditTextField(el) {
     if (!el || !el.closest || !el.closest("#editMask")) return false;
@@ -1209,14 +1228,44 @@
   });
   $("#searchInput").on("input", render);
   $("#editDate").on("input change", refreshWeekday);
-  $("#peopleToggle").on("click", function () { $("#peoplePanel").toggleClass("open"); });
+  function positionDesktopPeoplePanel() {
+    // v2.24.0: PC People 面板改为 CSS absolute，固定在下拉框正下方。
+    // 不再用 JS 计算 viewport fixed 坐标，避免跑到计划内容 / 小红书链接区域。
+    return;
+  }
+
+  $("#peopleToggle").on("click", function () {
+    const $panel = $("#peoplePanel");
+    $panel.toggleClass("open");
+    if ($panel.hasClass("open")) {
+      const panel = document.getElementById("peoplePanel");
+      if (panel) panel.scrollTop = 0;
+      positionDesktopPeoplePanel();
+      setTimeout(positionDesktopPeoplePanel, 30);
+      setTimeout(function () {
+        const isMobile = window.matchMedia && window.matchMedia("(max-width: 760px)").matches;
+        if (isMobile) {
+          const panel = document.getElementById("peoplePanel");
+          if (panel) panel.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+        }
+      }, 60);
+    }
+  });
+  $("#editMask .modalBody").on("scroll", function () {
+    positionDesktopPeoplePanel();
+  });
+
+  $(window).on("scroll resize", function () {
+    positionDesktopPeoplePanel();
+  });
+
   document.addEventListener("visibilitychange", function () { if (!document.hidden) loadData(true); });
 
   setAppHeightVar();
   window.addEventListener("resize", setAppHeightVar);
   if (window.visualViewport) {
-    window.visualViewport.addEventListener("resize", setAppHeightVar);
-    window.visualViewport.addEventListener("scroll", setAppHeightVar);
+    window.visualViewport.addEventListener("resize", function () { setAppHeightVar(); refreshKeyboardState(); });
+    window.visualViewport.addEventListener("scroll", function () { setAppHeightVar(); refreshKeyboardState(); });
   }
   window.addEventListener("orientationchange", function () {
     setTimeout(setAppHeightVar, 250);

@@ -190,7 +190,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.19.0 floating action buttons */
+/* v2.24.0 floating action buttons */
 .hero{align-items:center}
 .heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
 .heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
@@ -245,7 +245,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.19.0 clean overrides */
+/* v2.24.0 clean overrides */
 .hero{align-items:center}
 .heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
 .heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
@@ -349,7 +349,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.19.0 iOS PWA top safe-area fix */
+/* v2.24.0 iOS PWA top safe-area fix */
 :root{
   --safe-top: env(safe-area-inset-top, 0px);
   --mobile-top-gap: 16px;
@@ -398,7 +398,7 @@ html.pwa .hero{
 }
 
 
-/* v2.19.0 mobile modal scroll lock */
+/* v2.24.0 mobile modal scroll lock */
 html.modalLocked,
 body.modalLocked{
   width:100%;
@@ -472,7 +472,7 @@ body.modalLocked{
 }
 
 
-/* v2.19.0 fixed mobile edit modal: no bounce / no floating */
+/* v2.24.0 fixed mobile edit modal: no bounce / no floating */
 :root{
   --app-height: 100vh;
 }
@@ -566,7 +566,7 @@ body.modalLocked{
 }
 
 
-/* v2.19.0 mobile date picker and horizontal swipe lock */
+/* v2.24.0 mobile date picker and horizontal swipe lock */
 html,
 body{
   overflow-x:hidden!important;
@@ -691,7 +691,7 @@ body{
 }
 
 
-/* v2.19.0 mobile date picker final fix */
+/* v2.24.0 mobile date picker final fix */
 body.modalLocked .fabGroup{
   display:none!important;
 }
@@ -766,7 +766,7 @@ body.modalLocked{
 }
 
 
-/* v2.19.0 native Safari date input */
+/* v2.24.0 native Safari date input */
 #editDate{
   -webkit-appearance:none;
   appearance:none;
@@ -827,7 +827,7 @@ body,
 }
 
 
-/* v2.19.0 mobile keyboard stability */
+/* v2.24.0 mobile keyboard stability */
 #editTime{
   width:auto!important;
   min-width:132px;
@@ -933,7 +933,7 @@ body.modalLocked{
 }
 
 
-/* v2.19.0 people picker mobile optimization */
+/* v2.24.0 people picker mobile optimization */
 #peoplePicker{
   position:relative;
 }
@@ -1048,7 +1048,7 @@ body.modalLocked{
 }
 
 
-/* v2.19.0 edit form order and Rednote height */
+/* v2.24.0 edit form order and Rednote height */
 #editMask .editFieldDate{order:1;}
 #editMask .editFieldTime{order:2;}
 #editMask .editFieldWeekday{order:3;}
@@ -1080,5 +1080,543 @@ body.modalLocked{
   #editLinks{
     min-height:66px!important;
     height:66px;
+  }
+}
+
+
+/* v2.24.0 PC edit modal and people dropdown optimization */
+@media(min-width:761px){
+  #editMask{
+    align-items:center!important;
+    justify-content:center!important;
+    padding:20px!important;
+  }
+
+  #editMask .modal{
+    width:min(980px,96vw)!important;
+    max-width:980px!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    border-radius:26px!important;
+  }
+
+  #editMask .modalHead{
+    padding:14px 20px!important;
+  }
+
+  #editMask .modalHead h2{
+    font-size:24px!important;
+  }
+
+  #editMask .modalBody{
+    padding:14px 20px!important;
+    overflow:visible!important;
+    max-height:none!important;
+  }
+
+  #editMask .modalFoot{
+    padding:12px 20px!important;
+  }
+
+  #editMask .grid{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:10px 12px!important;
+    overflow:visible!important;
+    align-items:start!important;
+  }
+
+  #editMask .field{
+    gap:5px!important;
+    min-width:0!important;
+  }
+
+  #editMask .field label{
+    font-size:12px!important;
+  }
+
+  #editMask .field input,
+  #editMask .field textarea{
+    min-height:42px!important;
+    padding:9px 12px!important;
+    border-radius:13px!important;
+    font-size:15px!important;
+  }
+
+  #editMask .editFieldDate{
+    order:1!important;
+    grid-column:auto!important;
+  }
+
+  #editMask .editFieldTime{
+    order:2!important;
+    grid-column:auto!important;
+  }
+
+  #editMask .editFieldWeekday{
+    order:3!important;
+    grid-column:auto!important;
+  }
+
+  #editMask .editFieldPeople{
+    order:4!important;
+    grid-column:1 / 3!important;
+    position:relative!important;
+    z-index:100002!important;
+  }
+
+  #editMask .editFieldGroup{
+    order:5!important;
+    grid-column:3 / 4!important;
+  }
+
+  #editMask .editFieldContent{
+    order:6!important;
+    grid-column:1 / -1!important;
+  }
+
+  #editMask .editFieldLinks{
+    order:7!important;
+    grid-column:1 / -1!important;
+  }
+
+  #editContent{
+    min-height:80px!important;
+    height:80px!important;
+    resize:none!important;
+  }
+
+  #editLinks{
+    min-height:52px!important;
+    height:52px!important;
+    resize:none!important;
+  }
+
+  #editMask .hint{
+    display:none!important;
+  }
+
+  #peoplePicker{
+    position:relative!important;
+    z-index:100002!important;
+    overflow:visible!important;
+  }
+
+  #peopleToggle{
+    min-height:42px!important;
+    height:42px!important;
+    padding:9px 12px!important;
+  }
+
+  #peoplePanel{
+    position:absolute!important;
+    left:0!important;
+    right:0!important;
+    top:calc(100% + 8px)!important;
+    bottom:auto!important;
+    width:100%!important;
+    max-height:230px!important;
+    overflow:auto!important;
+    background:#fff!important;
+    border:1px solid var(--line)!important;
+    border-radius:16px!important;
+    box-shadow:0 22px 46px rgba(15,23,42,.18)!important;
+    padding:8px!important;
+    z-index:100003!important;
+  }
+
+  #peoplePanel.open{
+    display:block!important;
+  }
+
+  #peoplePanel .peopleOption{
+    display:flex!important;
+    align-items:center!important;
+    gap:10px!important;
+    min-height:38px!important;
+    padding:8px 10px!important;
+    border-radius:10px!important;
+    background:#fff!important;
+  }
+
+  #peoplePanel .peopleOption input{
+    flex:0 0 auto!important;
+    width:16px!important;
+    height:16px!important;
+    margin:0!important;
+  }
+
+  #peoplePanel .peopleOption span{
+    flex:1 1 auto!important;
+    min-width:0!important;
+    color:var(--text)!important;
+    white-space:normal!important;
+    overflow:visible!important;
+    word-break:break-word!important;
+  }
+}
+
+/* Keep mobile ordering from v2.19.0, but reduce Rednote height a little more */
+@media(max-width:760px){
+  #editLinks{
+    min-height:58px!important;
+    height:58px!important;
+  }
+}
+
+
+/* v2.24.0 PC people picker + edit modal final layout */
+@media(min-width:761px){
+  #editMask{
+    padding:18px!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+
+  #editMask .modal{
+    width:min(1040px,96vw)!important;
+    max-width:1040px!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+
+  #editMask .modalHead{
+    padding:12px 20px!important;
+  }
+
+  #editMask .modalBody{
+    padding:12px 20px!important;
+    overflow:visible!important;
+    max-height:none!important;
+  }
+
+  #editMask .modalFoot{
+    padding:12px 20px!important;
+    position:relative!important;
+  }
+
+  #editMask .grid{
+    display:grid!important;
+    grid-template-columns:1fr 0.62fr 1fr!important;
+    gap:10px 14px!important;
+    align-items:start!important;
+    overflow:visible!important;
+  }
+
+  #editMask .field{
+    min-width:0!important;
+    gap:5px!important;
+    overflow:visible!important;
+  }
+
+  #editMask .field label{
+    font-size:12px!important;
+    line-height:1.2!important;
+  }
+
+  #editMask .field input,
+  #editMask .field textarea{
+    min-height:42px!important;
+    padding:9px 12px!important;
+    border-radius:13px!important;
+    font-size:15px!important;
+  }
+
+  #editMask .editFieldDate{order:1!important;grid-column:1 / 2!important;}
+  #editMask .editFieldTime{order:2!important;grid-column:2 / 3!important;}
+  #editMask .editFieldWeekday{order:3!important;grid-column:3 / 4!important;}
+  #editMask .editFieldPeople{order:4!important;grid-column:1 / 3!important;}
+  #editMask .editFieldGroup{order:5!important;grid-column:3 / 4!important;}
+  #editMask .editFieldContent{order:6!important;grid-column:1 / -1!important;}
+  #editMask .editFieldLinks{order:7!important;grid-column:1 / -1!important;}
+
+  #peoplePicker{
+    position:relative!important;
+    overflow:visible!important;
+    z-index:5!important;
+  }
+
+  #peopleToggle{
+    min-height:42px!important;
+    height:42px!important;
+    padding:9px 12px!important;
+  }
+
+  /*
+    PC 端不要用 absolute 下拉，避免被 grid / modal 裁切。
+    改成在输入框下面直接展开的复选卡片，所有人员都能看见。
+  */
+  #peoplePanel{
+    position:static!important;
+    display:none!important;
+    width:100%!important;
+    max-height:none!important;
+    overflow:visible!important;
+    margin-top:8px!important;
+    padding:8px!important;
+    border:1px solid var(--line)!important;
+    border-radius:16px!important;
+    background:#fff!important;
+    box-shadow:0 10px 28px rgba(15,23,42,.10)!important;
+    z-index:auto!important;
+  }
+
+  #peoplePanel.open{
+    display:grid!important;
+    grid-template-columns:repeat(auto-fit,minmax(138px,1fr))!important;
+    gap:6px!important;
+  }
+
+  #peoplePanel .peopleOption{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:9px!important;
+    min-height:36px!important;
+    padding:7px 9px!important;
+    border-radius:10px!important;
+    background:#f8fafc!important;
+    overflow:visible!important;
+  }
+
+  #peoplePanel .peopleOption input{
+    flex:0 0 auto!important;
+    width:16px!important;
+    height:16px!important;
+    min-height:16px!important;
+    margin:0!important;
+  }
+
+  #peoplePanel .peopleOption span{
+    display:block!important;
+    flex:1 1 auto!important;
+    min-width:0!important;
+    color:var(--text)!important;
+    font-size:14px!important;
+    line-height:1.25!important;
+    white-space:normal!important;
+    word-break:break-word!important;
+    overflow:visible!important;
+  }
+
+  #editContent,
+  #editLinks{
+    min-height:88px!important;
+    height:88px!important;
+    resize:none!important;
+  }
+
+  #editMask .hint{
+    display:none!important;
+  }
+
+  #editMask .modalBody::-webkit-scrollbar,
+  #peoplePanel::-webkit-scrollbar{
+    display:none!important;
+  }
+}
+
+/* v2.24.0 mobile footer: never disappear after keyboard / scrolling */
+@media(max-width:760px){
+  #editMask .modalFoot{
+    display:flex!important;
+    position:sticky!important;
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    width:100%!important;
+    z-index:20!important;
+    background:#fff!important;
+    padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
+  }
+
+  body.keyboardOpen #editMask .modalFoot{
+    display:flex!important;
+    position:sticky!important;
+    bottom:0!important;
+  }
+
+  body.keyboardOpen #editMask .modalBody{
+    padding-bottom:130px!important;
+  }
+
+  #peoplePanel.open{
+    display:block!important;
+  }
+}
+
+
+/* v2.24.0 PC people picker floating dropdown */
+@media(min-width:761px){
+  /* PC 端 People 面板改回悬浮，不再撑高编辑弹窗 */
+  #peoplePicker{
+    position:relative!important;
+    overflow:visible!important;
+  }
+
+  #editMask .editFieldPeople{
+    overflow:visible!important;
+    z-index:100004!important;
+  }
+
+  #peoplePanel{
+    position:fixed!important;
+    left:var(--people-panel-left, 24px)!important;
+    top:var(--people-panel-top, 180px)!important;
+    right:auto!important;
+    bottom:auto!important;
+    width:var(--people-panel-width, 520px)!important;
+    max-width:calc(100vw - 32px)!important;
+    max-height:var(--people-panel-max-height, 260px)!important;
+    overflow:auto!important;
+    margin:0!important;
+    padding:8px!important;
+    background:#fff!important;
+    border:1px solid var(--line)!important;
+    border-radius:16px!important;
+    box-shadow:0 22px 52px rgba(15,23,42,.22)!important;
+    z-index:100005!important;
+  }
+
+  #peoplePanel.open{
+    display:grid!important;
+    grid-template-columns:repeat(auto-fit,minmax(136px,1fr))!important;
+    gap:6px!important;
+  }
+
+  #peoplePanel .peopleOption{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:9px!important;
+    min-height:36px!important;
+    padding:7px 9px!important;
+    border-radius:10px!important;
+    background:#f8fafc!important;
+    overflow:visible!important;
+  }
+
+  #peoplePanel .peopleOption:hover{
+    background:#eef4ff!important;
+  }
+
+  #peoplePanel .peopleOption input{
+    flex:0 0 auto!important;
+    width:16px!important;
+    height:16px!important;
+    min-height:16px!important;
+    margin:0!important;
+  }
+
+  #peoplePanel .peopleOption span{
+    display:block!important;
+    flex:1 1 auto!important;
+    min-width:0!important;
+    color:var(--text)!important;
+    font-size:14px!important;
+    line-height:1.25!important;
+    white-space:normal!important;
+    word-break:break-word!important;
+    overflow:visible!important;
+  }
+}
+
+
+/* v2.24.0 PC people dropdown: always float directly below the clicked dropdown */
+@media(min-width:761px){
+  #peoplePicker{
+    position:relative!important;
+    overflow:visible!important;
+  }
+
+  #peoplePanel{
+    position:fixed!important;
+    left:var(--people-panel-left, 24px)!important;
+    top:var(--people-panel-top, 180px)!important;
+    right:auto!important;
+    bottom:auto!important;
+    width:var(--people-panel-width, 520px)!important;
+    max-height:var(--people-panel-max-height, 260px)!important;
+    margin:0!important;
+    padding:8px!important;
+    overflow:auto!important;
+    background:#fff!important;
+    border:1px solid var(--line)!important;
+    border-radius:16px!important;
+    box-shadow:0 22px 46px rgba(15,23,42,.20)!important;
+    z-index:2147483647!important;
+    transform:none!important;
+  }
+
+  #peoplePanel.open{
+    display:grid!important;
+    grid-template-columns:repeat(auto-fit,minmax(136px,1fr))!important;
+    gap:6px!important;
+  }
+
+  #peoplePanel:not(.open){
+    display:none!important;
+  }
+
+  #editMask .editFieldPeople,
+  #editMask .modal,
+  #editMask .modalBody,
+  #editMask .grid{
+    overflow:visible!important;
+  }
+}
+
+
+/* v2.24.0 PC People dropdown final: float directly under the dropdown */
+@media(min-width:761px){
+  #editMask .modal,
+  #editMask .modalBody,
+  #editMask .grid,
+  #editMask .field,
+  #editMask .editFieldPeople,
+  #peoplePicker{
+    overflow:visible!important;
+  }
+
+  #editMask .editFieldPeople{
+    position:relative!important;
+    z-index:2147483640!important;
+  }
+
+  #peoplePicker{
+    position:relative!important;
+    z-index:2147483641!important;
+  }
+
+  #peoplePanel{
+    position:absolute!important;
+    left:0!important;
+    right:auto!important;
+    top:calc(100% + 8px)!important;
+    bottom:auto!important;
+    width:100%!important;
+    max-width:none!important;
+    max-height:220px!important;
+    margin:0!important;
+    padding:8px!important;
+    overflow:auto!important;
+    background:#fff!important;
+    border:1px solid var(--line)!important;
+    border-radius:16px!important;
+    box-shadow:0 22px 46px rgba(15,23,42,.20)!important;
+    transform:none!important;
+    z-index:2147483642!important;
+  }
+
+  #peoplePanel.open{
+    display:grid!important;
+    grid-template-columns:repeat(auto-fit,minmax(136px,1fr))!important;
+    gap:6px!important;
+  }
+
+  #peoplePanel:not(.open){
+    display:none!important;
   }
 }
