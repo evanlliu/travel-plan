@@ -1,6 +1,6 @@
 {
-  "version": "v2.40.0",
-  "updatedAt": "2026-05-06T13:50:18.523Z",
+  "version": "v2.41.0",
+  "updatedAt": "2026-05-06T13:53:01.774Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
