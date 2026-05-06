@@ -1,4 +1,4 @@
-const APP_VERSION = "v2.5.0";
+const APP_VERSION = "v2.6.0";
 
 const DEFAULT_DATA = {
   version: APP_VERSION,
@@ -25,7 +25,7 @@ function corsHeaders(env) {
 }
 
 function jsonResponse(body, status, env) {
-  return new Response(JSON.stringify(body), {
+  return new Response(JSON.stringify(body, null, 2), {
     status,
     headers: { ...corsHeaders(env), "Content-Type": "application/json; charset=utf-8" }
   });
@@ -35,15 +35,24 @@ function splitList(s) {
   return String(s || "").split(/[\n,，;；]+/).map(x => x.trim()).filter(Boolean);
 }
 
-function defaultSettings() {
-  return {
-    cloudflare: {
-      apiBase: "",
-      appPassword: "",
-      configSavedInDataJson: true,
-      passwordStorage: "data.json settings.cloudflare.appPassword"
+function isMojibakeName(name) {
+  const s = String(name || "");
+  return !s.trim() || /[\uFFFD\u0080-\u009F]/.test(s) || /[ÃÂ]/.test(s) || /â[€€™€œ]/.test(s);
+}
+
+function cleanNameList(list) {
+  const seen = new Set();
+  const out = [];
+  const arr = Array.isArray(list) ? list : splitList(list);
+  for (const name of arr) {
+    const s = String(name || "").trim();
+    if (!s || isMojibakeName(s)) continue;
+    if (!seen.has(s)) {
+      seen.add(s);
+      out.push(s);
     }
-  };
+  }
+  return out;
 }
 
 function normalizePayload(payload) {
@@ -62,16 +71,15 @@ function normalizePayload(payload) {
     }));
   }
 
-  const settings = payload.settings && typeof payload.settings === "object" ? payload.settings : defaultSettings();
-  if (!settings.cloudflare || typeof settings.cloudflare !== "object") settings.cloudflare = defaultSettings().cloudflare;
-  settings.cloudflare.apiBase = String(settings.cloudflare.apiBase || "");
+  const settings = payload.settings && typeof payload.settings === "object" ? payload.settings : DEFAULT_DATA.settings;
+  if (!settings.cloudflare || typeof settings.cloudflare !== "object") settings.cloudflare = DEFAULT_DATA.settings.cloudflare;
+  settings.cloudflare.apiBase = String(settings.cloudflare.apiBase || "").trim().replace(/\/+$/, "").replace(/\/data\.json$/i, "").replace(/\/data$/i, "");
   settings.cloudflare.appPassword = String(settings.cloudflare.appPassword || "");
   settings.cloudflare.configSavedInDataJson = true;
   settings.cloudflare.passwordStorage = "data.json settings.cloudflare.appPassword";
 
-  const peopleOptions = Array.isArray(payload.peopleOptions)
-    ? payload.peopleOptions.map(String).map(x => x.trim()).filter(Boolean)
-    : [];
+  let peopleOptions = cleanNameList(Array.isArray(payload.peopleOptions) ? payload.peopleOptions : DEFAULT_DATA.peopleOptions);
+  if (!peopleOptions.length) peopleOptions = [...DEFAULT_DATA.peopleOptions];
 
   const normalizedItems = items.map((r, idx) => ({
     id: String(r.id || crypto.randomUUID()),
@@ -80,7 +88,7 @@ function normalizePayload(payload) {
     group: String(r.group || r.section || ""),
     content: String(r.content || r.plan || ""),
     links: (Array.isArray(r.links) ? r.links : splitList(r.links || r.link || "")).map(String).filter(Boolean),
-    participants: (Array.isArray(r.participants) ? r.participants : splitList(r.participants || "")).map(String).filter(Boolean),
+    participants: cleanNameList(Array.isArray(r.participants) ? r.participants : splitList(r.participants || "")),
     sort: typeof r.sort === "number" ? r.sort : idx
   }));
 
@@ -99,21 +107,36 @@ function normalizePayload(payload) {
   };
 }
 
-function isGithubMode(env) {
-  return !!(env.GH_TOKEN && env.GH_OWNER && env.GH_REPO);
+function b64Encode(str) {
+  const bytes = new TextEncoder().encode(str);
+  let binary = "";
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
 }
 
-function dataPath(env) {
+function b64Decode(str) {
+  const binary = atob(String(str || "").replace(/\s/g, ""));
+  const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+
+function githubConfigured(env) {
+  return env.GH_TOKEN && env.GH_OWNER && env.GH_REPO;
+}
+
+function githubPath(env) {
   return env.DATA_PATH || "data.json";
 }
 
+function githubBranch(env) {
+  return env.GH_BRANCH || "main";
+}
+
 async function githubGet(env) {
-  const owner = env.GH_OWNER;
-  const repo = env.GH_REPO;
-  const branch = env.GH_BRANCH || "main";
-  const path = dataPath(env);
-  const encodedPath = path.split("/").map(encodeURIComponent).join("/");
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodedPath}?ref=${encodeURIComponent(branch)}`;
+  const url = `https://api.github.com/repos/${env.GH_OWNER}/${env.GH_REPO}/contents/${encodeURIComponent(githubPath(env)).replace(/%2F/g, "/")}?ref=${encodeURIComponent(githubBranch(env))}`;
   const res = await fetch(url, {
     headers: {
       "Authorization": `Bearer ${env.GH_TOKEN}`,
@@ -121,26 +144,20 @@ async function githubGet(env) {
       "User-Agent": "travel-plan-worker"
     }
   });
-  if (res.status === 404) return { data: DEFAULT_DATA, sha: null };
-  if (!res.ok) throw new Error("GitHub read failed: " + res.status);
+  if (res.status === 404) return { data: DEFAULT_DATA, sha: "" };
+  if (!res.ok) throw new Error(`GitHub read failed: ${res.status}`);
   const body = await res.json();
-  const decoded = atob(String(body.content || "").replace(/\n/g, ""));
-  return { data: JSON.parse(decoded), sha: body.sha || null };
+  const text = b64Decode(body.content || "");
+  return { data: JSON.parse(text), sha: body.sha || "" };
 }
 
 async function githubPut(env, payload) {
-  const owner = env.GH_OWNER;
-  const repo = env.GH_REPO;
-  const branch = env.GH_BRANCH || "main";
-  const path = dataPath(env);
-  const encodedPath = path.split("/").map(encodeURIComponent).join("/");
-  const current = await githubGet(env).catch(() => ({ data: DEFAULT_DATA, sha: null }));
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodedPath}`;
+  const current = await githubGet(env);
+  const url = `https://api.github.com/repos/${env.GH_OWNER}/${env.GH_REPO}/contents/${encodeURIComponent(githubPath(env)).replace(/%2F/g, "/")}`;
   const body = {
     message: `Update travel plan data ${new Date().toISOString()}`,
-    content,
-    branch
+    content: b64Encode(JSON.stringify(payload, null, 2)),
+    branch: githubBranch(env)
   };
   if (current.sha) body.sha = current.sha;
 
@@ -149,43 +166,55 @@ async function githubPut(env, payload) {
     headers: {
       "Authorization": `Bearer ${env.GH_TOKEN}`,
       "Accept": "application/vnd.github+json",
-      "User-Agent": "travel-plan-worker",
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "User-Agent": "travel-plan-worker"
     },
     body: JSON.stringify(body)
   });
   if (!res.ok) {
     const text = await res.text();
-    throw new Error("GitHub write failed: " + res.status + " " + text.slice(0, 200));
+    throw new Error(`GitHub write failed: ${res.status} ${text}`);
   }
-  return await res.json();
 }
 
-async function kvGet(env) {
-  if (!env.TRAVEL_DATA) return DEFAULT_DATA;
-  const stored = await env.TRAVEL_DATA.get(dataPath(env));
-  return stored ? JSON.parse(stored) : DEFAULT_DATA;
+async function readData(env) {
+  if (githubConfigured(env)) {
+    const result = await githubGet(env);
+    return normalizePayload(result.data);
+  }
+  if (env.TRAVEL_DATA) {
+    const stored = await env.TRAVEL_DATA.get(env.DATA_PATH || "data.json");
+    return stored ? normalizePayload(JSON.parse(stored)) : DEFAULT_DATA;
+  }
+  return DEFAULT_DATA;
 }
 
-async function kvPut(env, payload) {
-  if (!env.TRAVEL_DATA) throw new Error("Missing KV binding: TRAVEL_DATA");
-  await env.TRAVEL_DATA.put(dataPath(env), JSON.stringify(payload, null, 2));
-}
-
-function acceptedPath(pathname) {
-  return pathname === "/" || pathname === "/data" || pathname === "/data.json";
+async function writeData(env, payload) {
+  const normalized = normalizePayload(payload);
+  if (githubConfigured(env)) {
+    await githubPut(env, normalized);
+    return normalized;
+  }
+  if (env.TRAVEL_DATA) {
+    await env.TRAVEL_DATA.put(env.DATA_PATH || "data.json", JSON.stringify(normalized, null, 2));
+    return normalized;
+  }
+  throw new Error("No storage configured. Set GitHub variables or TRAVEL_DATA KV binding.");
 }
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(env) });
-    if (!acceptedPath(url.pathname)) return jsonResponse({ ok: false, error: "Not found" }, 404, env);
+    const headers = corsHeaders(env);
+
+    if (request.method === "OPTIONS") return new Response(null, { status: 204, headers });
+
+    const okPath = url.pathname === "/" || url.pathname === "/data" || url.pathname === "/data.json";
+    if (!okPath) return jsonResponse({ ok: false, error: "Not found" }, 404, env);
 
     if (request.method === "GET") {
       try {
-        const raw = isGithubMode(env) ? (await githubGet(env)).data : await kvGet(env);
-        const data = normalizePayload(raw);
+        const data = await readData(env);
         return jsonResponse(data, 200, env);
       } catch (e) {
         return jsonResponse({ ok: false, error: e.message || "Read failed" }, 500, env);
@@ -201,18 +230,11 @@ export default {
       const text = await request.text();
       if (text.length > 1024 * 1024) return jsonResponse({ ok: false, error: "JSON too large" }, 413, env);
 
-      let payload;
       try {
-        payload = normalizePayload(JSON.parse(text));
+        const payload = normalizePayload(JSON.parse(text));
         payload.updatedAt = new Date().toISOString();
-      } catch (e) {
-        return jsonResponse({ ok: false, error: e.message || "Invalid JSON" }, 400, env);
-      }
-
-      try {
-        if (isGithubMode(env)) await githubPut(env, payload);
-        else await kvPut(env, payload);
-        return jsonResponse({ ok: true, version: payload.version, updatedAt: payload.updatedAt }, 200, env);
+        await writeData(env, payload);
+        return jsonResponse({ ok: true, updatedAt: payload.updatedAt, version: payload.version }, 200, env);
       } catch (e) {
         return jsonResponse({ ok: false, error: e.message || "Write failed" }, 500, env);
       }

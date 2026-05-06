@@ -1,22 +1,21 @@
 name = "travel-plan-data-worker"
 main = "worker.js"
-compatibility_date = "2026-05-06"
+compatibility_date = "2026-05-05"
 
-# GitHub storage mode, matching your Cloudflare Variables and Secrets:
-# Secret:
-#   APP_PASSWORD
-#   GH_TOKEN
-# Plaintext variables:
-#   GH_OWNER = "evanlliu"
-#   GH_REPO = "travel-plan"
-#   GH_BRANCH = "main"
-#   DATA_PATH = "data.json"
+# Your current GitHub storage mode:
+# Variables and Secrets:
+# APP_PASSWORD  Secret
+# GH_TOKEN      Secret
+# DATA_PATH     data.json
+# GH_BRANCH     main
+# GH_OWNER      evanlliu
+# GH_REPO       travel-plan
 
 # Optional CORS restriction:
 # [vars]
 # ALLOWED_ORIGIN = "https://your-pages-domain.pages.dev"
 
-# Optional KV mode fallback:
+# Optional KV fallback mode:
 # [[kv_namespaces]]
 # binding = "TRAVEL_DATA"
 # id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"

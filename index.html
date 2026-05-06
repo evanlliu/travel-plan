@@ -3,38 +3,44 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Travel Plan Pro v2.5.0</title>
-  <link rel="stylesheet" href="./style.css?v=v2.5.0">
+  <title>Travel Plan Pro v2.6.0</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="./style.css?v=v2.6.0">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh.js"></script>
 </head>
 <body>
   <main class="page">
     <section class="hero">
       <div class="heroText">
-        <div class="eyebrow"><span data-i18n="eyebrow">多设备同步行程</span><span class="ver">v2.5.0</span></div>
+        <div class="eyebrow"><span data-i18n="eyebrow">多设备同步行程</span><span class="ver">v2.6.0</span></div>
         <h1 data-i18n="appTitle">行程计划 Pro</h1>
-        <p data-i18n="subtitle">按日期分组管理行程，支持中英文、Excel 导入、小红书链接预览、人员多选和 Cloudflare + GitHub 同步。</p>
+        <p data-i18n="subtitle">按日期分组展示，支持 Excel 导入、人员多选、小红书链接预览、Cloudflare + GitHub 多设备同步。</p>
       </div>
+
       <div class="heroActions">
-        <button class="primary" id="btnAdd"><span>＋</span><span data-i18n="add">新增安排</span></button>
-        <button id="btnMore"><span>☰</span><span data-i18n="more">更多功能</span></button>
+        <button class="primary" id="btnAdd" data-i18n="add">新增安排</button>
+        <button id="btnMore" data-i18n="more">更多功能</button>
+        <button class="lang" id="btnLang" aria-label="language">EN</button>
       </div>
     </section>
 
-    <section class="tools collapsed" id="toolPanel">
-      <div class="toolGrid">
-        <button id="btnImport" data-i18n="import">导入 Excel</button>
-        <button id="btnTplZh" data-i18n="tplZh">中文模板</button>
-        <button id="btnTplEn" data-i18n="tplEn">英文模板</button>
-        <button id="btnPeople" data-i18n="peopleConfig">人员配置</button>
-        <button id="btnCloudflare" data-i18n="cloudflareConfig">Cloudflare 同步配置</button>
-        <button id="btnRefresh" data-i18n="refresh">刷新同步</button>
-      </div>
-      <input class="search" id="searchInput" data-i18n-placeholder="search" placeholder="搜索日期 / 内容 / 人员">
+    <section class="morePanel" id="morePanel">
+      <button id="btnImport" data-i18n="import">导入 Excel</button>
+      <button id="btnTplZh" data-i18n="tplZh">中文模板</button>
+      <button id="btnTplEn" data-i18n="tplEn">英文模板</button>
+      <button id="btnPeople" data-i18n="peopleConfig">人员配置</button>
+      <button id="btnCloudflare" data-i18n="cloudflareConfig">Cloudflare 同步配置</button>
+      <button id="btnRefresh" data-i18n="refresh">刷新同步</button>
     </section>
 
-    <section class="syncBar">
+    <section class="searchBar">
+      <input id="searchInput" data-i18n-placeholder="search" placeholder="搜索日期 / 内容 / 人员">
+    </section>
+
+    <section class="status">
       <div><span class="dot" id="statusDot"></span><span id="statusText">Loading...</span></div>
       <div id="updatedText">-</div>
     </section>
@@ -43,24 +49,18 @@
     <section class="board" id="board"></section>
   </main>
 
-  <button class="lang" id="btnLang" title="Language">EN</button>
-
   <div class="mask" id="editMask">
     <div class="modal">
       <div class="modalHead">
         <h2 id="editTitle">新增安排</h2>
-        <button class="iconBtn" data-close="editMask">✕</button>
+        <button class="iconBtn" data-close="editMask" aria-label="close">✕</button>
       </div>
       <div class="modalBody">
         <input type="hidden" id="editId">
         <div class="grid">
-          <div class="field dateField">
+          <div class="field">
             <label data-i18n="date">日期</label>
-            <div class="dateSelects">
-              <select id="editYear"></select>
-              <select id="editMonth"></select>
-              <select id="editDay"></select>
-            </div>
+            <input type="text" id="editDate" data-i18n-placeholder="datePlaceholder" placeholder="选择日期" autocomplete="off">
           </div>
           <div class="field">
             <label data-i18n="time">时间</label>
@@ -105,14 +105,14 @@
     <div class="modal smallModal">
       <div class="modalHead">
         <h2 data-i18n="peopleConfig">人员配置</h2>
-        <button class="iconBtn" data-close="peopleMask">✕</button>
+        <button class="iconBtn" data-close="peopleMask" aria-label="close">✕</button>
       </div>
       <div class="modalBody">
         <div class="notice" data-i18n="peopleSyncNotice">人员配置会和行程一起保存到 data.json，新设备加载后也会自动同步。</div>
         <div class="field full">
           <label data-i18n="peopleList">人员列表</label>
           <textarea id="peopleText" class="peopleText"></textarea>
-          <div class="hint" data-i18n="peopleHint">一行一个名字。</div>
+          <div class="hint" data-i18n="peopleHint">一行一个名字。保存后会写入 data.json 的 peopleOptions。</div>
         </div>
       </div>
       <div class="modalFoot">
@@ -126,21 +126,20 @@
     <div class="modal smallModal">
       <div class="modalHead">
         <h2 data-i18n="cloudflareConfig">Cloudflare 同步配置</h2>
-        <button class="iconBtn" data-close="cloudMask">✕</button>
+        <button class="iconBtn" data-close="cloudMask" aria-label="close">✕</button>
       </div>
       <div class="modalBody">
-        <div class="notice" data-i18n="cloudNotice">Worker 地址和写入密码都会保存到 data.json，方便新设备自动同步。</div>
         <div class="field full">
-          <label data-i18n="workerAddress">Worker 地址</label>
-          <input id="cloudApiBase" placeholder="https://xxx.workers.dev">
-          <div class="hint" data-i18n="workerHint">支持填写根地址、/data 或 /data.json，保存时会自动规范化。</div>
+          <label data-i18n="workerUrl">Worker 地址</label>
+          <input id="cloudApiBase" placeholder="https://your-worker.workers.dev">
+          <div class="hint" data-i18n="workerHint">支持填写根地址、/data 或 /data.json。保存后会写入 data.json。</div>
         </div>
         <div class="field full">
           <label data-i18n="writePassword">写入密码</label>
           <input id="cloudPassword" type="password" autocomplete="current-password">
-          <div class="hint" data-i18n="passwordHint">对应 Cloudflare Worker Secret：APP_PASSWORD。此版本会按你的要求保存到 data.json。</div>
+          <div class="hint" data-i18n="passwordHint">会保存到 data.json 的 settings.cloudflare.appPassword。</div>
         </div>
-        <div class="cloudResult" id="cloudResult"></div>
+        <div class="notice" id="cloudResult" data-i18n="cloudNotice">配置会保存到 data.json，新设备加载后会自动读取并同步。</div>
       </div>
       <div class="modalFoot">
         <button id="btnTestCloud" data-i18n="testRead">测试读取</button>
@@ -154,7 +153,7 @@
     <div class="modal viewer">
       <div class="modalHead">
         <h2 data-i18n="preview">链接预览</h2>
-        <button class="iconBtn" data-close="viewerMask">✕</button>
+        <button class="iconBtn" data-close="viewerMask" aria-label="close">✕</button>
       </div>
       <div class="viewerTip">
         <span data-i18n="iframeTip">如果无法显示，请新窗口打开。</span>
@@ -164,6 +163,6 @@
     </div>
   </div>
 
-  <script src="./app.js?v=v2.5.0"></script>
+  <script src="./app.js?v=v2.6.0"></script>
 </body>
 </html>

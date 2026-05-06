@@ -1,49 +1,70 @@
-# Travel Plan Pro v2.5.0
+# Travel Plan Pro
 
-## 本版本重点
+当前版本：**v2.6.0**
 
-- 人员配置 `peopleOptions` 会保存到 `data.json`。
-- Cloudflare Worker 地址和 `APP_PASSWORD` 会保存到 `data.json` 的 `settings.cloudflare`。
-- 每次设备打开页面时，会先读取当前站点的 `./data.json`，再用里面的 Cloudflare 配置同步 Worker 最新数据。
-- 支持你截图里的 Cloudflare Worker GitHub 模式变量：
-  - Secret: `APP_PASSWORD`
-  - Secret: `GH_TOKEN`
-  - Plaintext: `GH_OWNER`
-  - Plaintext: `GH_REPO`
-  - Plaintext: `GH_BRANCH`
-  - Plaintext: `DATA_PATH`
-- 仍兼容 KV 绑定 `TRAVEL_DATA`。
+## 本版修复
 
-## data.json 关键结构
+1. 修复人员配置里的乱码人员重复出现问题。
+   - 自动过滤 `Ã`、`Â`、控制字符、替换字符等常见乱码。
+   - 保存人员配置时，会同步清理行程中的已删除人员，避免下次加载又被重新添加。
+2. 重新优化移动端兼容。
+   - 顶部按钮、更多功能、弹窗、行程表格在 iPhone Safari 上重新适配。
+3. 新增安排日期改为第三方日期插件 `flatpickr`。
+   - 一个输入框直接选择日期。
+   - 支持中文 / 英文日历。
+   - 切换语言后，日历月份、星期、显示格式会跟着切换。
+4. Cloudflare 同步配置、人员配置都会保存到 `data.json`。
+   - `settings.cloudflare.apiBase`
+   - `settings.cloudflare.appPassword`
+   - `peopleOptions`
 
-```json
-{
-  "version": "v2.5.0",
-  "settings": {
-    "cloudflare": {
-      "apiBase": "https://your-worker.workers.dev",
-      "appPassword": "your-password",
-      "configSavedInDataJson": true,
-      "passwordStorage": "data.json settings.cloudflare.appPassword"
-    }
-  },
-  "peopleOptions": ["Evan", "Gonca"],
-  "items": []
-}
+## Cloudflare Worker 配置
+
+你的截图配置可以继续使用：
+
+| Type | Name | Value |
+|---|---|---|
+| Secret | `APP_PASSWORD` | 你的写入密码 |
+| Secret | `GH_TOKEN` | GitHub Token |
+| Plaintext | `DATA_PATH` | `data.json` |
+| Plaintext | `GH_BRANCH` | `main` |
+| Plaintext | `GH_OWNER` | `evanlliu` |
+| Plaintext | `GH_REPO` | `travel-plan` |
+
+`worker.js` 兼容路径：
+
+```text
+/
+ /data
+ /data.json
 ```
 
-## 部署方式
+页面里的 Worker 地址可以填写：
 
-1. 把 `index.html`、`style.css`、`app.js`、`data.json` 上传到 GitHub 仓库。
-2. Cloudflare Pages 连接这个 GitHub 仓库。
-3. Cloudflare Worker 使用 `worker.js`。
-4. Worker 的 Variables and Secrets 按下面配置：
-   - `APP_PASSWORD`：Secret，写入密码。
-   - `GH_TOKEN`：Secret，GitHub Token，需要 Contents read/write 权限。
-   - `GH_OWNER`：Plaintext，例如 `evanlliu`。
-   - `GH_REPO`：Plaintext，例如 `travel-plan`。
-   - `GH_BRANCH`：Plaintext，例如 `main`。
-   - `DATA_PATH`：Plaintext，例如 `data.json`。
+```text
+https://你的-worker.workers.dev
+```
+
+也兼容：
+
+```text
+https://你的-worker.workers.dev/data
+https://你的-worker.workers.dev/data.json
+```
+
+## 部署
+
+1. 将这些文件上传到 GitHub 仓库：
+   - `index.html`
+   - `style.css`
+   - `app.js`
+   - `data.json`
+   - `worker.js`
+   - `wrangler.toml`
+2. Cloudflare Pages 连接该仓库。
+3. Cloudflare Worker 部署新版 `worker.js`。
+4. 打开网页，在“更多功能 -> Cloudflare 同步配置”里保存 Worker 地址和 APP_PASSWORD。
+5. 保存后配置会写入 GitHub 的 `data.json`，新设备加载后会自动同步。
 
 ## Excel 表头
 
@@ -61,4 +82,4 @@ Date, Time, Group, Plan Content, Red Note, People
 
 ## 注意
 
-按你的要求，本版本会把 `APP_PASSWORD` 保存到 `data.json`。这样新设备同步更方便，但能访问 `data.json` 的人也能看到这个密码。
+按你的要求，`APP_PASSWORD` 会保存到 `data.json`。这样换设备方便同步，但如果别人能访问 `data.json`，也能看到这个密码。

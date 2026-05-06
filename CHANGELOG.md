@@ -1,10 +1,16 @@
 # Changelog
 
+## v2.6.0
+
+- 修复人员配置乱码项反复新增的问题。
+- 保存人员配置时，会同步清理行程中的已删除人员。
+- 新增安排日期选择改为第三方插件 flatpickr。
+- 日期选择器支持中文 / 英文日历和显示格式。
+- 重新优化移动端布局、弹窗、表格和按钮区域。
+- 继续支持 Cloudflare + GitHub `data.json` 多设备同步。
+- 继续将 Cloudflare 地址、APP_PASSWORD、人员配置保存到 `data.json`。
+
 ## v2.5.0
 
-- 新增：人员配置保存到 `data.json` 的 `peopleOptions`。
-- 新增：保存人员配置后会直接同步到 Worker / GitHub 的 `data.json`。
-- 优化：设备启动流程，先读取本地站点 `./data.json`，再使用其中的 Cloudflare 地址和密码同步 Worker 数据。
-- 优化：Cloudflare 配置保存到 `data.json` 的 `settings.cloudflare`，包含 `apiBase` 和 `appPassword`。
-- 优化：兼容 Worker 地址根路径、`/data`、`/data.json`。
-- 保留：中英文 UI、移动端适配、自定义日期选择器、Excel 导入、人员多选、小红书链接预览。
+- 人员配置保存到 `data.json`。
+- Cloudflare 配置保存到 `data.json`。
