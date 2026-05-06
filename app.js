@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.42.1";
+  const APP_VERSION = "v2.42.6";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -15,12 +15,9 @@
     zh: {
       appTitle: "行程计划",
       more: "更多功能",
-      import: "导入 Excel",
-      tplZh: "中文模板",
-      tplEn: "英文模板",
-      peopleConfig: "人员配置",
+      settings: "设置",
       cloudflareConfig: "Cloudflare 同步配置",
-      refresh: "刷新同步",
+      syncData: "同步数据",
       search: "搜索日期 / 内容 / 人员",
       loading: "正在加载数据...",
       loaded: "数据已加载",
@@ -57,10 +54,17 @@
       preview: "链接预览",
       iframeTip: "如果无法显示，请新窗口打开。",
       openNew: "新窗口打开",
-      peopleSyncNotice: "人员配置会和行程一起保存到 data.json，新设备加载后也会自动同步。",
+      settingsSyncNotice: "设置会和行程一起保存到 data.json，新设备加载后也会自动同步。",
       peopleList: "人员列表",
       peopleHint: "一行一个名字。保存后会写入 data.json 的 peopleOptions。",
-      savePeople: "保存人员配置",
+      displaySettings: "显示配置",
+      displaySettingsHint: "这些配置会保存到 data.json，可分别控制 PC 和移动端显示内容。",
+      showOnPC: "PC显示",
+      showOnMobile: "移动端显示",
+      displayCardPeople: "计划内容卡片 People 列",
+      displayDayItemCount: "日期卡片 items 数量行",
+      displayDaySummary: "日期卡片时间 / 必做 / 人数摘要行",
+      saveSettings: "保存设置",
       workerUrl: "Worker 地址",
       workerHint: "支持填写根地址、/data 或 /data.json。保存后会写入 data.json。",
       writePassword: "写入密码",
@@ -128,7 +132,14 @@
       peopleSyncNotice: "People settings are saved to data.json together with plans and sync on new devices.",
       peopleList: "People list",
       peopleHint: "One name per line. Saving writes to data.json peopleOptions.",
-      savePeople: "Save People",
+      displaySettings: "Display Settings",
+      displaySettingsHint: "These settings are saved to data.json and can control PC and mobile display separately.",
+      showOnPC: "Show on PC",
+      showOnMobile: "Show on mobile",
+      displayCardPeople: "People column in plan cards",
+      displayDayItemCount: "Day card items count line",
+      displayDaySummary: "Day card time / must-do / people summary line",
+      saveSettings: "Save Settings",
       workerUrl: "Worker URL",
       workerHint: "Root URL, /data, or /data.json are supported. Saving writes to data.json.",
       writePassword: "Write password",
@@ -159,6 +170,11 @@
         appPassword: "",
         configSavedInDataJson: true,
         passwordStorage: "data.json settings.cloudflare.appPassword"
+      },
+      displayOptions: {
+        cardPeople: { pc: true, mobile: true },
+        dayItemCount: { pc: true, mobile: true },
+        daySummary: { pc: true, mobile: true }
       }
     },
     peopleOptions: ["Evan", "Gonca", "Ainiya", "Lin", "Mom", "全家"],
@@ -206,6 +222,51 @@
 
   function isMobile() {
     return window.matchMedia("(max-width: 760px)").matches;
+  }
+
+  function currentDeviceKey() {
+    return isMobile() ? "mobile" : "pc";
+  }
+
+  function normalizeVisibleValue(value, fallback = true) {
+    if (value === false || value === 0) return false;
+    const raw = cleanText(value).toLowerCase();
+    if (["false", "0", "no", "hide", "hidden", "off", "不显示", "隐藏", "否", "关"].includes(raw)) return false;
+    if (["true", "1", "yes", "show", "visible", "on", "显示", "是", "开"].includes(raw)) return true;
+    return fallback;
+  }
+
+  function normalizeDeviceVisibility(value, fallback) {
+    const base = fallback && typeof fallback === "object" ? fallback : { pc: true, mobile: true };
+    if (typeof value === "boolean" || typeof value === "number" || typeof value === "string") {
+      const visible = normalizeVisibleValue(value, true);
+      return { pc: visible, mobile: visible };
+    }
+
+    value = value && typeof value === "object" ? value : {};
+    return {
+      pc: normalizeVisibleValue(value.pc ?? value.desktop ?? value.web, base.pc !== false),
+      mobile: normalizeVisibleValue(value.mobile ?? value.ios ?? value.phone, base.mobile !== false)
+    };
+  }
+
+  function normalizeDisplayOptions(value) {
+    const fallback = clone(DEFAULT_DATA.settings.displayOptions);
+    value = value && typeof value === "object" ? value : {};
+
+    return {
+      cardPeople: normalizeDeviceVisibility(value.cardPeople || value.peopleColumn || value.people, fallback.cardPeople),
+      dayItemCount: normalizeDeviceVisibility(value.dayItemCount || value.itemCount || value.itemsLine, fallback.dayItemCount),
+      daySummary: normalizeDeviceVisibility(value.daySummary || value.summaryLine || value.dayMeta, fallback.daySummary)
+    };
+  }
+
+  function isDisplayOptionVisible(key) {
+    ensureSettings();
+    const device = currentDeviceKey();
+    const options = data.settings.displayOptions || DEFAULT_DATA.settings.displayOptions;
+    const item = options[key] || DEFAULT_DATA.settings.displayOptions[key] || { pc: true, mobile: true };
+    return item[device] !== false;
   }
 
   function isStandaloneMode() {
@@ -398,6 +459,7 @@
     cf.appPassword = String(cf.appPassword || "");
     cf.configSavedInDataJson = true;
     cf.passwordStorage = "data.json settings.cloudflare.appPassword";
+    data.settings.displayOptions = normalizeDisplayOptions(data.settings.displayOptions);
   }
 
   function getApiBase() {
@@ -529,6 +591,8 @@
     base.version = APP_VERSION;
     base.updatedAt = cleanText(input.updatedAt || "");
     base.settings = Object.assign({}, base.settings, input.settings || {});
+    base.settings.cloudflare = Object.assign({}, DEFAULT_DATA.settings.cloudflare, (input.settings && input.settings.cloudflare) || {});
+    base.settings.displayOptions = normalizeDisplayOptions((input.settings && input.settings.displayOptions) || input.displayOptions);
     base.peopleOptions = cleanNameList(input.peopleOptions || base.peopleOptions);
     base.items = (Array.isArray(input.items) ? input.items : []).map(normalizeItem);
 
@@ -689,6 +753,8 @@
   }
 
   function daySummaryHtml(dayItems) {
+    if (!isDisplayOptionVisible("daySummary")) return "";
+
     const times = dayItems.map(item => cleanText(item.time)).filter(Boolean).sort();
     const people = cleanNameList(dayItems.flatMap(item => item.participants || []));
     const linkCount = dayItems.reduce((count, item) => count + ((item.links || []).length), 0);
@@ -718,17 +784,18 @@
 
   function itemCardHtml(item) {
     const hasLinks = (item.links || []).length > 0;
-    const hasPeople = (item.participants || []).length > 0;
+    const showPeopleColumn = isDisplayOptionVisible("cardPeople");
+    const hasPeople = showPeopleColumn && (item.participants || []).length > 0;
 
     const priority = normalizePriority(item.priority);
     return `
-      <article class="planRow priority-${priority} ${hasLinks ? "hasLinks" : ""} ${hasPeople ? "hasPeople" : ""}" data-id="${escapeHtml(item.id)}">
+      <article class="planRow priority-${priority} ${hasLinks ? "hasLinks" : ""} ${hasPeople ? "hasPeople" : ""} ${showPeopleColumn ? "" : "peopleHidden"}" data-id="${escapeHtml(item.id)}">
         <div class="cell timeCell" data-label="${escapeHtml(t("time"))}">${escapeHtml(item.time || "-")}</div>
         <div class="cell contentCell" data-label="${escapeHtml(t("content"))}">
           <div class="contentText">${priorityBadgeHtml(priority)}<span class="contentMain">${escapeHtml(item.content || "-")}</span></div>
         </div>
         <div class="cell linkCell ${hasLinks ? "" : "emptyCell"}" data-label="${escapeHtml(t("rednote"))}">${linkHtml(item.links)}</div>
-        <div class="cell peopleCell ${hasPeople ? "" : "emptyCell"}" data-label="${escapeHtml(t("people"))}">${chipHtml(item.participants)}</div>
+        <div class="cell peopleCell ${showPeopleColumn ? "" : "hiddenBySetting"} ${hasPeople ? "" : "emptyCell"}" data-label="${escapeHtml(t("people"))}">${showPeopleColumn ? chipHtml(item.participants) : ""}</div>
         <div class="cell actionCell">
           <button class="secondary btnEdit" data-id="${escapeHtml(item.id)}">${escapeHtml(t("edit"))}</button>
           <button class="secondary btnCopy" data-id="${escapeHtml(item.id)}">${escapeHtml(t("copy"))}</button>
@@ -748,6 +815,9 @@
       return;
     }
 
+    const showPeopleColumn = isDisplayOptionVisible("cardPeople");
+    const showDayItemCount = isDisplayOptionVisible("dayItemCount");
+
     const html = groupByDate(items).map(([dateISO, dayItems]) => {
       const rows = [];
       let lastGroup = null;
@@ -761,11 +831,11 @@
       });
 
       return `
-        <section class="dayCard">
+        <section class="dayCard ${showPeopleColumn ? "" : "hidePeopleColumn"}">
           <header class="dayHead">
             <div>
               <h2>${escapeHtml(formatDate(dateISO))}</h2>
-              <p>${dayItems.length} ${appLang === "zh" ? "项安排" : dayItems.length === 1 ? "item" : "items"}</p>
+              ${showDayItemCount ? `<p>${dayItems.length} ${appLang === "zh" ? "项安排" : dayItems.length === 1 ? "item" : "items"}</p>` : ""}
               ${daySummaryHtml(dayItems)}
             </div>
           </header>
@@ -773,7 +843,7 @@
             <span>${escapeHtml(t("time"))}</span>
             <span>${escapeHtml(t("content"))}</span>
             <span>${escapeHtml(t("rednote"))}</span>
-            <span>${escapeHtml(t("people"))}</span>
+            <span class="${showPeopleColumn ? "" : "peopleHeadHidden"}">${escapeHtml(t("people"))}</span>
             <span>${escapeHtml(t("action"))}</span>
           </div>
           ${rows.join("")}
@@ -906,14 +976,43 @@
     setStatus("ok", t("deleted"));
   }
 
+  function renderDisplayOptionsConfig() {
+    ensureSettings();
+    const options = normalizeDisplayOptions(data.settings.displayOptions);
+
+    $("#displayOptionsList input[data-display-key]").each(function () {
+      const key = $(this).data("display-key");
+      const device = $(this).data("device");
+      const checked = options[key] && options[key][device] !== false;
+      $(this).prop("checked", checked);
+    });
+  }
+
+  function readDisplayOptionsConfig() {
+    const options = normalizeDisplayOptions(data.settings && data.settings.displayOptions);
+
+    $("#displayOptionsList input[data-display-key]").each(function () {
+      const key = $(this).data("display-key");
+      const device = $(this).data("device");
+      if (!options[key]) options[key] = { pc: true, mobile: true };
+      options[key][device] = this.checked;
+    });
+
+    return normalizeDisplayOptions(options);
+  }
+
   function openPeopleConfig() {
+    ensureSettings();
     $("#peopleText").val(cleanNameList(data.peopleOptions).join("\n"));
+    renderDisplayOptionsConfig();
     openModal("peopleMask");
   }
 
   async function savePeopleConfig() {
     data.peopleOptions = cleanNameList($("#peopleText").val());
     if (!data.peopleOptions.length) data.peopleOptions = cleanNameList(DEFAULT_DATA.peopleOptions);
+    ensureSettings();
+    data.settings.displayOptions = readDisplayOptionsConfig();
     closeModal("peopleMask");
     await saveData(true);
     setStatus("ok", t("saved"));
@@ -948,131 +1047,6 @@
     setStatus("ok", t("configSaved"));
   }
 
-  function headerMap(row) {
-    const map = {};
-    row.forEach((cell, index) => {
-      const key = cleanText(cell).toLowerCase().replace(/\s+/g, "");
-      if (["日期", "date"].includes(key)) map.date = index;
-      if (["时间", "time"].includes(key)) map.time = index;
-      if (["星期", "weekday", "week"].includes(key)) map.weekday = index;
-      if (["计划内容", "plancontent", "content", "plan"].includes(key)) map.content = index;
-      if (["小红书链接", "rednote", "rednotelink", "link", "links"].includes(key)) map.links = index;
-      if (["参与人员", "people", "participants"].includes(key)) map.people = index;
-      if (["类型", "重要程度", "priority", "type"].includes(key)) map.priority = index;
-      if (["分组", "group"].includes(key)) map.group = index;
-    });
-    return map;
-  }
-
-  function findHeaderRow(rows) {
-    for (let i = 0; i < Math.min(rows.length, 10); i += 1) {
-      const map = headerMap(rows[i] || []);
-      if (map.date != null && (map.content != null || map.time != null)) return { index: i, map };
-    }
-    return { index: 0, map: { date: 0, time: 1, content: 2, links: 3, people: 4 } };
-  }
-
-  function readCell(row, index) {
-    return index == null ? "" : row[index];
-  }
-
-  async function importExcel(file) {
-    if (!file) {
-      alert(t("uploadExcel"));
-      return;
-    }
-
-    try {
-      const buffer = await file.arrayBuffer();
-      const workbook = XLSX.read(buffer, { type: "array", cellDates: true });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
-      const { index: headerIndex, map } = findHeaderRow(rows);
-
-      const imported = [];
-      let currentDate = "";
-      let currentGroup = "";
-
-      rows.slice(headerIndex + 1).forEach((row, rowIndex) => {
-        if (!row || row.every(cell => cleanText(cell) === "")) return;
-
-        const rawDateISO = dateToInput(readCell(row, map.date));
-        const dateISO = rawDateISO || currentDate;
-        const time = cleanText(readCell(row, map.time));
-        const content = cleanText(readCell(row, map.content));
-        const links = splitList(readCell(row, map.links)).map(normalizeUrl).filter(Boolean);
-        const people = cleanNameList(readCell(row, map.people));
-        const priority = normalizePriority(readCell(row, map.priority));
-        const group = cleanText(readCell(row, map.group)) || currentGroup;
-
-        if (rawDateISO) currentDate = rawDateISO;
-
-        if (!rawDateISO && !time && content && !links.length && !people.length) {
-          currentGroup = content;
-          return;
-        }
-
-        if (!dateISO || (!content && !links.length && !time)) return;
-
-        imported.push({
-          id: uid(),
-          dateISO,
-          time,
-          group,
-          content,
-          links,
-          participants: people,
-          priority,
-          sort: data.items.length + imported.length + rowIndex + 1
-        });
-      });
-
-      if (imported.length) {
-        data.items = data.items.concat(imported.map(normalizeItem));
-        await saveData(true);
-      }
-
-      setStatus("ok", `${t("imported")}：${imported.length}`);
-    } catch (err) {
-      console.error(err);
-      alert(t("importFailed"));
-      setStatus("warn", t("importFailed"));
-    } finally {
-      $("#excelFile").val("");
-    }
-  }
-
-  function downloadWorkbook(workbook, filename) {
-    XLSX.writeFile(workbook, filename);
-  }
-
-  function downloadTemplate(lang) {
-    const zh = lang === "zh";
-    const header = zh
-      ? ["日期", "时间", "类型", "计划内容", "小红书链接", "参与人员"]
-      : ["Date", "Time", "Type", "Plan content", "Red note", "People"];
-
-    const rows = zh
-      ? [
-          header,
-          ["2026-05-17", "13:00", "必做", "市中心购物", "", "Evan,Gonca"],
-          ["2026-05-17", "22:00", "可选", "吃街头小吃", "", "Evan,Gonca,Lin"],
-          ["2026-05-18", "08:00", "必做", "体检", "", "Evan,Gonca"]
-        ]
-      : [
-          header,
-          ["2026-05-17", "13:00", "Must do", "Center shopping", "", "Evan,Gonca"],
-          ["2026-05-17", "22:00", "Optional", "Street foods", "", "Evan,Gonca,Lin"],
-          ["2026-05-18", "08:00", "Must do", "Medical checkup", "", "Evan,Gonca"]
-        ];
-
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-    ws["!cols"] = [{ wch: 16 }, { wch: 10 }, { wch: 12 }, { wch: 36 }, { wch: 42 }, { wch: 24 }];
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    downloadWorkbook(wb, zh ? "travel-plan-template-zh.xlsx" : "travel-plan-template-en.xlsx");
-  }
-
   function openViewer(url) {
     const safeUrl = normalizeUrl(url);
     if (!safeUrl) return;
@@ -1081,14 +1055,15 @@
 
   function bindEvents() {
     $("#btnMore").on("click", () => $("#morePanel").toggleClass("show"));
-    $("#btnImport").on("click", () => $("#excelFile").trigger("click"));
-    $("#excelFile").on("change", e => importExcel(e.target.files[0]));
-    $("#btnTplZh").on("click", () => downloadTemplate("zh"));
-    $("#btnTplEn").on("click", () => downloadTemplate("en"));
     $("#btnPeople").on("click", openPeopleConfig);
     $("#btnCloudflare").on("click", openCloudConfig);
-    $("#btnRefresh").on("click", async () => { await loadCloudData(); render(); });
     $("#btnFabAdd").on("click", () => openEdit(null));
+    $("#btnFabSync").on("click", async () => {
+      setStatus("loading", t("loading"));
+      await loadCloudData();
+      render();
+      setStatus("ok", t("loaded"));
+    });
     $("#btnSaveEdit").on("click", saveEdit);
     $("#btnSavePeople").on("click", savePeopleConfig);
     $("#btnTestCloud").on("click", testCloudRead);
@@ -1185,7 +1160,16 @@
     }, AUTO_REFRESH_MS);
   }
 
-  window.addEventListener("resize", setAppHeightVar);
+  let lastDeviceKey = currentDeviceKey();
+
+  window.addEventListener("resize", () => {
+    setAppHeightVar();
+    const device = currentDeviceKey();
+    if (device !== lastDeviceKey) {
+      lastDeviceKey = device;
+      render();
+    }
+  });
   window.addEventListener("orientationchange", () => setTimeout(setAppHeightVar, 250));
   if (window.visualViewport) {
     window.visualViewport.addEventListener("resize", () => { setAppHeightVar(); refreshKeyboardState(); });

@@ -10,16 +10,15 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-  <title>Travel Plan v2.42.1</title>
-  <link rel="stylesheet" href="./style.css?v=v2.42.1">
+  <title>Travel Plan v2.42.6</title>
+  <link rel="stylesheet" href="./style.css?v=v2.42.6">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
   <main class="page">
     <section class="hero">
       <div class="heroText">
-        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.42.1</span></h1>
+        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.42.6</span></h1>
       </div>
 
       <div class="heroActions">
@@ -28,12 +27,8 @@
     </section>
 
     <section class="morePanel" id="morePanel">
-      <button id="btnImport" data-i18n="import">导入 Excel</button>
-      <button id="btnTplZh" data-i18n="tplZh">中文模板</button>
-      <button id="btnTplEn" data-i18n="tplEn">英文模板</button>
-      <button id="btnPeople" data-i18n="peopleConfig">人员配置</button>
+      <button id="btnPeople" data-i18n="settings">设置</button>
       <button id="btnCloudflare" data-i18n="cloudflareConfig">Cloudflare 同步配置</button>
-      <button id="btnRefresh" data-i18n="refresh">刷新同步</button>
     </section>
 
     <section class="searchBar">
@@ -45,13 +40,15 @@
       <div id="updatedText">-</div>
     </section>
 
-    <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" hidden>
     <section class="board" id="board"></section>
   </main>
 
   <div class="fabGroup" aria-label="Quick actions">
     <button class="fab fabAdd" id="btnFabAdd" type="button" aria-label="新增安排" title="新增安排">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+    <button class="fab fabSync" id="btnFabSync" type="button" aria-label="同步数据" title="同步数据">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7h-9a4 4 0 0 0-4 4v1M4 17h9a4 4 0 0 0 4-4v-1M17 4l3 3-3 3M7 20l-3-3 3-3"/></svg>
     </button>
     <button class="fab fabLang" id="btnLang" type="button" aria-label="切换语言" title="切换语言">
       <span class="fabLangMark" aria-hidden="true"><b>A</b><em>文</em></span>
@@ -126,20 +123,46 @@
   <div class="mask" id="peopleMask">
     <div class="modal smallModal">
       <div class="modalHead">
-        <h2 data-i18n="peopleConfig">人员配置</h2>
+        <h2 data-i18n="settings">设置</h2>
         <button class="iconBtn" data-close="peopleMask" aria-label="close">✕</button>
       </div>
       <div class="modalBody">
-        <div class="notice" data-i18n="peopleSyncNotice">人员配置会和行程一起保存到 data.json，新设备加载后也会自动同步。</div>
+        <div class="notice" data-i18n="settingsSyncNotice">设置会和行程一起保存到 data.json，新设备加载后也会自动同步。</div>
         <div class="field full">
           <label data-i18n="peopleList">人员列表</label>
           <textarea id="peopleText" class="peopleText"></textarea>
           <div class="hint" data-i18n="peopleHint">一行一个名字。保存后会写入 data.json 的 peopleOptions。</div>
         </div>
+        <div class="field full displayOptionsField">
+          <label data-i18n="displaySettings">显示配置</label>
+          <div class="displayOptionsList" id="displayOptionsList">
+            <div class="displayOptionsHeader">
+              <span></span>
+              <span data-i18n="showOnPC">PC显示</span>
+              <span data-i18n="showOnMobile">移动端显示</span>
+            </div>
+            <label class="displayOptionRow">
+              <span data-i18n="displayCardPeople">计划内容卡片 People 列</span>
+              <input type="checkbox" data-display-key="cardPeople" data-device="pc">
+              <input type="checkbox" data-display-key="cardPeople" data-device="mobile">
+            </label>
+            <label class="displayOptionRow">
+              <span data-i18n="displayDayItemCount">日期卡片 items 数量行</span>
+              <input type="checkbox" data-display-key="dayItemCount" data-device="pc">
+              <input type="checkbox" data-display-key="dayItemCount" data-device="mobile">
+            </label>
+            <label class="displayOptionRow">
+              <span data-i18n="displayDaySummary">日期卡片时间 / 必做 / 人数摘要行</span>
+              <input type="checkbox" data-display-key="daySummary" data-device="pc">
+              <input type="checkbox" data-display-key="daySummary" data-device="mobile">
+            </label>
+          </div>
+          <div class="hint" data-i18n="displaySettingsHint">这些配置会保存到 data.json，可分别控制 PC 和移动端显示内容。</div>
+        </div>
       </div>
       <div class="modalFoot">
         <button data-close="peopleMask" data-i18n="cancel">取消</button>
-        <button class="primary" id="btnSavePeople" data-i18n="savePeople">保存人员配置</button>
+        <button class="primary" id="btnSavePeople" data-i18n="saveSettings">保存设置</button>
       </div>
     </div>
   </div>
@@ -172,6 +195,6 @@
   </div>
 
   
-  <script src="./app.js?v=v2.42.1"></script>
+  <script src="./app.js?v=v2.42.6"></script>
 </body>
 </html>

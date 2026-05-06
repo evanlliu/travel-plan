@@ -1,4 +1,4 @@
-const APP_VERSION = "v2.42.1";
+const APP_VERSION = "v2.42.6";
 
 const DEFAULT_DATA = {
   version: APP_VERSION,
@@ -9,6 +9,11 @@ const DEFAULT_DATA = {
       appPassword: "",
       configSavedInDataJson: true,
       passwordStorage: "data.json settings.cloudflare.appPassword"
+    },
+    displayOptions: {
+      cardPeople: { pc: true, mobile: true },
+      dayItemCount: { pc: true, mobile: true },
+      daySummary: { pc: true, mobile: true }
     }
   },
   peopleOptions: ["Evan", "Gonca", "Ainiya", "Lin", "Mom", "全家"],
@@ -58,6 +63,39 @@ function normalizeUrl(value) {
   return /^https?:\/\//i.test(url) ? url : `https://${url}`;
 }
 
+function normalizeVisibleValue(value, fallback = true) {
+  if (value === false || value === 0) return false;
+  const raw = cleanText(value).toLowerCase();
+  if (["false", "0", "no", "hide", "hidden", "off", "不显示", "隐藏", "否", "关"].includes(raw)) return false;
+  if (["true", "1", "yes", "show", "visible", "on", "显示", "是", "开"].includes(raw)) return true;
+  return fallback;
+}
+
+function normalizeDeviceVisibility(value, fallback) {
+  const base = fallback && typeof fallback === "object" ? fallback : { pc: true, mobile: true };
+  if (typeof value === "boolean" || typeof value === "number" || typeof value === "string") {
+    const visible = normalizeVisibleValue(value, true);
+    return { pc: visible, mobile: visible };
+  }
+
+  value = value && typeof value === "object" ? value : {};
+  return {
+    pc: normalizeVisibleValue(value.pc ?? value.desktop ?? value.web, base.pc !== false),
+    mobile: normalizeVisibleValue(value.mobile ?? value.ios ?? value.phone, base.mobile !== false)
+  };
+}
+
+function normalizeDisplayOptions(value) {
+  const fallback = DEFAULT_DATA.settings.displayOptions;
+  value = value && typeof value === "object" ? value : {};
+
+  return {
+    cardPeople: normalizeDeviceVisibility(value.cardPeople || value.peopleColumn || value.people, fallback.cardPeople),
+    dayItemCount: normalizeDeviceVisibility(value.dayItemCount || value.itemCount || value.itemsLine, fallback.dayItemCount),
+    daySummary: normalizeDeviceVisibility(value.daySummary || value.summaryLine || value.dayMeta, fallback.daySummary)
+  };
+}
+
 function normalizeSettings(settings) {
   const cf = settings && settings.cloudflare ? settings.cloudflare : {};
   return {
@@ -66,7 +104,8 @@ function normalizeSettings(settings) {
       appPassword: String(cf.appPassword || ""),
       configSavedInDataJson: true,
       passwordStorage: "data.json settings.cloudflare.appPassword"
-    }
+    },
+    displayOptions: normalizeDisplayOptions(settings && settings.displayOptions)
   };
 }
 
