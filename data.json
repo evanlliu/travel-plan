@@ -1,6 +1,6 @@
 {
   "version": "v2.26.0",
-  "updatedAt": "2026-05-06T10:52:24.150Z",
+  "updatedAt": "2026-05-06T10:52:35.918Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -109,16 +109,6 @@
       "links": [],
       "participants": [],
       "sort": 10
-    },
-    {
-      "id": "i_011",
-      "dateISO": "2026-05-20",
-      "time": "19:00",
-      "group": "",
-      "content": "Eat frog",
-      "links": [],
-      "participants": [],
-      "sort": 11
     },
     {
       "id": "i_012",
