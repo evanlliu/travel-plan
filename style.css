@@ -190,7 +190,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.18.0 floating action buttons */
+/* v2.19.0 floating action buttons */
 .hero{align-items:center}
 .heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
 .heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
@@ -245,7 +245,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.18.0 clean overrides */
+/* v2.19.0 clean overrides */
 .hero{align-items:center}
 .heroText h1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;font-size:34px;letter-spacing:-.03em}
 .heroActions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
@@ -349,7 +349,7 @@ body.isStandalone .modal{
 }
 
 
-/* v2.18.0 iOS PWA top safe-area fix */
+/* v2.19.0 iOS PWA top safe-area fix */
 :root{
   --safe-top: env(safe-area-inset-top, 0px);
   --mobile-top-gap: 16px;
@@ -398,7 +398,7 @@ html.pwa .hero{
 }
 
 
-/* v2.18.0 mobile modal scroll lock */
+/* v2.19.0 mobile modal scroll lock */
 html.modalLocked,
 body.modalLocked{
   width:100%;
@@ -472,7 +472,7 @@ body.modalLocked{
 }
 
 
-/* v2.18.0 fixed mobile edit modal: no bounce / no floating */
+/* v2.19.0 fixed mobile edit modal: no bounce / no floating */
 :root{
   --app-height: 100vh;
 }
@@ -566,7 +566,7 @@ body.modalLocked{
 }
 
 
-/* v2.18.0 mobile date picker and horizontal swipe lock */
+/* v2.19.0 mobile date picker and horizontal swipe lock */
 html,
 body{
   overflow-x:hidden!important;
@@ -691,7 +691,7 @@ body{
 }
 
 
-/* v2.18.0 mobile date picker final fix */
+/* v2.19.0 mobile date picker final fix */
 body.modalLocked .fabGroup{
   display:none!important;
 }
@@ -766,7 +766,7 @@ body.modalLocked{
 }
 
 
-/* v2.18.0 native Safari date input */
+/* v2.19.0 native Safari date input */
 #editDate{
   -webkit-appearance:none;
   appearance:none;
@@ -827,7 +827,7 @@ body,
 }
 
 
-/* v2.18.0 mobile keyboard stability */
+/* v2.19.0 mobile keyboard stability */
 #editTime{
   width:auto!important;
   min-width:132px;
@@ -933,7 +933,7 @@ body.modalLocked{
 }
 
 
-/* v2.18.0 people picker mobile optimization */
+/* v2.19.0 people picker mobile optimization */
 #peoplePicker{
   position:relative;
 }
@@ -1044,5 +1044,41 @@ body.modalLocked{
   }
   #editMask .modalBody{
     scroll-padding-bottom:120px;
+  }
+}
+
+
+/* v2.19.0 edit form order and Rednote height */
+#editMask .editFieldDate{order:1;}
+#editMask .editFieldTime{order:2;}
+#editMask .editFieldWeekday{order:3;}
+#editMask .editFieldPeople{order:4;grid-column:1/-1;}
+#editMask .editFieldGroup{order:5;}
+#editMask .editFieldContent{order:6;grid-column:1/-1;}
+#editMask .editFieldLinks{order:7;grid-column:1/-1;}
+#editLinks{
+  min-height:72px!important;
+  height:72px;
+  resize:vertical;
+}
+@media(max-width:760px){
+  #editMask .grid{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:14px!important;
+  }
+  #editMask .editFieldDate,
+  #editMask .editFieldTime,
+  #editMask .editFieldWeekday,
+  #editMask .editFieldPeople,
+  #editMask .editFieldGroup,
+  #editMask .editFieldContent,
+  #editMask .editFieldLinks{
+    width:100%!important;
+    max-width:100%!important;
+  }
+  #editLinks{
+    min-height:66px!important;
+    height:66px;
   }
 }
