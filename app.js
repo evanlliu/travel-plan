@@ -1,5 +1,5 @@
 (function () {
-  const APP_VERSION = "v2.12.0";
+  const APP_VERSION = "v2.13.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -183,6 +183,12 @@
 
   let modalScrollY = 0;
 
+  function setAppHeightVar() {
+    const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    document.documentElement.style.setProperty("--app-height", Math.round(h) + "px");
+  }
+
+
   function lockPageScroll() {
     if (document.body.classList.contains("modalLocked")) return;
     modalScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
@@ -200,8 +206,10 @@
   }
 
   function openModal(id) {
-    $("#" + id).addClass("show");
+    setAppHeightVar();
     lockPageScroll();
+    $("#" + id).addClass("show");
+    setTimeout(setAppHeightVar, 80);
   }
 
   function closeModal(id) {
@@ -907,7 +915,7 @@
     const ws = XLSX.utils.aoa_to_sheet([header].concat(rows));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, zh ? "中文模板" : "English Template");
-    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.12.0.xlsx" : "travel-plan-pro-en-v2.12.0.xlsx");
+    XLSX.writeFile(wb, zh ? "travel-plan-pro-cn-v2.13.0.xlsx" : "travel-plan-pro-en-v2.13.0.xlsx");
   }
 
   async function testCloud() {
@@ -968,6 +976,38 @@
     renderPicker();
     $("#peoplePanel").addClass("open");
   });
+
+
+  let activeModalScroller = null;
+  let activeModalTouchY = 0;
+
+  document.addEventListener("touchstart", function (e) {
+    if (!$(".mask.show").length || !e.touches || !e.touches.length) return;
+    activeModalScroller = e.target.closest(".modalBody, .peoplePanel");
+    activeModalTouchY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener("touchmove", function (e) {
+    if (!$(".mask.show").length || !e.touches || !e.touches.length) return;
+
+    const target = e.target;
+    if (target.closest(".flatpickr-calendar") || target.closest("#viewerFrame")) return;
+
+    const scroller = target.closest(".modalBody, .peoplePanel");
+    if (!scroller) {
+      e.preventDefault();
+      return;
+    }
+
+    const currentY = e.touches[0].clientY;
+    const deltaY = currentY - activeModalTouchY;
+    const atTop = scroller.scrollTop <= 0;
+    const atBottom = Math.ceil(scroller.scrollTop + scroller.clientHeight) >= scroller.scrollHeight;
+
+    if ((atTop && deltaY > 0) || (atBottom && deltaY < 0)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
 
   $(document).on("touchmove", ".mask.show", function (e) {
     const $target = $(e.target);
@@ -1033,6 +1073,17 @@
   $("#editDate").on("input change", refreshWeekday);
   $("#peopleToggle").on("click", function () { $("#peoplePanel").toggleClass("open"); });
   document.addEventListener("visibilitychange", function () { if (!document.hidden) loadData(true); });
+
+  setAppHeightVar();
+  window.addEventListener("resize", setAppHeightVar);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", setAppHeightVar);
+    window.visualViewport.addEventListener("scroll", setAppHeightVar);
+  }
+  window.addEventListener("orientationchange", function () {
+    setTimeout(setAppHeightVar, 250);
+  });
+
 
   async function boot() {
     loadLocal();
