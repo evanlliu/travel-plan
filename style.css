@@ -790,7 +790,7 @@ body.modalLocked{
 }
 
 
-/* v2.33.0 readability + content-density optimization */
+/* v2.34.0 readability + content-density optimization */
 .daySummary{
   display:flex;
   flex-wrap:wrap;
@@ -1058,7 +1058,7 @@ body.modalLocked{
 }
 
 
-/* v2.33.0 compact density pass: PC + mobile show more content */
+/* v2.34.0 compact density pass: PC + mobile show more content */
 :root{
   --compact-radius:14px;
   --compact-gap:10px;
@@ -1386,7 +1386,7 @@ button{
 }
 
 
-/* v2.33.0: compress top cards, reduce vertical gaps, show more trip content */
+/* v2.34.0: compress top cards, reduce vertical gaps, show more trip content */
 .page{
   padding-top:10px!important;
 }
@@ -1587,7 +1587,7 @@ button{
 }
 
 
-/* v2.33.0 Red Note links open in a new window; viewer modal disabled */
+/* v2.34.0 Red Note links open in a new window; viewer modal disabled */
 #viewerMask{
   display:none!important;
 }
@@ -1596,7 +1596,7 @@ button{
 }
 
 
-/* v2.33.0 record copy button */
+/* v2.34.0 record copy button */
 .btnCopy{
   color:#0f5132!important;
   border-color:#cce8d8!important;
@@ -1640,7 +1640,7 @@ button{
 }
 
 
-/* v2.33.0 keep Edit / Copy / Delete in one row */
+/* v2.34.0 keep Edit / Copy / Delete in one row */
 .actionCell{
   display:flex!important;
   flex-direction:row!important;
@@ -1715,5 +1715,283 @@ button{
     padding:5px 8px!important;
     font-size:12px!important;
     border-radius:10px!important;
+  }
+}
+
+
+/* v2.34.0 mobile edit modal one-screen compact layout */
+@media(max-width:760px){
+  /*
+    Goal: editing form should fit on one mobile screen without scrolling.
+    Keep input font-size 16px to avoid iOS Safari auto zoom.
+  */
+  #editMask{
+    align-items:flex-start!important;
+    justify-content:center!important;
+    padding:
+      calc(env(safe-area-inset-top,0px) + 6px)
+      8px
+      calc(env(safe-area-inset-bottom,0px) + var(--bottom-ui-offset,0px) + 6px)!important;
+    overflow:hidden!important;
+  }
+
+  #editMask .modal{
+    width:100%!important;
+    height:auto!important;
+    max-height:calc(var(--app-height,100vh) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - var(--bottom-ui-offset,0px) - 14px)!important;
+    display:grid!important;
+    grid-template-rows:auto auto auto!important;
+    border-radius:18px!important;
+    overflow:visible!important;
+    margin:0!important;
+    bottom:auto!important;
+  }
+
+  html.isStandalone #editMask .modal,
+  body.isStandalone #editMask .modal{
+    height:auto!important;
+    max-height:calc(var(--app-height,100vh) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 18px)!important;
+    bottom:auto!important;
+  }
+
+  #editMask .modalHead{
+    min-height:0!important;
+    padding:8px 10px!important;
+    border-bottom:1px solid rgba(15,23,42,.08)!important;
+  }
+
+  #editMask .modalHead h2{
+    font-size:20px!important;
+    line-height:1.05!important;
+    margin:0!important;
+  }
+
+  #editMask .modalHead .iconBtn{
+    width:38px!important;
+    height:38px!important;
+    min-height:38px!important;
+    border-radius:14px!important;
+    font-size:20px!important;
+  }
+
+  #editMask .modalBody{
+    padding:7px 10px 6px!important;
+    overflow:visible!important;
+    max-height:none!important;
+  }
+
+  #editMask .grid{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    gap:5px 8px!important;
+    align-items:start!important;
+  }
+
+  #editMask .field{
+    min-width:0!important;
+    gap:2px!important;
+  }
+
+  #editMask .field label{
+    font-size:11px!important;
+    line-height:1.05!important;
+    margin:0!important;
+  }
+
+  #editMask input,
+  #editMask textarea,
+  #editMask select,
+  #peopleToggle{
+    min-height:34px!important;
+    height:34px!important;
+    padding:5px 9px!important;
+    border-radius:11px!important;
+    font-size:16px!important;
+    line-height:1.15!important;
+  }
+
+  #editMask input::placeholder,
+  #editMask textarea::placeholder{
+    font-size:16px!important;
+  }
+
+  #editMask .editFieldDate{order:1!important;grid-column:1 / 2!important;}
+  #editMask .editFieldTime{order:2!important;grid-column:2 / 3!important;}
+  #editMask .editFieldWeekday{order:3!important;grid-column:1 / 2!important;}
+  #editMask .editFieldPeople{order:4!important;grid-column:2 / 3!important;}
+  #editMask .editFieldGroup{order:5!important;grid-column:1 / -1!important;}
+  #editMask .editFieldContent{order:6!important;grid-column:1 / -1!important;}
+  #editMask .editFieldLinks{order:7!important;grid-column:1 / -1!important;}
+
+  #editWeekday{
+    text-align:left!important;
+  }
+
+  #peoplePicker{
+    position:relative!important;
+    z-index:30!important;
+  }
+
+  #peopleToggle{
+    overflow:hidden!important;
+    white-space:nowrap!important;
+  }
+
+  #peopleToggle .chip{
+    max-width:68px!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+
+  #peoplePanel{
+    position:absolute!important;
+    left:0!important;
+    right:0!important;
+    top:calc(100% + 5px)!important;
+    max-height:148px!important;
+    overflow:auto!important;
+    z-index:80!important;
+    border-radius:13px!important;
+    box-shadow:0 16px 38px rgba(15,23,42,.20)!important;
+    background:#fff!important;
+  }
+
+  #peoplePanel.open{
+    display:block!important;
+  }
+
+  #peoplePanel .peopleOption{
+    min-height:30px!important;
+    padding:5px 8px!important;
+    border-radius:9px!important;
+  }
+
+  #peoplePanel .peopleOption input{
+    width:16px!important;
+    height:16px!important;
+    min-height:16px!important;
+  }
+
+  #peoplePanel .peopleOption span{
+    font-size:12px!important;
+    line-height:1.1!important;
+  }
+
+  #editContent{
+    min-height:54px!important;
+    height:54px!important;
+    resize:none!important;
+  }
+
+  #editLinks{
+    min-height:42px!important;
+    height:42px!important;
+    resize:none!important;
+  }
+
+  #editMask .hint{
+    display:none!important;
+  }
+
+  #editMask .modalFoot{
+    position:static!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+    padding:7px 10px calc(8px + env(safe-area-inset-bottom,0px))!important;
+    border-top:1px solid rgba(15,23,42,.08)!important;
+    background:#fff!important;
+    box-shadow:0 -6px 18px rgba(15,23,42,.04)!important;
+    z-index:20!important;
+  }
+
+  #editMask .modalFoot button{
+    min-height:40px!important;
+    height:40px!important;
+    padding:6px 10px!important;
+    border-radius:13px!important;
+    font-size:15px!important;
+  }
+
+  body.keyboardOpen #editMask .modal,
+  body.keyboardOpen #editMask .modalBody,
+  body.keyboardOpen #editMask .modalFoot{
+    transform:none!important;
+  }
+
+  body.keyboardOpen #editMask .modalBody,
+  html.isStandalone body.keyboardOpen #editMask .modalBody,
+  body.isStandalone.keyboardOpen #editMask .modalBody{
+    padding-bottom:6px!important;
+  }
+
+  body.keyboardOpen #editMask .modalFoot,
+  html.isStandalone body.keyboardOpen #editMask .modalFoot,
+  body.isStandalone.keyboardOpen #editMask .modalFoot{
+    position:static!important;
+    bottom:auto!important;
+    display:grid!important;
+  }
+}
+
+/* Very small iPhone height: squeeze one more step */
+@media(max-width:760px) and (max-height:700px){
+  #editMask{
+    padding-top:calc(env(safe-area-inset-top,0px) + 4px)!important;
+  }
+
+  #editMask .modalHead{
+    padding:6px 10px!important;
+  }
+
+  #editMask .modalHead h2{
+    font-size:18px!important;
+  }
+
+  #editMask .modalHead .iconBtn{
+    width:34px!important;
+    height:34px!important;
+    min-height:34px!important;
+  }
+
+  #editMask .modalBody{
+    padding:5px 9px!important;
+  }
+
+  #editMask .grid{
+    gap:4px 7px!important;
+  }
+
+  #editMask .field label{
+    font-size:10px!important;
+  }
+
+  #editMask input,
+  #editMask textarea,
+  #editMask select,
+  #peopleToggle{
+    min-height:32px!important;
+    height:32px!important;
+    padding:4px 8px!important;
+  }
+
+  #editContent{
+    min-height:46px!important;
+    height:46px!important;
+  }
+
+  #editLinks{
+    min-height:36px!important;
+    height:36px!important;
+  }
+
+  #editMask .modalFoot{
+    padding-top:6px!important;
+    padding-bottom:calc(7px + env(safe-area-inset-bottom,0px))!important;
+  }
+
+  #editMask .modalFoot button{
+    min-height:36px!important;
+    height:36px!important;
   }
 }
