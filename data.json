@@ -1,6 +1,6 @@
 {
   "version": "v2.40.0",
-  "updatedAt": "2026-05-06T13:41:03.002Z",
+  "updatedAt": "2026-05-06T13:41:25.214Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -256,7 +256,7 @@
       "dateISO": "2026-05-20",
       "time": "14:00",
       "group": "",
-      "content": "Applicantion debt card",
+      "content": "Applicantion debt card(ICBC+Changsha)",
       "links": [],
       "participants": [
         "Evan",
