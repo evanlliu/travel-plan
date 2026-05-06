@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.28.0";
+  const APP_VERSION = "v2.30.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
