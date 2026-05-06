@@ -1,6 +1,6 @@
 {
   "version": "v2.37.0",
-  "updatedAt": "2026-05-06T12:42:51.944Z",
+  "updatedAt": "2026-05-06T12:49:05.108Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -92,7 +92,7 @@
       "dateISO": "2026-05-20",
       "time": "20:00",
       "group": "",
-      "content": "Wuhan back to ZhuZhou",
+      "content": "Go back to ZhuZhou",
       "links": [],
       "participants": [
         "Evan",
