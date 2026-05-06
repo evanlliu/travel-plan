@@ -1,6 +1,6 @@
 {
   "version": "v2.37.0",
-  "updatedAt": "2026-05-06T12:53:02.765Z",
+  "updatedAt": "2026-05-06T12:53:14.673Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -174,7 +174,7 @@
       "dateISO": "2026-05-18",
       "time": "12:00",
       "group": "",
-      "content": "Snack Kingdom",
+      "content": "Snack Kingdom/零食王国",
       "links": [
         "https://www.xiaohongshu.com/discovery/item/69e0b3a2000000002302369a?source=webshare&xhsshare=pc_web&xsec_token=ABGyk--4p6A6_5xeXoxTdK3M2bo8Fk2f_lTrYv8cMrifI=&xsec_source=pc_share"
       ],
