@@ -1,6 +1,6 @@
 {
   "version": "v2.37.0",
-  "updatedAt": "2026-05-06T13:16:07.405Z",
+  "updatedAt": "2026-05-06T13:16:20.533Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -330,6 +330,19 @@
         "Gonca"
       ],
       "sort": 28
+    },
+    {
+      "id": "i_29hhv2vfgaamou2zcca",
+      "dateISO": "2026-05-19",
+      "time": "20:30",
+      "group": "",
+      "content": "Bar",
+      "links": [],
+      "participants": [
+        "Evan",
+        "Gonca"
+      ],
+      "sort": 29
     }
   ]
 }
