@@ -1,6 +1,6 @@
 {
   "version": "v2.33.0",
-  "updatedAt": "2026-05-06T11:27:27.450Z",
+  "updatedAt": "2026-05-06T11:27:50.924Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -182,9 +182,9 @@
       "dateISO": "2026-05-18",
       "time": "12:00",
       "group": "",
-      "content": "JuZiZhou head(orage island)",
+      "content": "Snack Kingdom",
       "links": [
-        "https://www.xiaohongshu.com/discovery/item/68cbb578000000000b03f699?source=webshare&xhsshare=pc_web&xsec_token=ABXrSTTwLw4E7b8UHz6wh0PZESJwmrG_hBPbNHhrPi1t4=&xsec_source=pc_share"
+        "https://www.xiaohongshu.com/discovery/item/69e0b3a2000000002302369a?source=webshare&xhsshare=pc_web&xsec_token=ABGyk--4p6A6_5xeXoxTdK3M2bo8Fk2f_lTrYv8cMrifI=&xsec_source=pc_share"
       ],
       "participants": [
         "Evan",
