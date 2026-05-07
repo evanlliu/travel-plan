@@ -1,4 +1,4 @@
-const APP_VERSION = "v2.42.20";
+const APP_VERSION = "v2.42.21";
 
 const DEFAULT_DATA = {
   version: APP_VERSION,

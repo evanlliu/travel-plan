@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.42.20";
+  const APP_VERSION = "v2.42.21";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -1142,11 +1142,51 @@
     });
   }
 
+  function positionMorePanel() {
+    const $panel = $("#morePanel");
+    const btn = document.getElementById("btnMore");
+    if (!$panel.hasClass("show") || !btn) return;
+
+    const rect = btn.getBoundingClientRect();
+    const gap = 8;
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    const panelWidth = Math.min(viewportWidth - 24, viewportWidth <= 760 ? 176 : 220);
+
+    let left = rect.right - panelWidth;
+    left = Math.max(12, Math.min(left, viewportWidth - panelWidth - 12));
+
+    $panel.css({
+      top: `${Math.round(rect.bottom + gap)}px`,
+      left: `${Math.round(left)}px`,
+      width: `${Math.round(panelWidth)}px`
+    });
+  }
+
+  function closeMorePanel() {
+    $("#morePanel").removeClass("show").removeAttr("style");
+  }
+
   function bindEvents() {
     bindMobileSwipeActions();
-    $("#btnMore").on("click", () => $("#morePanel").toggleClass("show"));
-    $("#btnPeople").on("click", openPeopleConfig);
-    $("#btnCloudflare").on("click", openCloudConfig);
+    $("#btnMore").on("click", (e) => {
+      e.stopPropagation();
+      closeSwipeRows();
+      $("#morePanel").toggleClass("show");
+      positionMorePanel();
+    });
+    $("#btnPeople").on("click", () => {
+      closeMorePanel();
+      openPeopleConfig();
+    });
+    $("#btnCloudflare").on("click", () => {
+      closeMorePanel();
+      openCloudConfig();
+    });
+    $(document).on("click", function (e) {
+      if ($(e.target).closest("#btnMore, #morePanel").length) return;
+      closeMorePanel();
+    });
+    $(window).on("resize scroll", positionMorePanel);
     $("#btnFabAdd").on("click", () => {
       closeSwipeRows();
       openEdit(null);
