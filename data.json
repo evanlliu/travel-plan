@@ -1,6 +1,6 @@
 {
-  "version": "v2.42.7",
-  "updatedAt": "2026-05-07T10:25:25.562Z",
+  "version": "v2.42.18",
+  "updatedAt": "2026-05-07T14:17:23.096Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -10,7 +10,7 @@
     },
     "displayOptions": {
       "cardPeople": {
-        "pc": true,
+        "pc": false,
         "mobile": false
       },
       "dayItemCount": {
