@@ -790,7 +790,7 @@ body.modalLocked{
 }
 
 
-/* v2.42.7 readability + content-density optimization */
+/* v2.42.18 readability + content-density optimization */
 .daySummary{
   display:flex;
   flex-wrap:wrap;
@@ -1058,7 +1058,7 @@ body.modalLocked{
 }
 
 
-/* v2.42.7 compact density pass: PC + mobile show more content */
+/* v2.42.18 compact density pass: PC + mobile show more content */
 :root{
   --compact-radius:14px;
   --compact-gap:10px;
@@ -1386,7 +1386,7 @@ button{
 }
 
 
-/* v2.42.7: compress top cards, reduce vertical gaps, show more trip content */
+/* v2.42.18: compress top cards, reduce vertical gaps, show more trip content */
 .page{
   padding-top:10px!important;
 }
@@ -1587,7 +1587,7 @@ button{
 }
 
 
-/* v2.42.7 Red Note links open in a new window; viewer modal disabled */
+/* v2.42.18 Red Note links open in a new window; viewer modal disabled */
 #viewerMask{
   display:none!important;
 }
@@ -1596,7 +1596,7 @@ button{
 }
 
 
-/* v2.42.7 record copy button */
+/* v2.42.18 record copy button */
 .btnCopy{
   color:#0f5132!important;
   border-color:#cce8d8!important;
@@ -1640,7 +1640,7 @@ button{
 }
 
 
-/* v2.42.7 keep Edit / Copy / Delete in one row */
+/* v2.42.18 keep Edit / Copy / Delete in one row */
 .actionCell{
   display:flex!important;
   flex-direction:row!important;
@@ -1719,7 +1719,7 @@ button{
 }
 
 
-/* v2.42.7 mobile edit modal one-screen compact layout */
+/* v2.42.18 mobile edit modal one-screen compact layout */
 @media(max-width:760px){
   /*
     Goal: editing form should fit on one mobile screen without scrolling.
@@ -1997,7 +1997,7 @@ button{
 }
 
 
-/* v2.42.7 mobile edit page redesign: full screen, visual hierarchy, plan content focus */
+/* v2.42.18 mobile edit page redesign: full screen, visual hierarchy, plan content focus */
 @media(max-width:760px){
   /* Full-screen edit experience */
   #editMask{
@@ -2362,7 +2362,7 @@ button{
 }
 
 
-/* v2.42.7 mobile edit page: one-column full-screen, no empty space, no scroll by default */
+/* v2.42.18 mobile edit page: one-column full-screen, no empty space, no scroll by default */
 @media(max-width:760px){
   #editMask{
     align-items:stretch!important;
@@ -2662,7 +2662,7 @@ button{
 }
 
 
-/* v2.42.7 mobile edit: Plan Content + Red Note adaptive height, exact full-screen fill */
+/* v2.42.18 mobile edit: Plan Content + Red Note adaptive height, exact full-screen fill */
 @media(max-width:760px){
   #editMask .modal{
     height:var(--app-height,100vh)!important;
@@ -2814,7 +2814,7 @@ button{
 }
 
 
-/* v2.42.7 PC card spacing compact */
+/* v2.42.18 PC card spacing compact */
 @media(min-width:761px){
   .page{
     padding-top:8px!important;
@@ -2864,7 +2864,7 @@ button{
 }
 
 
-/* v2.42.7 PC ultra compact spacing */
+/* v2.42.18 PC ultra compact spacing */
 @media(min-width:761px){
   body{
     background:#f3f6fa!important;
@@ -3015,7 +3015,7 @@ button{
 }
 
 
-/* v2.42.7 PC date-card spacing ultra compact */
+/* v2.42.18 PC date-card spacing ultra compact */
 @media(min-width:761px){
   .board{
     gap:2px!important;
@@ -3043,7 +3043,7 @@ button{
 }
 
 
-/* v2.42.7 Must / Optional priority design */
+/* v2.42.18 Must / Optional priority design */
 .priorityBadge{
   display:inline-flex;
   align-items:center;
@@ -3204,7 +3204,7 @@ button{
 }
 
 
-/* v2.42.7 Optional row color follow-through
+/* v2.42.18 Optional row color follow-through
    基于 v2.42.0，只优化 Optional 行的视觉状态，不套用 v2.43/v2.44 的大改样式。
 */
 .planRow.priority-optional{
@@ -3275,7 +3275,7 @@ button{
 }
 
 
-/* v2.42.7 PC/mobile display options */
+/* v2.42.18 PC/mobile display options */
 .displayOptionsField{
   margin-top:12px;
 }
@@ -3379,7 +3379,7 @@ button{
 }
 
 
-/* v2.42.7 floating sync button */
+/* v2.42.18 floating sync button */
 .fabSync svg{
   width:20px;
   height:20px;
@@ -3395,4 +3395,165 @@ button{
     width:18px;
     height:18px;
   }
+}
+
+
+/* v2.42.18 mobile left-swipe actions
+   IMPORTANT: do not change the original mobile card content layout. */
+@media(max-width:760px){
+  .planRow{
+    position:relative!important;
+    overflow:hidden!important;
+    touch-action:pan-y!important;
+  }
+
+  /* Keep all content cells exactly in their original position. */
+  .planRow > .cell:not(.actionCell),
+  .planRow.swiped > .cell:not(.actionCell){
+    transform:none!important;
+  }
+
+  /* Remove the original action buttons from normal layout on mobile only. */
+  .planRow > .actionCell{
+    position:absolute!important;
+    right:10px!important;
+    top:0!important;
+    bottom:0!important;
+    left:auto!important;
+    width:148px!important;
+    height:auto!important;
+    margin:0!important;
+    padding:0!important;
+    z-index:20!important;
+    box-sizing:border-box!important;
+
+    display:flex!important;
+    flex-direction:row!important;
+    justify-content:center!important;
+    align-items:center!important;
+    flex-wrap:nowrap!important;
+    gap:6px!important;
+
+    transform:translateX(120%)!important;
+    opacity:0!important;
+    pointer-events:none!important;
+    transition:transform .22s ease, opacity .18s ease!important;
+  }
+
+  .planRow.swiped > .actionCell{
+    transform:translateX(0)!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+
+  .planRow > .actionCell button{
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    text-align:center!important;
+    margin:0!important;
+    padding:0 5px!important;
+    height:30px!important;
+    min-height:30px!important;
+    line-height:1!important;
+    font-size:11px!important;
+    border-radius:10px!important;
+    white-space:nowrap!important;
+    box-sizing:border-box!important;
+    flex:0 0 auto!important;
+  }
+
+  .planRow > .actionCell .btnEdit{width:42px!important;min-width:42px!important;max-width:42px!important;}
+  .planRow > .actionCell .btnCopy{width:44px!important;min-width:44px!important;max-width:44px!important;}
+  .planRow > .actionCell .btnDelete{width:52px!important;min-width:52px!important;max-width:52px!important;}
+
+  /* Add a soft white backing behind buttons after swipe so the buttons stay readable. */
+  .planRow.swiped > .actionCell::before{
+    content:""!important;
+    position:absolute!important;
+    inset:0!important;
+    border-radius:16px!important;
+    background:linear-gradient(90deg, rgba(255,255,255,.35), rgba(255,255,255,.96))!important;
+    z-index:-1!important;
+  }
+}
+
+
+/* v2.42.18 mobile swipe overlay buttons
+   Use a dedicated overlay to avoid conflicts with the original mobile actionCell layout. */
+.swipeActions{display:none;}
+
+@media(max-width:760px){
+  .planRow{
+    position:relative!important;
+    overflow:hidden!important;
+    touch-action:pan-y!important;
+  }
+
+  /* Keep the original action cell out of the mobile layout and use overlay instead */
+  .planRow > .actionCell{
+    display:none!important;
+  }
+
+  .swipeActions{
+    position:absolute!important;
+    right:10px!important;
+    top:50%!important;
+    transform:translate(120%, -50%)!important;
+    z-index:32!important;
+
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:6px!important;
+
+    width:148px!important;
+    min-width:148px!important;
+    height:32px!important;
+    min-height:32px!important;
+    box-sizing:border-box!important;
+    opacity:0!important;
+    pointer-events:none!important;
+    transition:transform .22s ease, opacity .18s ease!important;
+  }
+
+  .planRow.swiped > .swipeActions{
+    transform:translate(0, -50%)!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+
+  .swipeActions::before{
+    content:""!important;
+    position:absolute!important;
+    left:-8px!important;
+    right:-2px!important;
+    top:-6px!important;
+    bottom:-6px!important;
+    border-radius:16px!important;
+    background:linear-gradient(90deg, rgba(255,255,255,.45), rgba(255,255,255,.98))!important;
+    z-index:-1!important;
+  }
+
+  .swipeActions button{
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    text-align:center!important;
+    margin:0!important;
+    padding:0 5px!important;
+    height:30px!important;
+    min-height:30px!important;
+    line-height:1!important;
+    font-size:11px!important;
+    border-radius:10px!important;
+    white-space:nowrap!important;
+    box-sizing:border-box!important;
+    flex:0 0 auto!important;
+  }
+
+  .swipeActions .btnEdit{width:42px!important;min-width:42px!important;max-width:42px!important;}
+  .swipeActions .btnCopy{width:44px!important;min-width:44px!important;max-width:44px!important;}
+  .swipeActions .btnDelete{width:52px!important;min-width:52px!important;max-width:52px!important;}
 }

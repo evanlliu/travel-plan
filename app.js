@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.42.7";
+  const APP_VERSION = "v2.42.18";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -801,6 +801,11 @@
           <button class="secondary btnCopy" data-id="${escapeHtml(item.id)}">${escapeHtml(t("copy"))}</button>
           <button class="danger btnDelete" data-id="${escapeHtml(item.id)}">${escapeHtml(t("delete"))}</button>
         </div>
+        <div class="swipeActions" aria-hidden="true">
+          <button class="secondary btnEdit" data-id="${escapeHtml(item.id)}">${escapeHtml(t("edit"))}</button>
+          <button class="secondary btnCopy" data-id="${escapeHtml(item.id)}">${escapeHtml(t("copy"))}</button>
+          <button class="danger btnDelete" data-id="${escapeHtml(item.id)}">${escapeHtml(t("delete"))}</button>
+        </div>
       </article>`;
   }
 
@@ -1059,7 +1064,74 @@
     window.open(safeUrl, "_blank", "noopener,noreferrer");
   }
 
+  function closeSwipeRows(exceptRow) {
+    $(".planRow.swiped").each(function () {
+      if (!exceptRow || this !== exceptRow) $(this).removeClass("swiped");
+    });
+  }
+
+  function bindMobileSwipeActions() {
+    let startX = 0;
+    let startY = 0;
+    let activeRow = null;
+    let tracking = false;
+
+    $(document).on("touchstart", ".planRow", function (e) {
+      if (window.innerWidth > 760) return;
+      if ($(e.target).closest("button,a,input,textarea,select").length) return;
+      const touch = e.originalEvent.touches && e.originalEvent.touches[0];
+      if (!touch) return;
+      activeRow = this;
+      startX = touch.clientX;
+      startY = touch.clientY;
+      tracking = true;
+    });
+
+    $(document).on("touchmove", ".planRow", function (e) {
+      if (!tracking || !activeRow || window.innerWidth > 760) return;
+      const touch = e.originalEvent.touches && e.originalEvent.touches[0];
+      if (!touch) return;
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 12) e.preventDefault();
+    });
+
+    $(document).on("touchend", ".planRow", function (e) {
+      if (!tracking || !activeRow || window.innerWidth > 760) return;
+      const touch = e.originalEvent.changedTouches && e.originalEvent.changedTouches[0];
+      if (!touch) return;
+
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 36) {
+        if (dx < 0) {
+          closeSwipeRows(activeRow);
+          $(activeRow).addClass("swiped");
+        } else {
+          $(activeRow).removeClass("swiped");
+        }
+      }
+
+      startX = 0;
+      startY = 0;
+      activeRow = null;
+      tracking = false;
+    });
+
+    $(document).on("click", function (e) {
+      if (window.innerWidth > 760) return;
+      if ($(e.target).closest(".planRow").length) return;
+      closeSwipeRows();
+    });
+
+    $(window).on("resize", function () {
+      if (window.innerWidth > 760) closeSwipeRows();
+    });
+  }
+
   function bindEvents() {
+    bindMobileSwipeActions();
     $("#btnMore").on("click", () => $("#morePanel").toggleClass("show"));
     $("#btnPeople").on("click", openPeopleConfig);
     $("#btnCloudflare").on("click", openCloudConfig);
@@ -1103,9 +1175,18 @@
       renderPeopleSummary();
     });
 
-    $(document).on("click", ".btnEdit", function () { openEdit($(this).data("id")); });
-    $(document).on("click", ".btnCopy", function () { copyItem($(this).data("id")); });
-    $(document).on("click", ".btnDelete", function () { deleteItem($(this).data("id")); });
+    $(document).on("click", ".btnEdit", function () {
+      closeSwipeRows();
+      openEdit($(this).data("id"));
+    });
+    $(document).on("click", ".btnCopy", function () {
+      closeSwipeRows();
+      copyItem($(this).data("id"));
+    });
+    $(document).on("click", ".btnDelete", function () {
+      closeSwipeRows();
+      deleteItem($(this).data("id"));
+    });
 
     $(document).on("click", ".xhsLink", function (e) {
       e.preventDefault();
