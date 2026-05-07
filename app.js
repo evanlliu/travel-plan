@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.42.18";
+  const APP_VERSION = "v2.42.19";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -1064,10 +1064,16 @@
     window.open(safeUrl, "_blank", "noopener,noreferrer");
   }
 
+  function updateFabVisibilityBySwipe() {
+    const hasOpenSwipeRow = window.innerWidth <= 760 && $(".planRow.swiped").length > 0;
+    $(".fabGroup").toggleClass("swipeHidden", hasOpenSwipeRow);
+  }
+
   function closeSwipeRows(exceptRow) {
     $(".planRow.swiped").each(function () {
       if (!exceptRow || this !== exceptRow) $(this).removeClass("swiped");
     });
+    updateFabVisibilityBySwipe();
   }
 
   function bindMobileSwipeActions() {
@@ -1108,8 +1114,10 @@
         if (dx < 0) {
           closeSwipeRows(activeRow);
           $(activeRow).addClass("swiped");
+          updateFabVisibilityBySwipe();
         } else {
           $(activeRow).removeClass("swiped");
+          updateFabVisibilityBySwipe();
         }
       }
 
@@ -1126,7 +1134,11 @@
     });
 
     $(window).on("resize", function () {
-      if (window.innerWidth > 760) closeSwipeRows();
+      if (window.innerWidth > 760) {
+        closeSwipeRows();
+      } else {
+        updateFabVisibilityBySwipe();
+      }
     });
   }
 
@@ -1135,8 +1147,12 @@
     $("#btnMore").on("click", () => $("#morePanel").toggleClass("show"));
     $("#btnPeople").on("click", openPeopleConfig);
     $("#btnCloudflare").on("click", openCloudConfig);
-    $("#btnFabAdd").on("click", () => openEdit(null));
+    $("#btnFabAdd").on("click", () => {
+      closeSwipeRows();
+      openEdit(null);
+    });
     $("#btnFabSync").on("click", async () => {
+      closeSwipeRows();
       setStatus("loading", t("loading"));
       await loadCloudData();
       render();
@@ -1149,6 +1165,7 @@
     $("#searchInput").on("input", render);
 
     $("#btnLang").on("click", () => {
+      closeSwipeRows();
       appLang = appLang === "zh" ? "en" : "zh";
       localStorage.setItem(LS_LANG, appLang);
       render();
