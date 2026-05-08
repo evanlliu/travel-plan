@@ -10,15 +10,15 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-  <title>Travel Plan v2.42.22</title>
-  <link rel="stylesheet" href="./style.css?v=v2.42.22">
+  <title>Travel Plan v2.43.0</title>
+  <link rel="stylesheet" href="./style.css?v=v2.43.0">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 </head>
 <body>
   <main class="page">
     <section class="hero">
       <div class="heroText">
-        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.42.22</span></h1>
+        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.43.0</span></h1>
       </div>
 
       <div class="heroActions">
@@ -27,8 +27,18 @@
     </section>
 
     <section class="morePanel" id="morePanel">
+      <button id="btnTrips" data-i18n="tripCategories">旅行计划分类</button>
       <button id="btnPeople" data-i18n="settings">设置</button>
       <button id="btnCloudflare" data-i18n="cloudflareConfig">Cloudflare 同步配置</button>
+    </section>
+
+    <section class="tripBar">
+      <button id="btnTripSelect" class="tripSelectBtn" type="button">
+        <span id="currentTripName">默认旅行计划</span>
+        <span class="tripSelectMeta" id="currentTripMeta"></span>
+        <span class="tripArrow">▾</span>
+      </button>
+      <div class="tripMenu" id="tripMenu"></div>
     </section>
 
     <section class="searchBar">
@@ -167,6 +177,39 @@
     </div>
   </div>
 
+
+  <div class="mask" id="tripMask">
+    <div class="modal smallModal tripModal">
+      <div class="modalHead">
+        <h2 data-i18n="tripCategories">旅行计划分类</h2>
+        <button class="iconBtn" data-close="tripMask" aria-label="close">✕</button>
+      </div>
+      <div class="modalBody">
+        <div class="notice" data-i18n="tripNotice">每个分类都有独立的行程记录，可复制、归档、恢复，所有内容都会保存到 data.json。</div>
+
+        <div class="field full">
+          <label data-i18n="newTrip">新建旅行计划</label>
+          <input id="tripNameZh" data-i18n-placeholder="tripNameZhPlaceholder" placeholder="中文名称，例如：墨西哥旅游计划">
+          <input id="tripNameEn" data-i18n-placeholder="tripNameEnPlaceholder" placeholder="English name, e.g. Mexico Trip Plan">
+          <button class="primary fullWidthBtn" id="btnCreateTrip" data-i18n="createTrip">新建分类</button>
+        </div>
+
+        <div class="tripManageSection">
+          <h3 data-i18n="activeTrips">当前分类</h3>
+          <div id="activeTripList" class="tripManageList"></div>
+        </div>
+
+        <div class="tripManageSection">
+          <h3 data-i18n="archivedTrips">已归档分类</h3>
+          <div id="archivedTripList" class="tripManageList"></div>
+        </div>
+      </div>
+      <div class="modalFoot">
+        <button data-close="tripMask" data-i18n="cancel">取消</button>
+      </div>
+    </div>
+  </div>
+
   <div class="mask" id="cloudMask">
     <div class="modal smallModal">
       <div class="modalHead">
@@ -195,6 +238,6 @@
   </div>
 
   
-  <script src="./app.js?v=v2.42.22"></script>
+  <script src="./app.js?v=v2.43.0"></script>
 </body>
 </html>
