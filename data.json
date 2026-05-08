@@ -1,6 +1,6 @@
 {
   "version": "v2.43.0",
-  "updatedAt": "2026-05-08T06:39:59.481Z",
+  "updatedAt": "2026-05-08T06:40:36.970Z",
   "settings": {
     "activePlanId": "plan_7i4b7q4ablymowjpdfp",
     "cloudflare": {
@@ -477,6 +477,20 @@
       ],
       "priority": "must",
       "sort": 34
+    },
+    {
+      "id": "i_t8mq31t69gmowjq6d2",
+      "planId": "plan_7i4b7q4ablymowjpdfp",
+      "dateISO": "2026-05-08",
+      "time": "",
+      "group": "",
+      "content": "测试",
+      "links": [],
+      "participants": [
+        "Evan"
+      ],
+      "priority": "must",
+      "sort": 1
     }
   ]
 }
