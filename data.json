@@ -1,6 +1,6 @@
 {
-  "version": "v2.42.18",
-  "updatedAt": "2026-05-07T14:17:37.730Z",
+  "version": "v2.43.0",
+  "updatedAt": "2026-05-08T05:39:38.227Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -346,7 +346,9 @@
       "time": "20:30",
       "group": "",
       "content": "Bar",
-      "links": [],
+      "links": [
+        "https://www.xiaohongshu.com/discovery/item/69cf9c03000000002301f96c?source=webshare&xhsshare=pc_web&xsec_token=ABBnzdX5Zxl4HBiJvK-r6jEvzhXx9dn9q9Y_9z-TtMxik=&xsec_source=pc_share"
+      ],
       "participants": [
         "Evan",
         "Gonca"
