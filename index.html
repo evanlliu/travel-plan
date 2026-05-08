@@ -10,15 +10,15 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-  <title>Travel Plan v2.42.23</title>
-  <link rel="stylesheet" href="./style.css?v=v2.42.23">
+  <title>Travel Plan v2.43.0</title>
+  <link rel="stylesheet" href="./style.css?v=v2.43.0">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 </head>
 <body>
   <main class="page">
     <section class="hero">
       <div class="heroText">
-        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.42.23</span></h1>
+        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.43.0</span></h1>
       </div>
 
       <div class="heroActions">
@@ -26,7 +26,20 @@
       </div>
     </section>
 
+    <section class="planBar">
+      <button id="btnCurrentPlan" class="planSwitch" type="button">
+        <span class="planSwitchLabel" data-i18n="currentPlan">当前计划</span>
+        <strong id="currentPlanName">当前旅行计划</strong>
+        <span id="currentPlanStatus"></span>
+        <span class="planArrow">▾</span>
+      </button>
+      <div class="planMeta" id="currentPlanMeta">-</div>
+    </section>
+
+    <div class="notice archivedReadonlyNotice" id="archivedReadonlyNotice" data-i18n="archivedReadonly" style="display:none">当前是归档计划，只读查看；如需修改请先恢复。</div>
+
     <section class="morePanel" id="morePanel">
+      <button id="btnPlanManager" data-i18n="planManagement">计划管理</button>
       <button id="btnPeople" data-i18n="settings">设置</button>
       <button id="btnCloudflare" data-i18n="cloudflareConfig">Cloudflare 同步配置</button>
     </section>
@@ -194,7 +207,52 @@
     </div>
   </div>
 
-  
-  <script src="./app.js?v=v2.42.23"></script>
+
+
+  <div class="mask" id="planMask">
+    <div class="modal planModal">
+      <div class="modalHead">
+        <h2 data-i18n="planManagement">计划管理</h2>
+        <button class="iconBtn" data-close="planMask" aria-label="close">✕</button>
+      </div>
+      <div class="modalBody">
+        <div class="notice" data-i18n="planManageHint">所有计划、归档状态和当前计划都会保存到 data.json，并通过 Cloudflare 同步。</div>
+        <section class="planEditor">
+          <h3 id="planEditTitle" data-i18n="newPlan">新建计划</h3>
+          <input type="hidden" id="planEditId">
+          <div class="grid planGrid">
+            <div class="field full">
+              <label data-i18n="planName">计划名称</label>
+              <input id="planName" data-i18n-placeholder="planNamePlaceholder" placeholder="例如：中国 7 天计划">
+            </div>
+            <div class="field">
+              <label data-i18n="destination">目的地</label>
+              <input id="planDestination" data-i18n-placeholder="destinationPlaceholder" placeholder="例如：中国 / 墨西哥 / 土耳其">
+            </div>
+            <div class="field">
+              <label data-i18n="startDate">开始日期</label>
+              <input type="date" id="planStartDate" inputmode="none" autocomplete="off">
+            </div>
+            <div class="field">
+              <label data-i18n="endDate">结束日期</label>
+              <input type="date" id="planEndDate" inputmode="none" autocomplete="off">
+            </div>
+            <div class="field full">
+              <label data-i18n="note">备注</label>
+              <textarea id="planNote" data-i18n-placeholder="planNotePlaceholder" placeholder="可选，记录这次旅行说明"></textarea>
+            </div>
+          </div>
+        </section>
+        <section class="planList" id="planList"></section>
+      </div>
+      <div class="modalFoot planFoot">
+        <button id="btnNewPlan" data-i18n="newPlan">新建计划</button>
+        <button data-close="planMask" data-i18n="cancel">取消</button>
+        <button class="primary" id="btnSavePlan" data-i18n="savePlan">保存计划</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./app.js?v=v2.43.0"></script>
 </body>
 </html>

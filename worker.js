@@ -1,9 +1,10 @@
-const APP_VERSION = "v2.42.23";
+const APP_VERSION = "v2.43.0";
 
 const DEFAULT_DATA = {
   version: APP_VERSION,
   updatedAt: "",
   settings: {
+    activePlanId: "plan_default",
     cloudflare: {
       apiBase: "",
       appPassword: "",
@@ -16,6 +17,9 @@ const DEFAULT_DATA = {
       daySummary: { pc: true, mobile: true }
     }
   },
+  plans: [
+    { id: "plan_default", name: "当前旅行计划", destination: "", startDate: "", endDate: "", status: "open", createdAt: "", archivedAt: "", sort: 1, note: "" }
+  ],
   peopleOptions: ["Evan", "Gonca", "Ainiya", "Lin", "Mom", "全家"],
   items: []
 };
@@ -96,9 +100,50 @@ function normalizeDisplayOptions(value) {
   };
 }
 
-function normalizeSettings(settings) {
+
+function dateToInput(value) {
+  const text = cleanText(value);
+  const match = text.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (!match) return "";
+  return `${match[1]}-${String(match[2]).padStart(2, "0")}-${String(match[3]).padStart(2, "0")}`;
+}
+
+function normalizePlanStatus(value) {
+  const raw = cleanText(value).toLowerCase();
+  if (["archived", "archive", "归档", "已归档"].includes(raw)) return "archived";
+  return "open";
+}
+
+function normalizePlan(plan, index) {
+  plan = plan && typeof plan === "object" ? plan : {};
+  return {
+    id: cleanText(plan.id) || (index === 0 ? "plan_default" : `plan_${Date.now()}_${index}`),
+    name: cleanText(plan.name || plan.title || plan["计划名称"] || plan["Plan Name"]) || "当前旅行计划",
+    destination: cleanText(plan.destination || plan.city || plan["目的地"] || plan["Destination"]),
+    startDate: dateToInput(plan.startDate || plan.start || plan["开始日期"] || plan["Start Date"]),
+    endDate: dateToInput(plan.endDate || plan.end || plan["结束日期"] || plan["End Date"]),
+    status: normalizePlanStatus(plan.status),
+    createdAt: cleanText(plan.createdAt),
+    archivedAt: cleanText(plan.archivedAt),
+    sort: Number(plan.sort || index + 1),
+    note: cleanText(plan.note || plan.remark || plan["备注"] || plan["Note"])
+  };
+}
+
+function derivePlanDates(items) {
+  const dates = (items || []).map(item => dateToInput(item.dateISO || item.date)).filter(Boolean).sort();
+  return { startDate: dates[0] || "", endDate: dates[dates.length - 1] || "" };
+}
+
+function makeDefaultPlanFromItems(items) {
+  const range = derivePlanDates(items || []);
+  return normalizePlan({ id: "plan_default", name: "当前旅行计划", startDate: range.startDate, endDate: range.endDate, status: "open", sort: 1 }, 0);
+}
+
+function normalizeSettings(settings, activePlanId) {
   const cf = settings && settings.cloudflare ? settings.cloudflare : {};
   return {
+    activePlanId: cleanText(activePlanId || (settings && settings.activePlanId) || DEFAULT_DATA.settings.activePlanId),
     cloudflare: {
       apiBase: cleanText(cf.apiBase).replace(/\/data\.json$/i, "").replace(/\/data$/i, "").replace(/\/+$/g, ""),
       appPassword: String(cf.appPassword || ""),
@@ -116,10 +161,11 @@ function normalizePriority(value) {
   return "must";
 }
 
-function normalizeItem(item, index) {
+function normalizeItem(item, index, fallbackPlanId) {
   item = item && typeof item === "object" ? item : {};
   return {
     id: cleanText(item.id) || `i_${Date.now()}_${index}`,
+    planId: cleanText(item.planId || item.planID || item.tripId || item.tripID) || cleanText(fallbackPlanId) || "plan_default",
     dateISO: cleanText(item.dateISO || item.date),
     time: cleanText(item.time),
     group: cleanText(item.group),
@@ -133,12 +179,28 @@ function normalizeItem(item, index) {
 
 function normalizePayload(payload) {
   payload = payload && typeof payload === "object" ? payload : {};
+  const rawItems = Array.isArray(payload.items) ? payload.items : [];
+  let plans = Array.isArray(payload.plans) ? payload.plans.map(normalizePlan) : [];
+  if (!plans.length) plans = [makeDefaultPlanFromItems(rawItems)];
+
+  const planIds = new Set(plans.map(plan => plan.id));
+  let activePlanId = cleanText(payload.settings && payload.settings.activePlanId);
+  if (!activePlanId || !planIds.has(activePlanId)) {
+    const firstOpen = plans.find(plan => plan.status !== "archived");
+    activePlanId = (firstOpen || plans[0]).id;
+  }
+
   const data = {
     version: APP_VERSION,
     updatedAt: cleanText(payload.updatedAt),
-    settings: normalizeSettings(payload.settings),
+    settings: normalizeSettings(payload.settings, activePlanId),
+    plans,
     peopleOptions: cleanList(payload.peopleOptions || DEFAULT_DATA.peopleOptions),
-    items: (Array.isArray(payload.items) ? payload.items : []).map(normalizeItem)
+    items: rawItems.map((item, index) => {
+      const fixed = normalizeItem(item, index, activePlanId);
+      if (!planIds.has(fixed.planId)) fixed.planId = activePlanId;
+      return fixed;
+    })
   };
 
   const people = new Set(data.peopleOptions);

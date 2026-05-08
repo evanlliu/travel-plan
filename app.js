@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.42.23";
+  const APP_VERSION = "v2.43.0";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -14,6 +14,39 @@
   const I18N = {
     zh: {
       appTitle: "行程计划",
+      currentPlan: "当前计划",
+      planManagement: "计划管理",
+      planManageHint: "所有计划、归档状态和当前计划都会保存到 data.json，并通过 Cloudflare 同步。",
+      activePlans: "当前计划",
+      archivedPlans: "归档计划",
+      newPlan: "新建计划",
+      editPlan: "编辑计划",
+      savePlan: "保存计划",
+      planName: "计划名称",
+      destination: "目的地",
+      startDate: "开始日期",
+      endDate: "结束日期",
+      note: "备注",
+      planNamePlaceholder: "例如：中国 7 天计划",
+      destinationPlaceholder: "例如：中国 / 墨西哥 / 土耳其",
+      planNotePlaceholder: "可选，记录这次旅行说明",
+      openPlan: "打开",
+      copyPlan: "复制",
+      archivePlan: "归档",
+      restorePlan: "恢复",
+      permanentDelete: "永久删除",
+      activePlanBadge: "当前",
+      archivedBadge: "已归档",
+      itemCount: "项安排",
+      archivedReadonly: "当前是归档计划，只读查看；如需修改请先恢复。",
+      confirmArchivePlan: "确认归档这个计划吗？行程不会删除，只会进入归档列表。",
+      confirmDeletePlan: "确认永久删除这个归档计划和它下面的所有安排吗？此操作不可恢复。",
+      requiredPlanName: "请输入计划名称",
+      planSaved: "计划已保存",
+      planArchived: "计划已归档",
+      planRestored: "计划已恢复",
+      planDeleted: "计划已删除",
+      planCopied: "计划已复制",
       more: "更多功能",
       settings: "设置",
       cloudflareConfig: "Cloudflare 同步配置",
@@ -86,6 +119,39 @@
     },
     en: {
       appTitle: "Travel Plan",
+      currentPlan: "Current Plan",
+      planManagement: "Plan Management",
+      planManageHint: "Plans, archive status, and the selected plan are saved to data.json and synced through Cloudflare.",
+      activePlans: "Active Plans",
+      archivedPlans: "Archived Plans",
+      newPlan: "New Plan",
+      editPlan: "Edit Plan",
+      savePlan: "Save Plan",
+      planName: "Plan Name",
+      destination: "Destination",
+      startDate: "Start Date",
+      endDate: "End Date",
+      note: "Note",
+      planNamePlaceholder: "For example: China 7-day plan",
+      destinationPlaceholder: "For example: China / Mexico / Turkey",
+      planNotePlaceholder: "Optional note for this trip",
+      openPlan: "Open",
+      copyPlan: "Copy",
+      archivePlan: "Archive",
+      restorePlan: "Restore",
+      permanentDelete: "Delete Forever",
+      activePlanBadge: "Current",
+      archivedBadge: "Archived",
+      itemCount: "items",
+      archivedReadonly: "This archived plan is read-only. Restore it before editing.",
+      confirmArchivePlan: "Archive this plan? Its items will not be deleted.",
+      confirmDeletePlan: "Delete this archived plan and all its items forever? This cannot be undone.",
+      requiredPlanName: "Please enter a plan name",
+      planSaved: "Plan saved",
+      planArchived: "Plan archived",
+      planRestored: "Plan restored",
+      planDeleted: "Plan deleted",
+      planCopied: "Plan copied",
       more: "More",
       import: "Import Excel",
       tplZh: "Chinese Template",
@@ -165,6 +231,7 @@
     version: APP_VERSION,
     updatedAt: "",
     settings: {
+      activePlanId: "plan_default",
       cloudflare: {
         apiBase: "",
         appPassword: "",
@@ -177,14 +244,17 @@
         daySummary: { pc: true, mobile: true }
       }
     },
+    plans: [
+      { id: "plan_default", name: "当前旅行计划", destination: "", startDate: "2026-05-17", endDate: "2026-05-19", status: "open", createdAt: "", archivedAt: "", sort: 1, note: "" }
+    ],
     peopleOptions: ["Evan", "Gonca", "Ainiya", "Lin", "Mom", "全家"],
     items: [
-      { id: "i_001", dateISO: "2026-05-17", time: "13:00", group: "", content: "Center shopping", links: [], participants: ["Evan", "Gonca", "Lin"], priority: "must", sort: 1 },
-      { id: "i_002", dateISO: "2026-05-17", time: "22:00", group: "", content: "Call sister eat street foods", links: [], participants: ["Evan", "Gonca", "Lin"], priority: "optional", sort: 2 },
-      { id: "i_003", dateISO: "2026-05-17", time: "23:00", group: "", content: "Hotel", links: [], participants: ["Evan", "Gonca"], priority: "must", sort: 3 },
-      { id: "i_004", dateISO: "2026-05-18", time: "08:00", group: "", content: "Medical checkup", links: [], participants: ["Evan", "Gonca", "Ainiya", "Lin"], priority: "must", sort: 4 },
-      { id: "i_005", dateISO: "2026-05-18", time: "12:00", group: "", content: "JuZiZhou head, Snack Kingdom, Wenheyou", links: ["http://xhslink.com/o/4fAotv0DtEv"], participants: ["Evan", "Gonca", "Ainiya", "Lin"], priority: "optional", sort: 5 },
-      { id: "i_006", dateISO: "2026-05-19", time: "09:00", group: "Plan 1", content: "Changsha Huayi Brothers Movie Town", links: ["http://xhslink.com/o/2SrIJCvzOXb"], participants: ["Evan", "Gonca"], priority: "must", sort: 6 }
+      { id: "i_001", planId: "plan_default", dateISO: "2026-05-17", time: "13:00", group: "", content: "Center shopping", links: [], participants: ["Evan", "Gonca", "Lin"], priority: "must", sort: 1 },
+      { id: "i_002", planId: "plan_default", dateISO: "2026-05-17", time: "22:00", group: "", content: "Call sister eat street foods", links: [], participants: ["Evan", "Gonca", "Lin"], priority: "optional", sort: 2 },
+      { id: "i_003", planId: "plan_default", dateISO: "2026-05-17", time: "23:00", group: "", content: "Hotel", links: [], participants: ["Evan", "Gonca"], priority: "must", sort: 3 },
+      { id: "i_004", planId: "plan_default", dateISO: "2026-05-18", time: "08:00", group: "", content: "Medical checkup", links: [], participants: ["Evan", "Gonca", "Ainiya", "Lin"], priority: "must", sort: 4 },
+      { id: "i_005", planId: "plan_default", dateISO: "2026-05-18", time: "12:00", group: "", content: "JuZiZhou head, Snack Kingdom, Wenheyou", links: ["http://xhslink.com/o/4fAotv0DtEv"], participants: ["Evan", "Gonca", "Ainiya", "Lin"], priority: "optional", sort: 5 },
+      { id: "i_006", planId: "plan_default", dateISO: "2026-05-19", time: "09:00", group: "Plan 1", content: "Changsha Huayi Brothers Movie Town", links: ["http://xhslink.com/o/2SrIJCvzOXb"], participants: ["Evan", "Gonca"], priority: "must", sort: 6 }
     ]
   };
 
@@ -197,6 +267,10 @@
 
   function uid() {
     return "i_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+  }
+
+  function planUid() {
+    return "plan_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
   }
 
   function clone(value) {
@@ -460,6 +534,17 @@
     cf.configSavedInDataJson = true;
     cf.passwordStorage = "data.json settings.cloudflare.appPassword";
     data.settings.displayOptions = normalizeDisplayOptions(data.settings.displayOptions);
+
+    if (!Array.isArray(data.plans) || !data.plans.length) {
+      data.plans = [makeDefaultPlanFromItems(data.items || [])];
+    }
+
+    const requestedPlanId = cleanText(data.settings.activePlanId || "");
+    const firstOpen = (data.plans || []).find(plan => plan.status !== "archived");
+    const firstPlan = firstOpen || (data.plans || [])[0];
+    if (!requestedPlanId || !planExists(requestedPlanId)) {
+      data.settings.activePlanId = firstPlan ? firstPlan.id : "plan_default";
+    }
   }
 
   function getApiBase() {
@@ -553,6 +638,112 @@
     return `<span class="priorityBadge ${priority === "optional" ? "optional" : "must"}">${escapeHtml(priorityLabel(priority))}</span>`;
   }
 
+
+  function normalizePlanStatus(value) {
+    const raw = cleanText(value).toLowerCase();
+    if (["archived", "archive", "归档", "已归档"].includes(raw)) return "archived";
+    return "open";
+  }
+
+  function normalizePlan(plan, index) {
+    plan = plan && typeof plan === "object" ? plan : {};
+    const id = cleanText(plan.id) || (index === 0 ? "plan_default" : planUid());
+    const name = cleanText(plan.name || plan.title || plan["计划名称"] || plan["Plan Name"]) || (appLang === "en" ? "Travel Plan" : "当前旅行计划");
+    return {
+      id,
+      name,
+      destination: cleanText(plan.destination || plan.city || plan["目的地"] || plan["Destination"]),
+      startDate: dateToInput(plan.startDate || plan.start || plan["开始日期"] || plan["Start Date"]),
+      endDate: dateToInput(plan.endDate || plan.end || plan["结束日期"] || plan["End Date"]),
+      status: normalizePlanStatus(plan.status),
+      createdAt: cleanText(plan.createdAt) || new Date().toISOString(),
+      archivedAt: cleanText(plan.archivedAt),
+      sort: Number(plan.sort || index + 1),
+      note: cleanText(plan.note || plan.remark || plan["备注"] || plan["Note"])
+    };
+  }
+
+  function getPlanItems(planId) {
+    const id = cleanText(planId || getActivePlanId());
+    return data.items.filter(item => item.planId === id);
+  }
+
+  function derivePlanDates(items) {
+    const dates = (items || []).map(item => dateToInput(item.dateISO || item.date)).filter(Boolean).sort();
+    return { startDate: dates[0] || "", endDate: dates[dates.length - 1] || "" };
+  }
+
+  function makeDefaultPlanFromItems(items) {
+    const range = derivePlanDates(items || []);
+    return normalizePlan({
+      id: "plan_default",
+      name: appLang === "en" ? "Current Travel Plan" : "当前旅行计划",
+      destination: "",
+      startDate: range.startDate,
+      endDate: range.endDate,
+      status: "open",
+      createdAt: "",
+      archivedAt: "",
+      sort: 1,
+      note: ""
+    }, 0);
+  }
+
+  function planExists(planId) {
+    return (data.plans || []).some(plan => plan.id === planId);
+  }
+
+  function getOpenPlans() {
+    return (data.plans || []).filter(plan => plan.status !== "archived").sort((a, b) => Number(a.sort || 0) - Number(b.sort || 0));
+  }
+
+  function getArchivedPlans() {
+    return (data.plans || []).filter(plan => plan.status === "archived").sort((a, b) => Number(a.sort || 0) - Number(b.sort || 0));
+  }
+
+  function getActivePlanId() {
+    ensureSettings();
+    return data.settings.activePlanId;
+  }
+
+  function getActivePlan() {
+    ensureSettings();
+    return (data.plans || []).find(plan => plan.id === data.settings.activePlanId) || (data.plans || [])[0] || null;
+  }
+
+  function isActivePlanArchived() {
+    const plan = getActivePlan();
+    return Boolean(plan && plan.status === "archived");
+  }
+
+  function planRangeText(plan) {
+    if (!plan) return "";
+    if (plan.startDate && plan.endDate) return `${plan.startDate} ~ ${plan.endDate}`;
+    return plan.startDate || plan.endDate || "";
+  }
+
+  function planItemCount(planId) {
+    return data.items.filter(item => item.planId === planId).length;
+  }
+
+  function updatePlanBar() {
+    const plan = getActivePlan();
+    const count = plan ? planItemCount(plan.id) : 0;
+    const name = plan ? plan.name : t("currentPlan");
+    const statusHtml = plan && plan.status === "archived" ? `<span class="planStatus archived">${escapeHtml(t("archivedBadge"))}</span>` : "";
+    const range = planRangeText(plan);
+    const metaParts = [];
+    if (range) metaParts.push(range);
+    metaParts.push(`${count} ${escapeHtml(t("itemCount"))}`);
+    if (plan && plan.destination) metaParts.push(plan.destination);
+
+    $("#currentPlanName").text(name);
+    $("#currentPlanStatus").html(statusHtml);
+    $("#currentPlanMeta").text(metaParts.join(" · "));
+    $("body").toggleClass("archivedPlanMode", Boolean(plan && plan.status === "archived"));
+    $("#archivedReadonlyNotice").toggle(Boolean(plan && plan.status === "archived"));
+  }
+
   function displayDateTime(isoString) {
     if (!isoString) return "-";
     const date = new Date(isoString);
@@ -567,10 +758,12 @@
     return `${date} ${time} ${String(sort).padStart(8, "0")}`;
   }
 
-  function normalizeItem(item, index) {
+  function normalizeItem(item, index, fallbackPlanId) {
     item = item && typeof item === "object" ? item : {};
+    const planId = cleanText(item.planId || item.planID || item.tripId || item.tripID) || cleanText(fallbackPlanId) || "plan_default";
     return {
       id: cleanText(item.id) || uid(),
+      planId,
       dateISO: dateToInput(item.dateISO || item.date || item["日期"] || item["Date"]) || new Date().toISOString().slice(0, 10),
       time: cleanText(item.time || item["时间"] || item["Time"]),
       group: cleanText(item.group || item["分组"] || item["Group"]),
@@ -587,14 +780,32 @@
   function normalize(raw) {
     const base = clone(DEFAULT_DATA);
     const input = raw && typeof raw === "object" ? raw : {};
+    const rawItems = Array.isArray(input.items) ? input.items : [];
+    let plans = Array.isArray(input.plans) ? input.plans.map(normalizePlan) : [];
+
+    if (!plans.length) {
+      plans = [makeDefaultPlanFromItems(rawItems.length ? rawItems : DEFAULT_DATA.items)];
+    }
+
+    const planIds = new Set(plans.map(plan => plan.id));
+    let activePlanId = cleanText((input.settings && input.settings.activePlanId) || input.activePlanId || "");
+    if (!activePlanId || !planIds.has(activePlanId)) {
+      const firstOpen = plans.find(plan => plan.status !== "archived");
+      activePlanId = (firstOpen || plans[0]).id;
+    }
 
     base.version = APP_VERSION;
     base.updatedAt = cleanText(input.updatedAt || "");
-    base.settings = Object.assign({}, base.settings, input.settings || {});
+    base.settings = Object.assign({}, base.settings, input.settings || {}, { activePlanId });
     base.settings.cloudflare = Object.assign({}, DEFAULT_DATA.settings.cloudflare, (input.settings && input.settings.cloudflare) || {});
     base.settings.displayOptions = normalizeDisplayOptions((input.settings && input.settings.displayOptions) || input.displayOptions);
+    base.plans = plans;
     base.peopleOptions = cleanNameList(input.peopleOptions || base.peopleOptions);
-    base.items = (Array.isArray(input.items) ? input.items : []).map(normalizeItem);
+    base.items = rawItems.map((item, index) => {
+      const fixed = normalizeItem(item, index, activePlanId);
+      if (!planIds.has(fixed.planId)) fixed.planId = activePlanId;
+      return fixed;
+    });
 
     if (!base.peopleOptions.length) base.peopleOptions = cleanNameList(DEFAULT_DATA.peopleOptions);
     data = base;
@@ -604,12 +815,23 @@
   }
 
   function repairData() {
+    if (!Array.isArray(data.plans) || !data.plans.length) {
+      data.plans = [makeDefaultPlanFromItems(data.items || [])];
+    }
+
+    data.plans = data.plans.map(normalizePlan);
+    const planIds = new Set(data.plans.map(plan => plan.id));
+    ensureSettings();
+    const fallbackPlanId = data.settings.activePlanId || (data.plans[0] && data.plans[0].id) || "plan_default";
     const options = new Set(cleanNameList(data.peopleOptions));
-    data.items.forEach((item, index) => {
-      const fixed = normalizeItem(item, index);
-      Object.assign(item, fixed);
-      item.participants.forEach(name => options.add(name));
+
+    data.items = (Array.isArray(data.items) ? data.items : []).map((item, index) => {
+      const fixed = normalizeItem(item, index, fallbackPlanId);
+      if (!planIds.has(fixed.planId)) fixed.planId = fallbackPlanId;
+      fixed.participants.forEach(name => options.add(name));
+      return fixed;
     });
+
     data.peopleOptions = Array.from(options).filter(Boolean);
   }
 
@@ -712,7 +934,10 @@
 
   function filteredItems() {
     const q = cleanText($("#searchInput").val()).toLowerCase();
-    const items = data.items.slice().sort((a, b) => itemSortValue(a).localeCompare(itemSortValue(b)));
+    const activePlanId = getActivePlanId();
+    const items = data.items
+      .filter(item => item.planId === activePlanId)
+      .sort((a, b) => itemSortValue(a).localeCompare(itemSortValue(b)));
 
     if (!q) return items;
     return items.filter(item => {
@@ -786,33 +1011,37 @@
     const hasLinks = (item.links || []).length > 0;
     const showPeopleColumn = isDisplayOptionVisible("cardPeople");
     const hasPeople = showPeopleColumn && (item.participants || []).length > 0;
+    const readonly = isActivePlanArchived();
+    const actionButtons = readonly
+      ? `<span class="readonlyTag">${escapeHtml(t("archivedBadge"))}</span>`
+      : `
+          <button class="secondary btnEdit" data-id="${escapeHtml(item.id)}">${escapeHtml(t("edit"))}</button>
+          <button class="secondary btnCopy" data-id="${escapeHtml(item.id)}">${escapeHtml(t("copy"))}</button>
+          <button class="danger btnDelete" data-id="${escapeHtml(item.id)}">${escapeHtml(t("delete"))}</button>`;
+    const swipeButtons = readonly ? "" : `
+          <button class="secondary btnEdit" data-id="${escapeHtml(item.id)}">${escapeHtml(t("edit"))}</button>
+          <button class="secondary btnCopy" data-id="${escapeHtml(item.id)}">${escapeHtml(t("copy"))}</button>
+          <button class="danger btnDelete" data-id="${escapeHtml(item.id)}">${escapeHtml(t("delete"))}</button>`;
 
     const priority = normalizePriority(item.priority);
     return `
-      <article class="planRow priority-${priority} ${hasLinks ? "hasLinks" : ""} ${hasPeople ? "hasPeople" : ""} ${showPeopleColumn ? "" : "peopleHidden"}" data-id="${escapeHtml(item.id)}">
+      <article class="planRow priority-${priority} ${readonly ? "readonly" : ""} ${hasLinks ? "hasLinks" : ""} ${hasPeople ? "hasPeople" : ""} ${showPeopleColumn ? "" : "peopleHidden"}" data-id="${escapeHtml(item.id)}">
         <div class="cell timeCell" data-label="${escapeHtml(t("time"))}">${escapeHtml(item.time || "-")}</div>
         <div class="cell contentCell" data-label="${escapeHtml(t("content"))}">
           <div class="contentText">${priorityBadgeHtml(priority)}<span class="contentMain">${escapeHtml(item.content || "-")}</span></div>
         </div>
         <div class="cell linkCell ${hasLinks ? "" : "emptyCell"}" data-label="${escapeHtml(t("rednote"))}">${linkHtml(item.links)}</div>
         <div class="cell peopleCell ${showPeopleColumn ? "" : "hiddenBySetting"} ${hasPeople ? "" : "emptyCell"}" data-label="${escapeHtml(t("people"))}">${showPeopleColumn ? chipHtml(item.participants) : ""}</div>
-        <div class="cell actionCell">
-          <button class="secondary btnEdit" data-id="${escapeHtml(item.id)}">${escapeHtml(t("edit"))}</button>
-          <button class="secondary btnCopy" data-id="${escapeHtml(item.id)}">${escapeHtml(t("copy"))}</button>
-          <button class="danger btnDelete" data-id="${escapeHtml(item.id)}">${escapeHtml(t("delete"))}</button>
-        </div>
-        <div class="swipeActions" aria-hidden="true">
-          <button class="secondary btnEdit" data-id="${escapeHtml(item.id)}">${escapeHtml(t("edit"))}</button>
-          <button class="secondary btnCopy" data-id="${escapeHtml(item.id)}">${escapeHtml(t("copy"))}</button>
-          <button class="danger btnDelete" data-id="${escapeHtml(item.id)}">${escapeHtml(t("delete"))}</button>
-        </div>
+        <div class="cell actionCell">${actionButtons}</div>
+        <div class="swipeActions" aria-hidden="true">${swipeButtons}</div>
       </article>`;
   }
 
   function renderBoard(items) {
     const $board = $("#board");
-    if (!data.items.length) {
-      $board.html(`<section class="empty">${escapeHtml(t("noData"))}</section>`);
+    if (!getPlanItems(getActivePlanId()).length) {
+      const archivedNotice = isActivePlanArchived() ? `<div class="notice archivedReadonlyInline">${escapeHtml(t("archivedReadonly"))}</div>` : "";
+      $board.html(`${archivedNotice}<section class="empty">${escapeHtml(t("noData"))}</section>`);
       return;
     }
     if (!items.length) {
@@ -871,6 +1100,8 @@
 
     $("#btnPeople").attr({ title: t("settings"), "aria-label": t("settings") });
     $("#btnCloudflare").attr({ title: t("cloudflareConfig"), "aria-label": t("cloudflareConfig") });
+    $("#btnPlanManager").attr({ title: t("planManagement"), "aria-label": t("planManagement") });
+    $("#btnCurrentPlan").attr({ title: t("planManagement"), "aria-label": t("planManagement") });
     $("#btnFabAdd").attr({ title: t("addItem"), "aria-label": t("addItem") });
     $("#btnFabSync").attr({ title: t("syncData"), "aria-label": t("syncData") });
     $("#btnLang").attr({
@@ -882,6 +1113,7 @@
   function render() {
     applyI18n();
     ensureSettings();
+    updatePlanBar();
     renderBoard(filteredItems());
     setStatus(getApiBase() ? "ok" : "warn", getApiBase() ? t("loaded") : t("localMode"));
   }
@@ -918,7 +1150,12 @@
   }
 
   function openEdit(id) {
-    const item = id ? data.items.find(x => x.id === id) : null;
+    if (isActivePlanArchived()) {
+      openPlanManager();
+      return;
+    }
+    const activePlanId = getActivePlanId();
+    const item = id ? data.items.find(x => x.id === id && x.planId === activePlanId) : null;
     $("#editTitle").text(item ? t("editItem") : t("addItem"));
     $("#editId").val(item ? item.id : "");
     $("#editDate").attr({ type: "date", inputmode: "none", autocomplete: "off" }).val(item ? item.dateISO : todayISO());
@@ -953,11 +1190,12 @@
     };
 
     if (id) {
-      const item = data.items.find(x => x.id === id);
+      const item = data.items.find(x => x.id === id && x.planId === getActivePlanId());
       if (item) Object.assign(item, payload);
     } else {
-      const maxSort = data.items.reduce((max, item) => Math.max(max, Number(item.sort || 0)), 0);
-      data.items.push(Object.assign({ id: uid(), sort: maxSort + 1 }, payload));
+      const activePlanId = getActivePlanId();
+      const maxSort = getPlanItems(activePlanId).reduce((max, item) => Math.max(max, Number(item.sort || 0)), 0);
+      data.items.push(Object.assign({ id: uid(), planId: activePlanId, sort: maxSort + 1 }, payload));
     }
 
     closeModal("editMask");
@@ -966,14 +1204,17 @@
   }
 
   async function copyItem(id) {
-    const source = data.items.find(item => item.id === id);
+    if (isActivePlanArchived()) return;
+    const activePlanId = getActivePlanId();
+    const source = data.items.find(item => item.id === id && item.planId === activePlanId);
     if (!source) return;
 
-    const maxSort = data.items.reduce((max, item) => Math.max(max, Number(item.sort || 0)), 0);
+    const maxSort = getPlanItems(activePlanId).reduce((max, item) => Math.max(max, Number(item.sort || 0)), 0);
     const copied = normalizeItem(Object.assign(clone(source), {
       id: uid(),
+      planId: activePlanId,
       sort: maxSort + 1
-    }), data.items.length);
+    }), data.items.length, activePlanId);
 
     data.items.push(copied);
     await saveData(true);
@@ -981,8 +1222,10 @@
   }
 
   async function deleteItem(id) {
+    if (isActivePlanArchived()) return;
     if (!confirm(t("confirmDelete"))) return;
-    data.items = data.items.filter(item => item.id !== id);
+    const activePlanId = getActivePlanId();
+    data.items = data.items.filter(item => !(item.id === id && item.planId === activePlanId));
     await saveData(true);
     setStatus("ok", t("deleted"));
   }
@@ -1056,6 +1299,202 @@
     await saveData(true);
     $("#cloudResult").text(t("configSaved")).removeClass("error");
     setStatus("ok", t("configSaved"));
+  }
+
+
+  function resetPlanForm(plan) {
+    const p = plan || null;
+    $("#planEditTitle").text(p ? t("editPlan") : t("newPlan"));
+    $("#planEditId").val(p ? p.id : "");
+    $("#planName").val(p ? p.name : "");
+    $("#planDestination").val(p ? p.destination : "");
+    $("#planStartDate").attr({ type: "date", inputmode: "none", autocomplete: "off" }).val(p ? p.startDate : "");
+    $("#planEndDate").attr({ type: "date", inputmode: "none", autocomplete: "off" }).val(p ? p.endDate : "");
+    $("#planNote").val(p ? p.note : "");
+  }
+
+  function planCardHtml(plan) {
+    const active = plan.id === getActivePlanId();
+    const count = planItemCount(plan.id);
+    const range = planRangeText(plan);
+    const meta = [range, plan.destination, `${count} ${t("itemCount")}`].filter(Boolean).join(" · ");
+    const statusBadge = active ? `<span class="planBadge active">${escapeHtml(t("activePlanBadge"))}</span>` : "";
+    const archivedBadge = plan.status === "archived" ? `<span class="planBadge archived">${escapeHtml(t("archivedBadge"))}</span>` : "";
+    const archivedAt = plan.status === "archived" && plan.archivedAt ? `<div class="planArchivedAt">${escapeHtml(t("updatedAt"))}${escapeHtml(displayDateTime(plan.archivedAt))}</div>` : "";
+    const archiveAction = plan.status === "archived"
+      ? `<button class="secondary" data-plan-action="restore" data-id="${escapeHtml(plan.id)}">${escapeHtml(t("restorePlan"))}</button>
+         <button class="danger" data-plan-action="delete" data-id="${escapeHtml(plan.id)}">${escapeHtml(t("permanentDelete"))}</button>`
+      : `<button class="danger" data-plan-action="archive" data-id="${escapeHtml(plan.id)}">${escapeHtml(t("archivePlan"))}</button>`;
+
+    return `
+      <article class="planManageCard ${active ? "active" : ""} ${plan.status === "archived" ? "archived" : ""}">
+        <div class="planManageMain">
+          <div class="planManageName">${escapeHtml(plan.name)} ${statusBadge}${archivedBadge}</div>
+          <div class="planManageMeta">${escapeHtml(meta || "-")}</div>
+          ${plan.note ? `<div class="planManageNote">${escapeHtml(plan.note)}</div>` : ""}
+          ${archivedAt}
+        </div>
+        <div class="planManageActions">
+          <button class="secondary" data-plan-action="open" data-id="${escapeHtml(plan.id)}">${escapeHtml(t("openPlan"))}</button>
+          <button class="secondary" data-plan-action="edit" data-id="${escapeHtml(plan.id)}">${escapeHtml(t("edit"))}</button>
+          <button class="secondary" data-plan-action="copy" data-id="${escapeHtml(plan.id)}">${escapeHtml(t("copyPlan"))}</button>
+          ${archiveAction}
+        </div>
+      </article>`;
+  }
+
+  function renderPlanList() {
+    const openPlans = getOpenPlans();
+    const archivedPlans = getArchivedPlans();
+    const openHtml = openPlans.length ? openPlans.map(planCardHtml).join("") : `<div class="empty miniEmpty">${escapeHtml(t("noData"))}</div>`;
+    const archivedHtml = archivedPlans.length ? archivedPlans.map(planCardHtml).join("") : `<div class="empty miniEmpty">${escapeHtml(t("noData"))}</div>`;
+    $("#planList").html(`
+      <section class="planListGroup">
+        <h3>${escapeHtml(t("activePlans"))}</h3>
+        ${openHtml}
+      </section>
+      <section class="planListGroup">
+        <h3>${escapeHtml(t("archivedPlans"))}</h3>
+        ${archivedHtml}
+      </section>`);
+  }
+
+  function openPlanManager() {
+    ensureSettings();
+    resetPlanForm(null);
+    renderPlanList();
+    openModal("planMask");
+  }
+
+  async function savePlanForm() {
+    const id = cleanText($("#planEditId").val());
+    const name = cleanText($("#planName").val());
+    if (!name) {
+      alert(t("requiredPlanName"));
+      return;
+    }
+
+    const payload = {
+      name,
+      destination: cleanText($("#planDestination").val()),
+      startDate: dateToInput($("#planStartDate").val()),
+      endDate: dateToInput($("#planEndDate").val()),
+      note: cleanText($("#planNote").val())
+    };
+
+    if (id) {
+      const plan = data.plans.find(item => item.id === id);
+      if (plan) Object.assign(plan, payload);
+    } else {
+      const maxSort = data.plans.reduce((max, plan) => Math.max(max, Number(plan.sort || 0)), 0);
+      const plan = normalizePlan(Object.assign({
+        id: planUid(),
+        status: "open",
+        createdAt: new Date().toISOString(),
+        archivedAt: "",
+        sort: maxSort + 1
+      }, payload), data.plans.length);
+      data.plans.push(plan);
+      data.settings.activePlanId = plan.id;
+    }
+
+    await saveData(true);
+    resetPlanForm(null);
+    renderPlanList();
+    setStatus("ok", t("planSaved"));
+  }
+
+  async function openPlan(planId) {
+    if (!planExists(planId)) return;
+    data.settings.activePlanId = planId;
+    $("#searchInput").val("");
+    await saveData(true);
+    renderPlanList();
+    setStatus("ok", t("loaded"));
+  }
+
+  function editPlan(planId) {
+    const plan = data.plans.find(item => item.id === planId);
+    if (!plan) return;
+    resetPlanForm(plan);
+  }
+
+  async function archivePlan(planId) {
+    const plan = data.plans.find(item => item.id === planId);
+    if (!plan || plan.status === "archived") return;
+    if (!confirm(t("confirmArchivePlan"))) return;
+    plan.status = "archived";
+    plan.archivedAt = new Date().toISOString();
+    await saveData(true);
+    renderPlanList();
+    setStatus("ok", t("planArchived"));
+  }
+
+  async function restorePlan(planId) {
+    const plan = data.plans.find(item => item.id === planId);
+    if (!plan) return;
+    plan.status = "open";
+    plan.archivedAt = "";
+    data.settings.activePlanId = plan.id;
+    await saveData(true);
+    renderPlanList();
+    setStatus("ok", t("planRestored"));
+  }
+
+  async function copyPlan(planId) {
+    const source = data.plans.find(item => item.id === planId);
+    if (!source) return;
+    const newPlanId = planUid();
+    const suffix = appLang === "en" ? " Copy" : " 副本";
+    const maxPlanSort = data.plans.reduce((max, plan) => Math.max(max, Number(plan.sort || 0)), 0);
+    const copiedPlan = normalizePlan(Object.assign(clone(source), {
+      id: newPlanId,
+      name: `${source.name}${suffix}`,
+      status: "open",
+      createdAt: new Date().toISOString(),
+      archivedAt: "",
+      sort: maxPlanSort + 1
+    }), data.plans.length);
+
+    const copiedItems = getPlanItems(source.id).map((item, index) => normalizeItem(Object.assign(clone(item), {
+      id: uid(),
+      planId: newPlanId,
+      sort: index + 1
+    }), index, newPlanId));
+
+    data.plans.push(copiedPlan);
+    data.items.push(...copiedItems);
+    data.settings.activePlanId = newPlanId;
+    await saveData(true);
+    resetPlanForm(null);
+    renderPlanList();
+    setStatus("ok", t("planCopied"));
+  }
+
+  async function deletePlan(planId) {
+    const plan = data.plans.find(item => item.id === planId);
+    if (!plan || plan.status !== "archived") return;
+    if (!confirm(t("confirmDeletePlan"))) return;
+    data.plans = data.plans.filter(item => item.id !== planId);
+    data.items = data.items.filter(item => item.planId !== planId);
+    if (data.settings.activePlanId === planId) {
+      const next = getOpenPlans()[0] || getArchivedPlans()[0] || makeDefaultPlanFromItems([]);
+      if (!planExists(next.id)) data.plans.push(next);
+      data.settings.activePlanId = next.id;
+    }
+    await saveData(true);
+    resetPlanForm(null);
+    renderPlanList();
+    setStatus("ok", t("planDeleted"));
+  }
+
+  async function handlePlanAction(action, planId) {
+    if (action === "open") return openPlan(planId);
+    if (action === "edit") return editPlan(planId);
+    if (action === "copy") return copyPlan(planId);
+    if (action === "archive") return archivePlan(planId);
+    if (action === "restore") return restorePlan(planId);
+    if (action === "delete") return deletePlan(planId);
   }
 
   function openViewer(url) {
@@ -1182,6 +1621,11 @@
       closeMorePanel();
       openCloudConfig();
     });
+    $("#btnPlanManager, #btnCurrentPlan").on("click", () => {
+      closeMorePanel();
+      closeSwipeRows();
+      openPlanManager();
+    });
     $(document).on("click", function (e) {
       if ($(e.target).closest("#btnMore, #morePanel").length) return;
       closeMorePanel();
@@ -1202,6 +1646,11 @@
     $("#btnSavePeople").on("click", savePeopleConfig);
     $("#btnTestCloud").on("click", testCloudRead);
     $("#btnSaveCloud").on("click", saveCloudConfig);
+    $("#btnNewPlan").on("click", () => resetPlanForm(null));
+    $("#btnSavePlan").on("click", savePlanForm);
+    $("#planList").on("click", "[data-plan-action]", function () {
+      handlePlanAction($(this).data("plan-action"), $(this).data("id"));
+    });
     $("#searchInput").on("input", render);
 
     $("#btnLang").on("click", () => {
@@ -1213,6 +1662,10 @@
       renderPeopleSummary();
       if ($("#peopleMask").hasClass("show")) {
         renderDisplayOptionsConfig();
+      }
+      if ($("#planMask").hasClass("show")) {
+        $("#planEditTitle").text($("#planEditId").val() ? t("editPlan") : t("newPlan"));
+        renderPlanList();
       }
     });
 

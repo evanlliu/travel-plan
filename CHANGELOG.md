@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.43.0
+
+- 新增多计划管理：支持新建计划、切换计划、复制计划、归档计划、恢复归档计划。
+- 新增 `plans`、`settings.activePlanId`、`items[].planId` 数据结构，全部保存到 `data.json`。
+- 增加旧数据自动迁移逻辑：旧版 `items` 会自动归入默认计划，避免升级后数据变空。
+- 归档计划只读显示，防止误修改历史行程。
+- 更新 Cloudflare Worker，确保新增的计划字段写入 GitHub `data.json` 时不会被过滤。
+
 ## v2.42.23
 
 - 修复 PC 端 Settings 弹窗底部按钮不可见。
