@@ -1,6 +1,6 @@
 {
   "version": "v2.43.0",
-  "updatedAt": "2026-05-08T06:54:31.530Z",
+  "updatedAt": "2026-05-08T06:58:24.807Z",
   "settings": {
     "activePlanId": "plan_default",
     "cloudflare": {
@@ -462,21 +462,6 @@
       ],
       "priority": "must",
       "sort": 33
-    },
-    {
-      "id": "i_b16m27lql9jmowjk97r",
-      "planId": "plan_default",
-      "dateISO": "2026-05-17",
-      "time": "13:00",
-      "group": "",
-      "content": "Center shopping+trip",
-      "links": [],
-      "participants": [
-        "Evan",
-        "Gonca"
-      ],
-      "priority": "must",
-      "sort": 34
     },
     {
       "id": "i_t8mq31t69gmowjq6d2",
