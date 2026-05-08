@@ -1,6 +1,6 @@
 {
   "version": "v2.43.0",
-  "updatedAt": "2026-05-08T06:58:50.882Z",
+  "updatedAt": "2026-05-08T06:58:59.325Z",
   "settings": {
     "activePlanId": "plan_default",
     "cloudflare": {
@@ -35,18 +35,6 @@
       "createdAt": "2026-05-08T06:35:58.649Z",
       "archivedAt": "",
       "sort": 1,
-      "note": ""
-    },
-    {
-      "id": "plan_7i4b7q4ablymowjpdfp",
-      "name": "中国每日计划",
-      "destination": "中国",
-      "startDate": "2026-05-08",
-      "endDate": "2026-05-12",
-      "status": "archived",
-      "createdAt": "2026-05-08T06:40:00.325Z",
-      "archivedAt": "2026-05-08T06:58:51.704Z",
-      "sort": 2,
       "note": ""
     }
   ],
@@ -462,20 +450,6 @@
       ],
       "priority": "must",
       "sort": 33
-    },
-    {
-      "id": "i_t8mq31t69gmowjq6d2",
-      "planId": "plan_7i4b7q4ablymowjpdfp",
-      "dateISO": "2026-05-08",
-      "time": "",
-      "group": "",
-      "content": "测试",
-      "links": [],
-      "participants": [
-        "Evan"
-      ],
-      "priority": "must",
-      "sort": 1
     }
   ]
 }
