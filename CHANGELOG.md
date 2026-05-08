@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.43.1
+## v2.43.2
 
 - 主页面“当前计划”改为直接下拉选择，不再点击进入计划管理。
 - 下拉框支持直接切换当前计划，并同步保存 `settings.activePlanId` 到 `data.json`。

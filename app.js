@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.43.1";
+  const APP_VERSION = "v2.43.2";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -738,15 +738,21 @@
 
   function renderPlanSelect(activePlanId) {
     const openPlans = getOpenPlans();
-    const archivedPlans = getArchivedPlans();
-    const groups = [];
-    if (openPlans.length) {
-      groups.push(`<optgroup label="${escapeHtml(t("activePlans"))}">${planOptionsHtml(openPlans)}</optgroup>`);
+    const activePlan = getActivePlan();
+    const currentId = activePlanId || getActivePlanId();
+    let options = planOptionsHtml(openPlans);
+
+    // Main page selector is for quick switching between non-archived plans only.
+    // Archived plans can still be viewed / restored from More -> Plan Management.
+    if (activePlan && activePlan.status === "archived") {
+      options = `<option value="${escapeHtml(activePlan.id)}" selected disabled>${escapeHtml(planOptionText(activePlan))}</option>${options}`;
     }
-    if (archivedPlans.length) {
-      groups.push(`<optgroup label="${escapeHtml(t("archivedPlans"))}">${planOptionsHtml(archivedPlans)}</optgroup>`);
+
+    if (!options) {
+      options = `<option value="" disabled selected>${escapeHtml(t("noData"))}</option>`;
     }
-    $("#planSelect").html(groups.join("")).val(activePlanId || getActivePlanId());
+
+    $("#planSelect").html(options).val(currentId);
   }
 
   function updatePlanBar() {
