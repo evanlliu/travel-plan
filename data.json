@@ -1,6 +1,6 @@
 {
   "version": "v2.43.0",
-  "updatedAt": "2026-05-08T05:32:18.092Z",
+  "updatedAt": "2026-05-08T05:32:51.419Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -30,5 +30,20 @@
     "Sister",
     "Mom"
   ],
-  "items": []
+  "items": [
+    {
+      "id": "i_9v6lmbdfdosmowhb1fi",
+      "dateISO": "2026-05-08",
+      "time": "",
+      "group": "",
+      "content": "测试",
+      "links": [],
+      "participants": [
+        "Evan",
+        "Gonca"
+      ],
+      "priority": "must",
+      "sort": 1
+    }
+  ]
 }
