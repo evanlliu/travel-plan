@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.43.1";
+  const APP_VERSION = "v2.42.22";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -161,76 +161,9 @@
     }
   };
 
-
-  Object.assign(I18N.zh, {
-    tripCategories: "旅行计划分类",
-    tripNotice: "每个分类都有独立的行程记录，可复制、归档、恢复，所有内容都会保存到 data.json。",
-    currentTrip: "当前计划",
-    newTrip: "新建旅行计划",
-    createTrip: "新建分类",
-    activeTrips: "当前分类",
-    archivedTrips: "已归档分类",
-    noArchivedTrips: "暂无已归档分类",
-    manageTrips: "管理分类",
-    archive: "归档",
-    restore: "恢复",
-    permanentDelete: "永久删除",
-    switchTrip: "切换",
-    tripNameZhPlaceholder: "中文名称，例如：墨西哥旅游计划",
-    tripNameEnPlaceholder: "English name, e.g. Mexico Trip Plan",
-    defaultTripNameZh: "默认旅行计划",
-    defaultTripNameEn: "Default Trip Plan",
-    copySuffixZh: " - 副本",
-    copySuffixEn: " - Copy",
-    tripCreated: "分类已新建",
-    tripCopied: "分类已复制",
-    tripArchived: "分类已归档",
-    tripRestored: "分类已恢复",
-    tripDeleted: "分类已删除",
-    tripSwitched: "已切换分类",
-    confirmArchiveTrip: "确认归档这个旅行计划吗？归档后不会在顶部列表显示，但可以恢复。",
-    confirmDeleteTrip: "确认永久删除这个已归档旅行计划吗？此操作不可恢复。",
-    cannotArchiveOnlyTrip: "至少需要保留一个未归档分类。",
-    itemsCount: "项安排"
-  });
-
-  Object.assign(I18N.en, {
-    tripCategories: "Trip Categories",
-    tripNotice: "Each category has independent plan records. You can copy, archive, and restore. Everything is saved to data.json.",
-    currentTrip: "Current plan",
-    newTrip: "New Trip Plan",
-    createTrip: "Create Category",
-    activeTrips: "Active Categories",
-    archivedTrips: "Archived Categories",
-    noArchivedTrips: "No archived categories",
-    manageTrips: "Manage Categories",
-    archive: "Archive",
-    restore: "Restore",
-    permanentDelete: "Delete Forever",
-    switchTrip: "Switch",
-    tripNameZhPlaceholder: "中文名称，例如：墨西哥旅游计划",
-    tripNameEnPlaceholder: "English name, e.g. Mexico Trip Plan",
-    defaultTripNameZh: "默认旅行计划",
-    defaultTripNameEn: "Default Trip Plan",
-    copySuffixZh: " - Copy",
-    copySuffixEn: " - Copy",
-    tripCreated: "Category created",
-    tripCopied: "Category copied",
-    tripArchived: "Category archived",
-    tripRestored: "Category restored",
-    tripDeleted: "Category deleted",
-    tripSwitched: "Category switched",
-    confirmArchiveTrip: "Archive this trip plan? It will be hidden from the top list but can be restored.",
-    confirmDeleteTrip: "Permanently delete this archived trip plan? This cannot be undone.",
-    cannotArchiveOnlyTrip: "At least one active category is required.",
-    itemsCount: "items"
-  });
-
   const DEFAULT_DATA = {
     version: APP_VERSION,
     updatedAt: "",
-    currentTripId: "trip_default",
-    trips: [],
     settings: {
       cloudflare: {
         apiBase: "",
@@ -651,86 +584,6 @@
     };
   }
 
-
-  function tripUid() {
-    return "trip_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
-  }
-
-  function tripDisplayName(trip) {
-    if (!trip) return appLang === "zh" ? t("defaultTripNameZh") : t("defaultTripNameEn");
-    if (typeof trip.name === "string") return cleanText(trip.name);
-    const name = trip.name && typeof trip.name === "object" ? trip.name : {};
-    return cleanText(name[appLang]) || cleanText(name.zh) || cleanText(name.en) || cleanText(trip.title) || t("defaultTripNameZh");
-  }
-
-  function normalizeTrip(trip, index, fallback) {
-    trip = trip && typeof trip === "object" ? trip : {};
-    fallback = fallback && typeof fallback === "object" ? fallback : {};
-    const name = trip.name && typeof trip.name === "object"
-      ? trip.name
-      : { zh: cleanText(trip.name || trip.title || fallback.nameZh || t("defaultTripNameZh")), en: cleanText(trip.nameEn || fallback.nameEn || t("defaultTripNameEn")) };
-
-    return {
-      id: cleanText(trip.id) || (index === 0 ? "trip_default" : tripUid()),
-      name: {
-        zh: cleanText(name.zh || name.cn || fallback.nameZh || t("defaultTripNameZh")),
-        en: cleanText(name.en || fallback.nameEn || name.zh || t("defaultTripNameEn"))
-      },
-      archived: !!trip.archived,
-      archivedAt: cleanText(trip.archivedAt || ""),
-      createdAt: cleanText(trip.createdAt || new Date().toISOString()),
-      updatedAt: cleanText(trip.updatedAt || ""),
-      peopleOptions: cleanNameList(trip.peopleOptions || fallback.peopleOptions || DEFAULT_DATA.peopleOptions),
-      displayOptions: normalizeDisplayOptions(trip.displayOptions || fallback.displayOptions || (data.settings && data.settings.displayOptions)),
-      items: (Array.isArray(trip.items) ? trip.items : (fallback.items || [])).map(normalizeItem)
-    };
-  }
-
-  function activeTrip() {
-    ensureTrips();
-    return data.trips.find(trip => trip.id === data.currentTripId) || data.trips.find(trip => !trip.archived) || data.trips[0];
-  }
-
-  function ensureTrips() {
-    data.trips = Array.isArray(data.trips) ? data.trips : [];
-    if (!data.trips.length) {
-      data.trips.push(normalizeTrip(null, 0, {
-        items: data.items || DEFAULT_DATA.items,
-        peopleOptions: data.peopleOptions || DEFAULT_DATA.peopleOptions,
-        displayOptions: data.settings && data.settings.displayOptions,
-        nameZh: t("defaultTripNameZh"),
-        nameEn: t("defaultTripNameEn")
-      }));
-    }
-    if (!data.trips.some(trip => trip.id === data.currentTripId)) {
-      const firstActive = data.trips.find(trip => !trip.archived) || data.trips[0];
-      data.currentTripId = firstActive.id;
-    }
-  }
-
-  function applyActiveTripToRoot() {
-    ensureTrips();
-    const trip = activeTrip();
-    data.currentTripId = trip.id;
-    data.items = trip.items;
-    data.peopleOptions = trip.peopleOptions;
-    ensureSettings();
-    data.settings.displayOptions = normalizeDisplayOptions(trip.displayOptions || data.settings.displayOptions);
-  }
-
-  function syncActiveTripFromRoot() {
-    ensureTrips();
-    const trip = activeTrip();
-    trip.items = data.items || [];
-    trip.peopleOptions = cleanNameList(data.peopleOptions || DEFAULT_DATA.peopleOptions);
-    trip.displayOptions = normalizeDisplayOptions(data.settings && data.settings.displayOptions);
-    trip.updatedAt = data.updatedAt || new Date().toISOString();
-  }
-
-  function cloneItemsForTrip(items) {
-    return (items || []).map((item, index) => normalizeItem(Object.assign({}, clone(item), { id: uid(), sort: index + 1 }), index));
-  }
-
   function normalize(raw) {
     const base = clone(DEFAULT_DATA);
     const input = raw && typeof raw === "object" ? raw : {};
@@ -743,25 +596,10 @@
     base.peopleOptions = cleanNameList(input.peopleOptions || base.peopleOptions);
     base.items = (Array.isArray(input.items) ? input.items : []).map(normalizeItem);
 
-    const fallbackTrip = {
-      items: base.items.length ? base.items : DEFAULT_DATA.items,
-      peopleOptions: base.peopleOptions,
-      displayOptions: base.settings.displayOptions,
-      nameZh: t("defaultTripNameZh"),
-      nameEn: t("defaultTripNameEn")
-    };
-
-    const sourceTrips = Array.isArray(input.trips) && input.trips.length ? input.trips : [fallbackTrip];
-    base.trips = sourceTrips.map((trip, index) => normalizeTrip(trip, index, index === 0 ? fallbackTrip : {}));
-    base.currentTripId = cleanText(input.currentTripId) || (base.trips[0] && base.trips[0].id) || "trip_default";
-
     if (!base.peopleOptions.length) base.peopleOptions = cleanNameList(DEFAULT_DATA.peopleOptions);
     data = base;
     ensureSettings();
-    ensureTrips();
-    applyActiveTripToRoot();
     repairData();
-    syncActiveTripFromRoot();
     return data;
   }
 
@@ -783,7 +621,6 @@
   }
 
   function persistLocal() {
-    syncActiveTripFromRoot();
     data.version = APP_VERSION;
     localStorage.setItem(LS_DATA, JSON.stringify(data));
   }
@@ -831,7 +668,6 @@
   }
 
   async function writeCloudData() {
-    syncActiveTripFromRoot();
     const url = endpoint();
     if (!url) {
       setStatus("warn", t("localMode"));
@@ -863,7 +699,6 @@
     data.version = APP_VERSION;
     data.updatedAt = new Date().toISOString();
     repairData();
-    syncActiveTripFromRoot();
     persistLocal();
     render();
     if (sync) await writeCloudData();
@@ -1023,205 +858,6 @@
     $board.html(html);
   }
 
-
-  function activeTrips() {
-    ensureTrips();
-    return data.trips.filter(trip => !trip.archived);
-  }
-
-  function archivedTrips() {
-    ensureTrips();
-    return data.trips.filter(trip => trip.archived);
-  }
-
-  function tripMetaHtml(trip) {
-    const count = (trip.items || []).length;
-    return `${count} ${appLang === "zh" ? t("itemsCount") : (count === 1 ? "item" : t("itemsCount"))}`;
-  }
-
-  function renderTripSelector() {
-    const trip = activeTrip();
-    $("#currentTripName").text(tripDisplayName(trip));
-    $("#currentTripMeta").text(tripMetaHtml(trip));
-  }
-
-  function renderTripMenu() {
-    const active = activeTrips();
-    const rows = active.map(trip => `
-      <button class="tripMenuItem ${trip.id === data.currentTripId ? "active" : ""}" data-trip-switch="${escapeHtml(trip.id)}">
-        <span>${escapeHtml(tripDisplayName(trip))}</span>
-        <em>${escapeHtml(tripMetaHtml(trip))}</em>
-      </button>
-    `).join("");
-
-    $("#tripMenu").html(`
-      ${rows}
-      <div class="tripMenuDivider"></div>
-      <button class="tripMenuItem tripMenuManage" id="btnTripManageInline">${escapeHtml(t("manageTrips"))}</button>
-    `);
-  }
-
-  function closeTripMenu() {
-    $("#tripMenu").removeClass("show");
-  }
-
-  function toggleTripMenu() {
-    renderTripMenu();
-    $("#tripMenu").toggleClass("show");
-  }
-
-  function renderTripManageList() {
-    const activeHtml = activeTrips().map(tripManageCardHtml).join("");
-    const archived = archivedTrips();
-    const archivedHtml = archived.length ? archived.map(tripManageCardHtml).join("") : `<div class="emptyMini">${escapeHtml(t("noArchivedTrips"))}</div>`;
-    $("#activeTripList").html(activeHtml);
-    $("#archivedTripList").html(archivedHtml);
-  }
-
-  function tripManageCardHtml(trip) {
-    const active = trip.id === data.currentTripId;
-    const archived = !!trip.archived;
-    const count = (trip.items || []).length;
-    return `
-      <article class="tripManageCard ${active ? "active" : ""} ${archived ? "archived" : ""}" data-trip-id="${escapeHtml(trip.id)}">
-        <div class="tripManageInfo">
-          <strong>${escapeHtml(tripDisplayName(trip))}</strong>
-          <span>${count} ${escapeHtml(appLang === "zh" ? t("itemsCount") : (count === 1 ? "item" : t("itemsCount")))}</span>
-        </div>
-        <div class="tripManageActions">
-          ${!archived ? `<button data-trip-switch="${escapeHtml(trip.id)}">${escapeHtml(t("switchTrip"))}</button>` : ""}
-          <button data-trip-copy="${escapeHtml(trip.id)}">${escapeHtml(t("copy"))}</button>
-          ${!archived ? `<button data-trip-archive="${escapeHtml(trip.id)}">${escapeHtml(t("archive"))}</button>` : `<button data-trip-restore="${escapeHtml(trip.id)}">${escapeHtml(t("restore"))}</button><button class="danger" data-trip-delete="${escapeHtml(trip.id)}">${escapeHtml(t("permanentDelete"))}</button>`}
-        </div>
-      </article>`;
-  }
-
-  function openTripManager() {
-    closeMorePanel();
-    closeTripMenu();
-    $("#tripNameZh").val("");
-    $("#tripNameEn").val("");
-    renderTripManageList();
-    openModal("tripMask");
-  }
-
-  async function switchTrip(id) {
-    if (!id || id === data.currentTripId) {
-      closeTripMenu();
-      return;
-    }
-    syncActiveTripFromRoot();
-    const trip = data.trips.find(item => item.id === id);
-    if (!trip || trip.archived) return;
-    data.currentTripId = id;
-    applyActiveTripToRoot();
-    closeTripMenu();
-    await saveData(true);
-    setStatus("ok", t("tripSwitched"));
-  }
-
-  async function createTrip() {
-    const zh = cleanText($("#tripNameZh").val()) || t("defaultTripNameZh");
-    const en = cleanText($("#tripNameEn").val()) || zh;
-    syncActiveTripFromRoot();
-
-    const trip = normalizeTrip({
-      id: tripUid(),
-      name: { zh, en },
-      archived: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      peopleOptions: cleanNameList(data.peopleOptions),
-      displayOptions: normalizeDisplayOptions(data.settings.displayOptions),
-      items: []
-    }, data.trips.length);
-
-    data.trips.push(trip);
-    data.currentTripId = trip.id;
-    applyActiveTripToRoot();
-    $("#tripNameZh").val("");
-    $("#tripNameEn").val("");
-    await saveData(true);
-    renderTripManageList();
-    setStatus("ok", t("tripCreated"));
-  }
-
-  async function copyTrip(id) {
-    syncActiveTripFromRoot();
-    const source = data.trips.find(trip => trip.id === id);
-    if (!source) return;
-
-    const copied = normalizeTrip({
-      id: tripUid(),
-      name: {
-        zh: `${cleanText(source.name && source.name.zh) || tripDisplayName(source)}${t("copySuffixZh")}`,
-        en: `${cleanText(source.name && source.name.en) || tripDisplayName(source)}${t("copySuffixEn")}`
-      },
-      archived: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      peopleOptions: cleanNameList(source.peopleOptions),
-      displayOptions: normalizeDisplayOptions(source.displayOptions),
-      items: cloneItemsForTrip(source.items)
-    }, data.trips.length);
-
-    data.trips.push(copied);
-    data.currentTripId = copied.id;
-    applyActiveTripToRoot();
-    await saveData(true);
-    renderTripManageList();
-    setStatus("ok", t("tripCopied"));
-  }
-
-  async function archiveTrip(id) {
-    const activeCount = activeTrips().length;
-    if (activeCount <= 1) {
-      alert(t("cannotArchiveOnlyTrip"));
-      return;
-    }
-    if (!confirm(t("confirmArchiveTrip"))) return;
-    syncActiveTripFromRoot();
-
-    const trip = data.trips.find(item => item.id === id);
-    if (!trip) return;
-    trip.archived = true;
-    trip.archivedAt = new Date().toISOString();
-
-    if (data.currentTripId === id) {
-      const next = data.trips.find(item => !item.archived && item.id !== id) || data.trips.find(item => !item.archived);
-      if (next) data.currentTripId = next.id;
-    }
-
-    applyActiveTripToRoot();
-    await saveData(true);
-    renderTripManageList();
-    setStatus("ok", t("tripArchived"));
-  }
-
-  async function restoreTrip(id) {
-    const trip = data.trips.find(item => item.id === id);
-    if (!trip) return;
-    trip.archived = false;
-    trip.archivedAt = "";
-    data.currentTripId = trip.id;
-    applyActiveTripToRoot();
-    await saveData(true);
-    renderTripManageList();
-    setStatus("ok", t("tripRestored"));
-  }
-
-  async function deleteTripForever(id) {
-    const trip = data.trips.find(item => item.id === id);
-    if (!trip || !trip.archived) return;
-    if (!confirm(t("confirmDeleteTrip"))) return;
-    data.trips = data.trips.filter(item => item.id !== id);
-    ensureTrips();
-    applyActiveTripToRoot();
-    await saveData(true);
-    renderTripManageList();
-    setStatus("ok", t("tripDeleted"));
-  }
-
   function applyI18n() {
     document.documentElement.lang = appLang === "zh" ? "zh-CN" : "en";
     $("[data-i18n]").each(function () {
@@ -1235,8 +871,6 @@
 
     $("#btnPeople").attr({ title: t("settings"), "aria-label": t("settings") });
     $("#btnCloudflare").attr({ title: t("cloudflareConfig"), "aria-label": t("cloudflareConfig") });
-    $("#btnTrips").attr({ title: t("tripCategories"), "aria-label": t("tripCategories") });
-    $("#btnTripSelect").attr({ title: t("currentTrip"), "aria-label": t("currentTrip") });
     $("#btnFabAdd").attr({ title: t("addItem"), "aria-label": t("addItem") });
     $("#btnFabSync").attr({ title: t("syncData"), "aria-label": t("syncData") });
     $("#btnLang").attr({
@@ -1248,8 +882,6 @@
   function render() {
     applyI18n();
     ensureSettings();
-    renderTripSelector();
-    renderTripMenu();
     renderBoard(filteredItems());
     setStatus(getApiBase() ? "ok" : "warn", getApiBase() ? t("loaded") : t("localMode"));
   }
@@ -1542,7 +1174,6 @@
       $("#morePanel").toggleClass("show");
       positionMorePanel();
     });
-    $("#btnTrips").on("click", openTripManager);
     $("#btnPeople").on("click", () => {
       closeMorePanel();
       openPeopleConfig();
@@ -1571,23 +1202,6 @@
     $("#btnSavePeople").on("click", savePeopleConfig);
     $("#btnTestCloud").on("click", testCloudRead);
     $("#btnSaveCloud").on("click", saveCloudConfig);
-    $("#btnCreateTrip").on("click", createTrip);
-    $("#btnTripSelect").on("click", (e) => {
-      e.stopPropagation();
-      closeMorePanel();
-      closeSwipeRows();
-      toggleTripMenu();
-    });
-    $(document).on("click", "#btnTripManageInline", openTripManager);
-    $(document).on("click", "[data-trip-switch]", function () { switchTrip($(this).data("trip-switch")); });
-    $(document).on("click", "[data-trip-copy]", function () { copyTrip($(this).data("trip-copy")); });
-    $(document).on("click", "[data-trip-archive]", function () { archiveTrip($(this).data("trip-archive")); });
-    $(document).on("click", "[data-trip-restore]", function () { restoreTrip($(this).data("trip-restore")); });
-    $(document).on("click", "[data-trip-delete]", function () { deleteTripForever($(this).data("trip-delete")); });
-    $(document).on("click", function (e) {
-      if ($(e.target).closest("#btnTripSelect, #tripMenu").length) return;
-      closeTripMenu();
-    });
     $("#searchInput").on("input", render);
 
     $("#btnLang").on("click", () => {
@@ -1599,9 +1213,6 @@
       renderPeopleSummary();
       if ($("#peopleMask").hasClass("show")) {
         renderDisplayOptionsConfig();
-      }
-      if ($("#tripMask").hasClass("show")) {
-        renderTripManageList();
       }
     });
 
