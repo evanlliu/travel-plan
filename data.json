@@ -1,6 +1,6 @@
 {
   "version": "v2.43.0",
-  "updatedAt": "2026-05-08T06:58:59.325Z",
+  "updatedAt": "2026-05-08T06:59:31.529Z",
   "settings": {
     "activePlanId": "plan_default",
     "cloudflare": {
@@ -27,8 +27,8 @@
   "plans": [
     {
       "id": "plan_default",
-      "name": "当前旅行计划",
-      "destination": "",
+      "name": "China",
+      "destination": "China",
       "startDate": "2026-05-17",
       "endDate": "2026-05-24",
       "status": "open",
