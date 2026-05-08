@@ -1,8 +1,8 @@
 {
   "version": "v2.43.0",
-  "updatedAt": "2026-05-08T06:52:49.956Z",
+  "updatedAt": "2026-05-08T06:52:50.875Z",
   "settings": {
-    "activePlanId": "plan_default",
+    "activePlanId": "plan_7i4b7q4ablymowjpdfp",
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
       "appPassword": "1123",
