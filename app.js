@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.43.0";
+  const APP_VERSION = "v2.43.1";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -726,18 +726,40 @@
     return data.items.filter(item => item.planId === planId).length;
   }
 
+  function planOptionText(plan) {
+    const parts = [plan.name];
+    if (plan.status === "archived") parts.push(t("archivedBadge"));
+    return parts.filter(Boolean).join(" · ");
+  }
+
+  function planOptionsHtml(plans) {
+    return plans.map(plan => `<option value="${escapeHtml(plan.id)}">${escapeHtml(planOptionText(plan))}</option>`).join("");
+  }
+
+  function renderPlanSelect(activePlanId) {
+    const openPlans = getOpenPlans();
+    const archivedPlans = getArchivedPlans();
+    const groups = [];
+    if (openPlans.length) {
+      groups.push(`<optgroup label="${escapeHtml(t("activePlans"))}">${planOptionsHtml(openPlans)}</optgroup>`);
+    }
+    if (archivedPlans.length) {
+      groups.push(`<optgroup label="${escapeHtml(t("archivedPlans"))}">${planOptionsHtml(archivedPlans)}</optgroup>`);
+    }
+    $("#planSelect").html(groups.join("")).val(activePlanId || getActivePlanId());
+  }
+
   function updatePlanBar() {
     const plan = getActivePlan();
     const count = plan ? planItemCount(plan.id) : 0;
-    const name = plan ? plan.name : t("currentPlan");
     const statusHtml = plan && plan.status === "archived" ? `<span class="planStatus archived">${escapeHtml(t("archivedBadge"))}</span>` : "";
     const range = planRangeText(plan);
     const metaParts = [];
     if (range) metaParts.push(range);
-    metaParts.push(`${count} ${escapeHtml(t("itemCount"))}`);
+    metaParts.push(`${count} ${t("itemCount")}`);
     if (plan && plan.destination) metaParts.push(plan.destination);
 
-    $("#currentPlanName").text(name);
+    renderPlanSelect(plan ? plan.id : "");
     $("#currentPlanStatus").html(statusHtml);
     $("#currentPlanMeta").text(metaParts.join(" · "));
     $("body").toggleClass("archivedPlanMode", Boolean(plan && plan.status === "archived"));
@@ -1101,7 +1123,7 @@
     $("#btnPeople").attr({ title: t("settings"), "aria-label": t("settings") });
     $("#btnCloudflare").attr({ title: t("cloudflareConfig"), "aria-label": t("cloudflareConfig") });
     $("#btnPlanManager").attr({ title: t("planManagement"), "aria-label": t("planManagement") });
-    $("#btnCurrentPlan").attr({ title: t("planManagement"), "aria-label": t("planManagement") });
+    $("#planSelect").attr({ title: t("currentPlan"), "aria-label": t("currentPlan") });
     $("#btnFabAdd").attr({ title: t("addItem"), "aria-label": t("addItem") });
     $("#btnFabSync").attr({ title: t("syncData"), "aria-label": t("syncData") });
     $("#btnLang").attr({
@@ -1621,10 +1643,15 @@
       closeMorePanel();
       openCloudConfig();
     });
-    $("#btnPlanManager, #btnCurrentPlan").on("click", () => {
+    $("#btnPlanManager").on("click", () => {
       closeMorePanel();
       closeSwipeRows();
       openPlanManager();
+    });
+    $("#planSelect").on("change", function () {
+      closeMorePanel();
+      closeSwipeRows();
+      openPlan($(this).val());
     });
     $(document).on("click", function (e) {
       if ($(e.target).closest("#btnMore, #morePanel").length) return;

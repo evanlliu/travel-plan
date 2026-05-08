@@ -1,4 +1,4 @@
-# Travel Plan Web v2.43.0
+# Travel Plan Web v2.43.1
 
 一个轻量级行程计划网页，支持 PC、移动端 Safari、iPhone 添加到主屏幕后使用。
 
@@ -6,7 +6,7 @@
 
 - 中英文切换
 - 按日期自动分组展示行程
-- 多计划管理：可新建、切换、复制、归档、恢复旅行计划
+- 多计划管理：主页面可直接下拉切换计划，More 里的计划管理可新建、编辑、复制、归档、恢复旅行计划
 - 旧数据自动迁移到默认计划，所有计划和配置保存到 data.json
 - 日期选择后自动带出星期
 - 新增、编辑、删除行程
@@ -296,9 +296,10 @@ settings.cloudflare.appPassword
 - 同步兼容移动端，底部按钮保留 safe-area 安全距离。
 
 
-## v2.43.0 说明
+## v2.43.1 说明
 
-- 新增 `plans` 数据结构：每个计划有 `id/name/destination/startDate/endDate/status/archivedAt/note`。
+- 主页面“当前计划”已经改为直接下拉选择，可快速切换计划。
+- More 菜单中的“计划管理”用于新建、编辑、复制、归档、恢复和删除计划。
 - `settings.activePlanId` 保存当前选中的计划，`items[].planId` 绑定行程所属计划。
 - 旧版没有 `plans` 的 `data.json` 会自动迁移为 `plan_default`，不会清空原行程。
 - 归档计划默认只读查看，需要恢复后才能新增、编辑或删除行程。

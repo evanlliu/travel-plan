@@ -790,7 +790,7 @@ body.modalLocked{
 }
 
 
-/* v2.43.0 readability + content-density optimization */
+/* v2.43.1 readability + content-density optimization */
 .daySummary{
   display:flex;
   flex-wrap:wrap;
@@ -1058,7 +1058,7 @@ body.modalLocked{
 }
 
 
-/* v2.43.0 compact density pass: PC + mobile show more content */
+/* v2.43.1 compact density pass: PC + mobile show more content */
 :root{
   --compact-radius:14px;
   --compact-gap:10px;
@@ -1386,7 +1386,7 @@ button{
 }
 
 
-/* v2.43.0: compress top cards, reduce vertical gaps, show more trip content */
+/* v2.43.1: compress top cards, reduce vertical gaps, show more trip content */
 .page{
   padding-top:10px!important;
 }
@@ -1587,7 +1587,7 @@ button{
 }
 
 
-/* v2.43.0 Red Note links open in a new window; viewer modal disabled */
+/* v2.43.1 Red Note links open in a new window; viewer modal disabled */
 #viewerMask{
   display:none!important;
 }
@@ -1596,7 +1596,7 @@ button{
 }
 
 
-/* v2.43.0 record copy button */
+/* v2.43.1 record copy button */
 .btnCopy{
   color:#0f5132!important;
   border-color:#cce8d8!important;
@@ -1640,7 +1640,7 @@ button{
 }
 
 
-/* v2.43.0 keep Edit / Copy / Delete in one row */
+/* v2.43.1 keep Edit / Copy / Delete in one row */
 .actionCell{
   display:flex!important;
   flex-direction:row!important;
@@ -1719,7 +1719,7 @@ button{
 }
 
 
-/* v2.43.0 mobile edit modal one-screen compact layout */
+/* v2.43.1 mobile edit modal one-screen compact layout */
 @media(max-width:760px){
   /*
     Goal: editing form should fit on one mobile screen without scrolling.
@@ -1997,7 +1997,7 @@ button{
 }
 
 
-/* v2.43.0 mobile edit page redesign: full screen, visual hierarchy, plan content focus */
+/* v2.43.1 mobile edit page redesign: full screen, visual hierarchy, plan content focus */
 @media(max-width:760px){
   /* Full-screen edit experience */
   #editMask{
@@ -2362,7 +2362,7 @@ button{
 }
 
 
-/* v2.43.0 mobile edit page: one-column full-screen, no empty space, no scroll by default */
+/* v2.43.1 mobile edit page: one-column full-screen, no empty space, no scroll by default */
 @media(max-width:760px){
   #editMask{
     align-items:stretch!important;
@@ -2662,7 +2662,7 @@ button{
 }
 
 
-/* v2.43.0 mobile edit: Plan Content + Red Note adaptive height, exact full-screen fill */
+/* v2.43.1 mobile edit: Plan Content + Red Note adaptive height, exact full-screen fill */
 @media(max-width:760px){
   #editMask .modal{
     height:var(--app-height,100vh)!important;
@@ -2814,7 +2814,7 @@ button{
 }
 
 
-/* v2.43.0 PC card spacing compact */
+/* v2.43.1 PC card spacing compact */
 @media(min-width:761px){
   .page{
     padding-top:8px!important;
@@ -2864,7 +2864,7 @@ button{
 }
 
 
-/* v2.43.0 PC ultra compact spacing */
+/* v2.43.1 PC ultra compact spacing */
 @media(min-width:761px){
   body{
     background:#f3f6fa!important;
@@ -3015,7 +3015,7 @@ button{
 }
 
 
-/* v2.43.0 PC date-card spacing ultra compact */
+/* v2.43.1 PC date-card spacing ultra compact */
 @media(min-width:761px){
   .board{
     gap:2px!important;
@@ -3043,7 +3043,7 @@ button{
 }
 
 
-/* v2.43.0 Must / Optional priority design */
+/* v2.43.1 Must / Optional priority design */
 .priorityBadge{
   display:inline-flex;
   align-items:center;
@@ -3204,7 +3204,7 @@ button{
 }
 
 
-/* v2.43.0 Optional row color follow-through
+/* v2.43.1 Optional row color follow-through
    基于 v2.42.0，只优化 Optional 行的视觉状态，不套用 v2.43/v2.44 的大改样式。
 */
 .planRow.priority-optional{
@@ -3275,7 +3275,7 @@ button{
 }
 
 
-/* v2.43.0 PC/mobile display options */
+/* v2.43.1 PC/mobile display options */
 .displayOptionsField{
   margin-top:12px;
 }
@@ -3379,7 +3379,7 @@ button{
 }
 
 
-/* v2.43.0 floating sync button */
+/* v2.43.1 floating sync button */
 .fabSync svg{
   width:20px;
   height:20px;
@@ -3398,7 +3398,7 @@ button{
 }
 
 
-/* v2.43.0 mobile left-swipe actions
+/* v2.43.1 mobile left-swipe actions
    IMPORTANT: do not change the original mobile card content layout. */
 @media(max-width:760px){
   .planRow{
@@ -3479,7 +3479,7 @@ button{
 }
 
 
-/* v2.43.0 mobile swipe overlay buttons
+/* v2.43.1 mobile swipe overlay buttons
    Use a dedicated overlay to avoid conflicts with the original mobile actionCell layout. */
 .swipeActions{display:none;}
 
@@ -3559,7 +3559,7 @@ button{
 }
 
 
-/* v2.43.0 mobile swipe + FAB conflict fix
+/* v2.43.1 mobile swipe + FAB conflict fix
    When a row is swiped open, hide global floating buttons to avoid covering row actions. */
 @media(max-width:760px){
   .fabGroup{
@@ -3575,7 +3575,7 @@ button{
 }
 
 
-/* v2.43.0 mobile top compact + PWA safe-area optimization */
+/* v2.43.1 mobile top compact + PWA safe-area optimization */
 @media(max-width:760px){
   /* Normal mobile Safari: slightly lower than before, but still compact */
   .page{
@@ -3704,7 +3704,7 @@ button{
 }
 
 
-/* v2.43.0 compact floating More panel + mobile top area tuning */
+/* v2.43.1 compact floating More panel + mobile top area tuning */
 
 /* More panel floats on both PC and mobile. It no longer takes page height. */
 .morePanel{
@@ -3841,7 +3841,7 @@ button{
 }
 
 
-/* v2.43.0 mobile top-safe-area and accidental zoom prevention */
+/* v2.43.1 mobile top-safe-area and accidental zoom prevention */
 html{
   -webkit-text-size-adjust:100%!important;
   text-size-adjust:100%!important;
@@ -3905,7 +3905,7 @@ select{
 }
 
 
-/* v2.43.0 settings modal footer visibility fix */
+/* v2.43.1 settings modal footer visibility fix */
 #peopleMask .modal,
 #peopleMask .smallModal{
   max-height:calc(100dvh - 36px)!important;
@@ -3963,7 +3963,7 @@ select{
   }
 }
 
-/* v2.43.0 multi-plan archive system */
+/* v2.43.1 direct current-plan selector */
 .planBar{
   display:flex;
   align-items:center;
@@ -3995,15 +3995,24 @@ select{
   font-size:12px;
   font-weight:900;
 }
-.planSwitch strong{
+.planSelect{
   min-width:0;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
+  flex:1 1 auto;
+  width:100%;
+  border:0!important;
+  outline:none!important;
+  background:transparent!important;
+  color:var(--text);
   font-size:16px;
   font-weight:900;
+  line-height:1.25;
+  padding:2px 22px 2px 0;
+  cursor:pointer;
 }
-.planArrow{color:var(--muted);font-weight:900}
+.planSelect:focus{
+  box-shadow:0 0 0 3px rgba(22,101,52,.12)!important;
+  border-radius:10px;
+}
 .planMeta{
   flex:0 1 auto;
   color:var(--muted);
@@ -4141,7 +4150,7 @@ select{
     min-height:32px!important;
   }
   .planSwitchLabel{font-size:11px!important}
-  .planSwitch strong{font-size:15px!important}
+  .planSelect{font-size:16px!important;min-height:28px!important}
   .planMeta{
     max-width:none;
     text-align:left;
