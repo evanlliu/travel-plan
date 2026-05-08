@@ -1,6 +1,6 @@
 {
   "version": "v2.43.0",
-  "updatedAt": "2026-05-08T05:39:38.227Z",
+  "updatedAt": "2026-05-08T05:43:45.313Z",
   "settings": {
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
@@ -411,6 +411,20 @@
       ],
       "priority": "must",
       "sort": 33
+    },
+    {
+      "id": "i_a5f1s4kxyjmowhp14u",
+      "dateISO": "2026-05-17",
+      "time": "13:00",
+      "group": "",
+      "content": "Center shopping+trip",
+      "links": [],
+      "participants": [
+        "Evan",
+        "Gonca"
+      ],
+      "priority": "must",
+      "sort": 34
     }
   ]
 }
