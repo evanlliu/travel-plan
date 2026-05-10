@@ -4211,7 +4211,7 @@ select{
 }
 
 
-/* v2.43.8 mobile deep compact optimization: show more plan content while keeping key info clear */
+/* v2.43.9 mobile deep compact optimization: show more plan content while keeping key info clear */
 @media(max-width:760px){
   .page{
     width:calc(100% - 14px)!important;
@@ -4441,7 +4441,7 @@ select{
 }
 
 
-/* v2.43.8: move update time beside version + collapse query box */
+/* v2.43.9: move update time beside version + collapse query box */
 .syncTime{
   display:inline-flex;
   align-items:center;
@@ -4505,7 +4505,7 @@ select{
     min-height:18px!important;
     padding:2px 6px!important;
     font-size:10px!important;
-    max-width:50px!important;
+    max-width:none!important;
   }
   .planBar{
     grid-template-columns:1fr!important;
@@ -4534,7 +4534,7 @@ select{
   }
 }
 
-/* v2.43.8: plan selector width, mobile search placement, mobile More icon, compact sync toast */
+/* v2.43.9: plan selector width, mobile search placement, mobile More icon, sync status beside version */
 .planBar{
   position:relative!important;
 }
@@ -4568,30 +4568,6 @@ select{
     top:50%!important;
     transform:translateY(-50%)!important;
   }
-}
-
-.syncToast{
-  position:fixed;
-  left:50%;
-  bottom:calc(86px + env(safe-area-inset-bottom,0px));
-  z-index:999;
-  transform:translate(-50%, 8px);
-  opacity:0;
-  pointer-events:none;
-  padding:8px 12px;
-  border-radius:999px;
-  background:rgba(20,32,51,.92);
-  color:#fff;
-  font-size:13px;
-  font-weight:900;
-  line-height:1;
-  box-shadow:0 12px 28px rgba(15,23,42,.22);
-  transition:opacity .18s ease, transform .18s ease;
-  white-space:nowrap;
-}
-.syncToast.show{
-  opacity:1;
-  transform:translate(-50%, 0);
 }
 
 @media(max-width:760px){
@@ -4668,15 +4644,10 @@ select{
   #updatedText{
     display:none!important;
   }
-  .syncToast{
-    bottom:calc(72px + env(safe-area-inset-bottom,0px));
-    font-size:12px;
-    padding:7px 10px;
-  }
 }
 
 
-/* v2.43.8 floating More: move top More button into the right floating action group */
+/* v2.43.9 floating More: move top More button into the right floating action group */
 .heroActions{display:none!important;}
 .fabMoreMark{
   display:inline-flex;
@@ -4709,5 +4680,21 @@ select{
   }
   .morePanel{
     z-index:1000!important;
+  }
+}
+
+
+/* v2.43.9: no popup sync toast; show load/sync status + time beside version */
+.syncTime{
+  max-width:none!important;
+}
+@media(max-width:760px){
+  .syncTime{
+    flex:0 0 auto!important;
+    max-width:none!important;
+    white-space:nowrap!important;
+  }
+  .hero h1{
+    min-width:0!important;
   }
 }

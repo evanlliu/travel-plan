@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.43.8";
+  const APP_VERSION = "v2.43.9";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -787,15 +787,6 @@
   }
 
 
-  function showSyncToast(message) {
-    const text = cleanText(message || t("loaded"));
-    if (!text || !isMobile()) return;
-    const $toast = $("#syncToast");
-    if (!$toast.length) return;
-    $toast.text(text).addClass("show");
-    clearTimeout(showSyncToast.timer);
-    showSyncToast.timer = setTimeout(() => $toast.removeClass("show"), 1600);
-  }
 
   function updateSearchCollapse(forceOpen) {
     const hasQuery = Boolean(cleanText($("#searchInput").val()));
@@ -980,10 +971,13 @@
   }
 
   function setStatus(kind, message) {
+    const timeText = displayTimeOnly(data.updatedAt);
+    const statusText = cleanText(message || "");
+    const syncLabel = statusText ? `${statusText} ${timeText}` : timeText;
     $("#statusText").text(message);
     $("#statusDot").attr("class", `dot ${kind || ""}`);
-    $("#updatedText").text(displayTimeOnly(data.updatedAt));
-    $("#syncTimeText").text(displayTimeOnly(data.updatedAt)).attr("title", `${message || ""} ${displayTimeOnly(data.updatedAt)}`.trim());
+    $("#updatedText").text(timeText);
+    $("#syncTimeText").text(syncLabel).attr("title", syncLabel);
   }
 
   function filteredItems() {
@@ -1711,7 +1705,6 @@
       await loadCloudData();
       render();
       setStatus("ok", t("loaded"));
-      showSyncToast(t("loaded"));
     });
     $("#btnSaveEdit").on("click", saveEdit);
     $("#btnSavePeople").on("click", savePeopleConfig);
