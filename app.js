@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.43.11";
+  const APP_VERSION = "v2.43.13";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -944,19 +944,25 @@
       return false;
     }
 
-    data.version = APP_VERSION;
-    data.updatedAt = new Date().toISOString();
-    persistLocal();
+    const payload = clone(data);
+    payload.version = APP_VERSION;
+    // Let the Worker write the final updatedAt. This keeps the UI time exactly
+    // aligned with the updatedAt saved in GitHub data.json.
+    payload.updatedAt = new Date().toISOString();
 
     try {
-      await fetchJson(url, {
+      const result = await fetchJson(url, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json;charset=utf-8",
           "X-App-Password": getCloudPassword()
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(payload)
       });
+
+      data.version = APP_VERSION;
+      data.updatedAt = cleanText(result && result.updatedAt) || payload.updatedAt;
+      persistLocal();
       setStatus("ok", t("synced"));
       return true;
     } catch {
@@ -1707,9 +1713,20 @@
     $("#btnFabSync").on("click", async () => {
       closeSwipeRows();
       setStatus("loading", t("loading"));
-      await loadCloudData();
+
+      // Manual sync should update data.json.updatedAt so the header time reflects
+      // the latest successful cloud sync, not just the previously loaded timestamp.
+      const loaded = await loadCloudData();
+      const written = await writeCloudData();
       render();
-      setStatus("ok", t("loaded"));
+
+      if (written) {
+        setStatus("ok", t("synced"));
+      } else if (loaded) {
+        setStatus("ok", t("loaded"));
+      } else {
+        setStatus("warn", endpoint() ? t("syncFailed") : t("localMode"));
+      }
     });
     $("#btnSaveEdit").on("click", saveEdit);
     $("#btnSavePeople").on("click", savePeopleConfig);
