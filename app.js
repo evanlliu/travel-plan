@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.43.9";
+  const APP_VERSION = "v2.43.11";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -780,10 +780,14 @@
   }
 
   function displayTimeOnly(isoString) {
-    if (!isoString) return "--:--";
+    if (!isoString) return "--:--:--";
     const date = new Date(isoString);
-    if (Number.isNaN(date.getTime())) return "--:--";
-    return date.toLocaleTimeString(appLang === "zh" ? "zh-CN" : "en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
+    if (Number.isNaN(date.getTime())) return "--:--:--";
+    return date.toLocaleTimeString(appLang === "zh" ? "zh-CN" : "en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+  }
+
+  function dataUpdatedTimeText() {
+    return displayTimeOnly(data && data.updatedAt ? data.updatedAt : "");
   }
 
 
@@ -971,7 +975,8 @@
   }
 
   function setStatus(kind, message) {
-    const timeText = displayTimeOnly(data.updatedAt);
+    // The header time is the data timestamp from data.json updatedAt, formatted as HH:mm:ss.
+    const timeText = dataUpdatedTimeText();
     const statusText = cleanText(message || "");
     const syncLabel = statusText ? `${statusText} ${timeText}` : timeText;
     $("#statusText").text(message);
