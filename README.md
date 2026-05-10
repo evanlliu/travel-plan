@@ -1,4 +1,4 @@
-# Travel Plan Web v2.43.2
+# Travel Plan Web v2.43.3
 
 一个轻量级行程计划网页，支持 PC、移动端 Safari、iPhone 添加到主屏幕后使用。
 
@@ -296,7 +296,7 @@ settings.cloudflare.appPassword
 - 同步兼容移动端，底部按钮保留 safe-area 安全距离。
 
 
-## v2.43.2 说明
+## v2.43.3 说明
 
 - 主页面“当前计划”已经改为直接下拉选择，可快速切换计划。
 - More 菜单中的“计划管理”用于新建、编辑、复制、归档、恢复和删除计划。
