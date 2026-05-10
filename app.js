@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.43.3";
+  const APP_VERSION = "v2.43.8";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -779,6 +779,31 @@
     return date.toLocaleString(appLang === "zh" ? "zh-CN" : "en-US", { hour12: false });
   }
 
+  function displayTimeOnly(isoString) {
+    if (!isoString) return "--:--";
+    const date = new Date(isoString);
+    if (Number.isNaN(date.getTime())) return "--:--";
+    return date.toLocaleTimeString(appLang === "zh" ? "zh-CN" : "en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
+  }
+
+
+  function showSyncToast(message) {
+    const text = cleanText(message || t("loaded"));
+    if (!text || !isMobile()) return;
+    const $toast = $("#syncToast");
+    if (!$toast.length) return;
+    $toast.text(text).addClass("show");
+    clearTimeout(showSyncToast.timer);
+    showSyncToast.timer = setTimeout(() => $toast.removeClass("show"), 1600);
+  }
+
+  function updateSearchCollapse(forceOpen) {
+    const hasQuery = Boolean(cleanText($("#searchInput").val()));
+    const shouldOpen = forceOpen === true || hasQuery || $("#searchBar").hasClass("expanded");
+    $("#searchBar").toggleClass("collapsed", !shouldOpen).toggleClass("expanded", shouldOpen);
+    $("#btnSearchToggle").toggleClass("active", shouldOpen || hasQuery);
+  }
+
   function itemSortValue(item) {
     const date = item.dateISO || "9999-12-31";
     const time = item.time || "99:99";
@@ -957,7 +982,8 @@
   function setStatus(kind, message) {
     $("#statusText").text(message);
     $("#statusDot").attr("class", `dot ${kind || ""}`);
-    $("#updatedText").text(`${t("updatedAt")}${displayDateTime(data.updatedAt)}`);
+    $("#updatedText").text(displayTimeOnly(data.updatedAt));
+    $("#syncTimeText").text(displayTimeOnly(data.updatedAt)).attr("title", `${message || ""} ${displayTimeOnly(data.updatedAt)}`.trim());
   }
 
   function filteredItems() {
@@ -1129,7 +1155,9 @@
     $("#btnPeople").attr({ title: t("settings"), "aria-label": t("settings") });
     $("#btnCloudflare").attr({ title: t("cloudflareConfig"), "aria-label": t("cloudflareConfig") });
     $("#btnPlanManager").attr({ title: t("planManagement"), "aria-label": t("planManagement") });
+    $("#btnFabMore").attr({ title: t("more"), "aria-label": t("more") });
     $("#planSelect").attr({ title: t("currentPlan"), "aria-label": t("currentPlan") });
+    $("#btnSearchToggle").attr({ title: t("search"), "aria-label": t("search") });
     $("#btnFabAdd").attr({ title: t("addItem"), "aria-label": t("addItem") });
     $("#btnFabSync").attr({ title: t("syncData"), "aria-label": t("syncData") });
     $("#btnLang").attr({
@@ -1143,6 +1171,7 @@
     ensureSettings();
     updatePlanBar();
     renderBoard(filteredItems());
+    updateSearchCollapse(false);
     setStatus(getApiBase() ? "ok" : "warn", getApiBase() ? t("loaded") : t("localMode"));
   }
 
@@ -1611,19 +1640,27 @@
 
   function positionMorePanel() {
     const $panel = $("#morePanel");
-    const btn = document.getElementById("btnMore");
+    const btn = document.getElementById("btnFabMore");
     if (!$panel.hasClass("show") || !btn) return;
 
     const rect = btn.getBoundingClientRect();
     const gap = 8;
     const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
     const panelWidth = Math.min(viewportWidth - 24, viewportWidth <= 760 ? 176 : 220);
 
     let left = rect.right - panelWidth;
     left = Math.max(12, Math.min(left, viewportWidth - panelWidth - 12));
 
+    $panel.css({ width: `${Math.round(panelWidth)}px`, left: `${Math.round(left)}px`, top: "0px" });
+    const panelHeight = $panel.outerHeight() || 150;
+    const belowTop = rect.bottom + gap;
+    const aboveTop = rect.top - panelHeight - gap;
+    const useAbove = belowTop + panelHeight > viewportHeight - 12;
+    const top = useAbove ? Math.max(12, aboveTop) : Math.min(belowTop, viewportHeight - panelHeight - 12);
+
     $panel.css({
-      top: `${Math.round(rect.bottom + gap)}px`,
+      top: `${Math.round(top)}px`,
       left: `${Math.round(left)}px`,
       width: `${Math.round(panelWidth)}px`
     });
@@ -1635,7 +1672,7 @@
 
   function bindEvents() {
     bindMobileSwipeActions();
-    $("#btnMore").on("click", (e) => {
+    $("#btnFabMore").on("click", (e) => {
       e.stopPropagation();
       closeSwipeRows();
       $("#morePanel").toggleClass("show");
@@ -1660,7 +1697,7 @@
       openPlan($(this).val());
     });
     $(document).on("click", function (e) {
-      if ($(e.target).closest("#btnMore, #morePanel").length) return;
+      if ($(e.target).closest("#btnFabMore, #morePanel").length) return;
       closeMorePanel();
     });
     $(window).on("resize scroll", positionMorePanel);
@@ -1674,6 +1711,7 @@
       await loadCloudData();
       render();
       setStatus("ok", t("loaded"));
+      showSyncToast(t("loaded"));
     });
     $("#btnSaveEdit").on("click", saveEdit);
     $("#btnSavePeople").on("click", savePeopleConfig);
@@ -1684,7 +1722,18 @@
     $("#planList").on("click", "[data-plan-action]", function () {
       handlePlanAction($(this).data("plan-action"), $(this).data("id"));
     });
-    $("#searchInput").on("input", render);
+    $("#btnSearchToggle").on("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const willOpen = $("#searchBar").hasClass("collapsed");
+      $("#searchBar").toggleClass("collapsed", !willOpen).toggleClass("expanded", willOpen);
+      $("#btnSearchToggle").toggleClass("active", willOpen || Boolean(cleanText($("#searchInput").val())));
+      if (willOpen) setTimeout(() => $("#searchInput").trigger("focus"), 30);
+    });
+    $("#searchInput").on("input", () => {
+      updateSearchCollapse(true);
+      render();
+    });
 
     $("#btnLang").on("click", () => {
       closeSwipeRows();

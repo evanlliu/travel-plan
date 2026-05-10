@@ -10,19 +10,15 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-  <title>Travel Plan v2.43.3</title>
-  <link rel="stylesheet" href="./style.css?v=v2.43.3">
+  <title>Travel Plan v2.43.8</title>
+  <link rel="stylesheet" href="./style.css?v=v2.43.8">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 </head>
 <body>
   <main class="page">
     <section class="hero">
       <div class="heroText">
-        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.43.3</span></h1>
-      </div>
-
-      <div class="heroActions">
-        <button id="btnMore" data-i18n="more">更多功能</button>
+        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.43.8</span><span class="syncTime" id="syncTimeText">--:--</span></h1>
       </div>
     </section>
 
@@ -31,8 +27,11 @@
         <span class="planSwitchLabel" data-i18n="currentPlan">当前计划</span>
         <select id="planSelect" class="planSelect" aria-label="当前计划"></select>
         <span id="currentPlanStatus"></span>
+        <button id="btnSearchToggle" class="searchToggle" type="button" aria-label="Search" title="Search">🔍</button>
       </label>
-      <div class="planMeta" id="currentPlanMeta">-</div>
+      <div class="planTools">
+        <div class="planMeta" id="currentPlanMeta">-</div>
+      </div>
     </section>
 
     <div class="notice archivedReadonlyNotice" id="archivedReadonlyNotice" data-i18n="archivedReadonly" style="display:none">当前是归档计划，只读查看；如需修改请先恢复。</div>
@@ -43,7 +42,7 @@
       <button id="btnCloudflare" data-i18n="cloudflareConfig">Cloudflare 同步配置</button>
     </section>
 
-    <section class="searchBar">
+    <section class="searchBar collapsed" id="searchBar">
       <input id="searchInput" data-i18n-placeholder="search" placeholder="搜索日期 / 内容 / 人员">
     </section>
 
@@ -51,6 +50,8 @@
       <div><span class="dot" id="statusDot"></span><span id="statusText">Loading...</span></div>
       <div id="updatedText">-</div>
     </section>
+
+    <div class="syncToast" id="syncToast" aria-live="polite"></div>
 
     <section class="board" id="board"></section>
   </main>
@@ -61,6 +62,9 @@
     </button>
     <button class="fab fabSync" id="btnFabSync" type="button" aria-label="同步数据" title="同步数据">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7h-9a4 4 0 0 0-4 4v1M4 17h9a4 4 0 0 0 4-4v-1M17 4l3 3-3 3M7 20l-3-3 3-3"/></svg>
+    </button>
+    <button class="fab fabMore" id="btnFabMore" type="button" aria-label="更多功能" title="更多功能">
+      <span class="fabMoreMark" aria-hidden="true">⋯</span>
     </button>
     <button class="fab fabLang" id="btnLang" type="button" aria-label="切换语言" title="切换语言">
       <span class="fabLangMark" aria-hidden="true"><b>A</b><em>文</em></span>
@@ -252,6 +256,6 @@
     </div>
   </div>
 
-  <script src="./app.js?v=v2.43.3"></script>
+  <script src="./app.js?v=v2.43.8"></script>
 </body>
 </html>
