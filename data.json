@@ -1,6 +1,6 @@
 {
   "version": "v2.43.23",
-  "updatedAt": "2026-05-11T10:50:24.508Z",
+  "updatedAt": "2026-05-11T10:50:29.300Z",
   "settings": {
     "activePlanId": "plan_default",
     "cloudflare": {
@@ -230,7 +230,7 @@
       "dateISO": "2026-05-19",
       "time": "12:00",
       "group": "",
-      "content": "Wenheyou/文和友",
+      "content": "Wenheyou",
       "links": [
         "https://www.xiaohongshu.com/discovery/item/692ffd8e000000000d00cf06?source=webshare&xhsshare=pc_web&xsec_token=AB6VbDwPvC-8PYE13KSBjJiF2kajAJRF0Y30OJSUtf1Yw=&xsec_source=pc_share"
       ],
