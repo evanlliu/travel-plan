@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.43.21";
+  const APP_VERSION = "v2.43.22";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -261,6 +261,7 @@
   let appLang = localStorage.getItem(LS_LANG) || "zh";
   let data = clone(DEFAULT_DATA);
   let headerSyncStatus = "";
+  let headerSyncKey = "";
   let headerSyncTime = "";
   let headerSyncKind = "loading";
   let selectedPeople = [];
@@ -794,7 +795,8 @@
   }
 
   function updateHeaderSyncText() {
-    const label = headerSyncStatus ? (headerSyncTime ? `${headerSyncStatus} · ${headerSyncTime}` : headerSyncStatus) : "";
+    const statusText = headerSyncKey ? t(headerSyncKey) : headerSyncStatus;
+    const label = statusText ? (headerSyncTime ? `${statusText} · ${headerSyncTime}` : statusText) : "";
     $("#syncTimeText")
       .text(label)
       .attr("title", label)
@@ -988,23 +990,28 @@
     const cleanMessage = cleanText(message || "");
     if (kind === "loading") {
       headerSyncKind = "loading";
-      headerSyncStatus = "Loading data...";
+      headerSyncKey = "loading";
+      headerSyncStatus = t("loading");
       headerSyncTime = "";
     } else if (kind === "ok" && cleanMessage === t("synced")) {
       headerSyncKind = "ok";
-      headerSyncStatus = "Synced";
+      headerSyncKey = "synced";
+      headerSyncStatus = t("synced");
       headerSyncTime = currentTimeText();
     } else if (kind === "ok" && cleanMessage === t("loaded")) {
       headerSyncKind = "ok";
-      headerSyncStatus = "Synced";
+      headerSyncKey = "synced";
+      headerSyncStatus = t("synced");
       headerSyncTime = currentTimeText();
     } else if (kind === "warn") {
       headerSyncKind = "warn";
-      headerSyncStatus = cleanMessage;
+      headerSyncKey = cleanMessage === t("syncFailed") ? "syncFailed" : (cleanMessage === t("localMode") ? "localMode" : "");
+      headerSyncStatus = headerSyncKey ? t(headerSyncKey) : cleanMessage;
       headerSyncTime = "";
     } else if (kind === "error") {
       headerSyncKind = "error";
-      headerSyncStatus = cleanMessage;
+      headerSyncKey = cleanMessage === t("syncFailed") ? "syncFailed" : (cleanMessage === t("localMode") ? "localMode" : "");
+      headerSyncStatus = headerSyncKey ? t(headerSyncKey) : cleanMessage;
       headerSyncTime = "";
     }
 

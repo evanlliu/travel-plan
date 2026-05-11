@@ -1,6 +1,6 @@
-# Travel Plan Web v2.43.21
+# Travel Plan Web v2.43.22
 
-## v2.43.21 说明
+## v2.43.22 说明
 
 - 首次打开页面和点击悬浮同步按钮时，版本号后面先显示 `Loading data...`。
 - 实际获取到 `data.json` 数据并完成页面渲染后，再显示 `Synced HH:mm:ss`。
