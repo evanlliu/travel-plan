@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.43.22
+## v2.43.23
 
 - 首次加载和悬浮同步刷新时，版本号后面先显示 `Loading data...`。
 - 实际获取到 `data.json` 并完成页面更新后，显示 `Synced HH:mm:ss`。

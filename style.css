@@ -4900,3 +4900,16 @@ select{
     height:6px!important;
   }
 }
+
+
+/* v2.43.23: distinguish people chips from link pills */
+.peopleCell .chips span{
+  border-color:#ddd6fe!important;
+  background:#f5f3ff!important;
+  color:#6d28d9!important;
+}
+.planRow.priority-optional .peopleCell .chips span{
+  color:#475467!important;
+  background:#f2f4f7!important;
+  border-color:#d0d5dd!important;
+}

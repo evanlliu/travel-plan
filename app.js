@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.43.22";
+  const APP_VERSION = "v2.43.23";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -66,7 +66,7 @@
       people: "参与人员",
       group: "分组",
       content: "计划内容",
-      rednote: "小红书链接",
+      rednote: "链接",
       priority: "类型",
       priorityMust: "必做",
       priorityOptional: "可选",
@@ -174,7 +174,7 @@
       people: "People",
       group: "Group",
       content: "Plan Content",
-      rednote: "Red Note",
+      rednote: "Link",
       priority: "Type",
       priorityMust: "Must",
       priorityOptional: "Optional",
