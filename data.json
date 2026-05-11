@@ -1,6 +1,6 @@
 {
-  "version": "v2.43.22",
-  "updatedAt": "2026-05-11T10:38:34.628Z",
+  "version": "v2.43.23",
+  "updatedAt": "2026-05-11T10:50:18.652Z",
   "settings": {
     "activePlanId": "plan_default",
     "cloudflare": {
@@ -211,7 +211,7 @@
       "dateISO": "2026-05-18",
       "time": "12:00",
       "group": "",
-      "content": "Snack Kingdom/零食王国",
+      "content": "Snack Kingdom",
       "links": [
         "https://www.xiaohongshu.com/discovery/item/69e0b3a2000000002302369a?source=webshare&xhsshare=pc_web&xsec_token=ABGyk--4p6A6_5xeXoxTdK3M2bo8Fk2f_lTrYv8cMrifI=&xsec_source=pc_share"
       ],
