@@ -1,6 +1,6 @@
 {
   "version": "v2.43.22",
-  "updatedAt": "2026-05-11T10:38:27.547Z",
+  "updatedAt": "2026-05-11T10:38:34.628Z",
   "settings": {
     "activePlanId": "plan_default",
     "cloudflare": {
@@ -12,7 +12,7 @@
     "displayOptions": {
       "cardPeople": {
         "pc": true,
-        "mobile": false
+        "mobile": true
       },
       "dayItemCount": {
         "pc": false,
