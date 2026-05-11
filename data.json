@@ -1,6 +1,6 @@
 {
   "version": "v2.43.23",
-  "updatedAt": "2026-05-11T10:50:38.061Z",
+  "updatedAt": "2026-05-11T10:50:53.505Z",
   "settings": {
     "activePlanId": "plan_default",
     "cloudflare": {
@@ -131,7 +131,7 @@
       "dateISO": "2026-05-21",
       "time": "10:00",
       "group": "",
-      "content": "Zoom/长沙动物园",
+      "content": "Zoom",
       "links": [
         "http://xhslink.com/o/2szPYKOkA9l"
       ],
