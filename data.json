@@ -1,6 +1,6 @@
 {
   "version": "v2.43.12",
-  "updatedAt": "2026-05-11T05:46:22.452Z",
+  "updatedAt": "2026-05-11T10:11:12.684Z",
   "settings": {
     "activePlanId": "plan_default",
     "cloudflare": {
@@ -383,7 +383,9 @@
       "time": "20:30",
       "group": "",
       "content": "Bar",
-      "links": [],
+      "links": [
+        "https://www.xiaohongshu.com/discovery/item/69d4fdfc000000002103b17c?source=webshare&xhsshare=pc_web&xsec_token=ABalAD45gDn8Oqz2yIHBJmP5boP_nl5jb-YedwZlM72ms=&xsec_source=pc_share"
+      ],
       "participants": [
         "Evan",
         "Gonca"
