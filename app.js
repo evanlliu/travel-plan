@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.43.13";
+  const APP_VERSION = "v2.43.19";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -176,7 +176,7 @@
       content: "Plan Content",
       rednote: "Red Note",
       priority: "Type",
-      priorityMust: "Must do",
+      priorityMust: "Must",
       priorityOptional: "Optional",
       action: "Action",
       addItem: "Add Item",
@@ -204,7 +204,7 @@
       showOnMobile: "Show on mobile",
       displayCardPeople: "People column in plan cards",
       displayDayItemCount: "Day card items count line",
-      displayDaySummary: "Day card time / must-do / people summary line",
+      displayDaySummary: "Day card time / must / people summary line",
       saveSettings: "Save Settings",
       workerUrl: "Worker URL",
       workerHint: "Root URL, /data, or /data.json are supported. Saving writes to data.json.",
@@ -260,6 +260,8 @@
 
   let appLang = localStorage.getItem(LS_LANG) || "zh";
   let data = clone(DEFAULT_DATA);
+  let headerSyncStatus = "";
+  let headerSyncTime = "";
   let selectedPeople = [];
   let modalScrollY = 0;
   let modalBaseHeight = 0;
@@ -786,10 +788,14 @@
     return date.toLocaleTimeString(appLang === "zh" ? "zh-CN" : "en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
   }
 
-  function dataUpdatedTimeText() {
-    return displayTimeOnly(data && data.updatedAt ? data.updatedAt : "");
+  function currentTimeText() {
+    return new Date().toLocaleTimeString(appLang === "zh" ? "zh-CN" : "en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
   }
 
+  function updateHeaderSyncText() {
+    const label = headerSyncStatus ? (headerSyncTime ? `${headerSyncStatus} ${headerSyncTime}` : headerSyncStatus) : "";
+    $("#syncTimeText").text(label).attr("title", label).toggleClass("empty", !label);
+  }
 
 
   function updateSearchCollapse(forceOpen) {
@@ -929,10 +935,8 @@
       const cloud = await fetchJson(`${url}?ts=${Date.now()}`);
       normalize(pickNewer(data, cloud));
       persistLocal();
-      setStatus("ok", t("synced"));
       return true;
     } catch {
-      setStatus("warn", t("syncFailed"));
       return false;
     }
   }
@@ -944,25 +948,19 @@
       return false;
     }
 
-    const payload = clone(data);
-    payload.version = APP_VERSION;
-    // Let the Worker write the final updatedAt. This keeps the UI time exactly
-    // aligned with the updatedAt saved in GitHub data.json.
-    payload.updatedAt = new Date().toISOString();
+    data.version = APP_VERSION;
+    data.updatedAt = new Date().toISOString();
+    persistLocal();
 
     try {
-      const result = await fetchJson(url, {
+      await fetchJson(url, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json;charset=utf-8",
           "X-App-Password": getCloudPassword()
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(data)
       });
-
-      data.version = APP_VERSION;
-      data.updatedAt = cleanText(result && result.updatedAt) || payload.updatedAt;
-      persistLocal();
       setStatus("ok", t("synced"));
       return true;
     } catch {
@@ -981,14 +979,25 @@
   }
 
   function setStatus(kind, message) {
-    // The header time is the data timestamp from data.json updatedAt, formatted as HH:mm:ss.
-    const timeText = dataUpdatedTimeText();
-    const statusText = cleanText(message || "");
-    const syncLabel = statusText ? `${statusText} ${timeText}` : timeText;
-    $("#statusText").text(message);
+    const cleanMessage = cleanText(message || "");
+    if (kind === "loading") {
+      headerSyncStatus = "Loading data...";
+      headerSyncTime = "";
+    } else if (kind === "ok" && cleanMessage === t("synced")) {
+      headerSyncStatus = "Synced";
+      headerSyncTime = currentTimeText();
+    } else if (kind === "ok" && cleanMessage === t("loaded")) {
+      headerSyncStatus = "Synced";
+      headerSyncTime = currentTimeText();
+    } else if (kind === "warn" || kind === "error") {
+      headerSyncStatus = cleanMessage;
+      headerSyncTime = "";
+    }
+
+    $("#statusText").text(cleanMessage);
     $("#statusDot").attr("class", `dot ${kind || ""}`);
-    $("#updatedText").text(timeText);
-    $("#syncTimeText").text(syncLabel).attr("title", syncLabel);
+    $("#updatedText").text(`${t("updatedAt")}${displayDateTime(data.updatedAt)}`);
+    updateHeaderSyncText();
   }
 
   function filteredItems() {
@@ -1177,7 +1186,7 @@
     updatePlanBar();
     renderBoard(filteredItems());
     updateSearchCollapse(false);
-    setStatus(getApiBase() ? "ok" : "warn", getApiBase() ? t("loaded") : t("localMode"));
+    updateHeaderSyncText();
   }
 
   function todayISO() {
@@ -1714,17 +1723,15 @@
       closeSwipeRows();
       setStatus("loading", t("loading"));
 
-      // Manual sync should update data.json.updatedAt so the header time reflects
-      // the latest successful cloud sync, not just the previously loaded timestamp.
+      // Refresh sync is a real data.json pull: fetch the latest cloud data first,
+      // then render it. This avoids showing a synced time while the page is still
+      // using stale localStorage data.
       const loaded = await loadCloudData();
-      const written = await writeCloudData();
-      render();
-
-      if (written) {
+      if (loaded) {
+        render();
         setStatus("ok", t("synced"));
-      } else if (loaded) {
-        setStatus("ok", t("loaded"));
       } else {
+        render();
         setStatus("warn", endpoint() ? t("syncFailed") : t("localMode"));
       }
     });
@@ -1842,17 +1849,26 @@
 
     loadLocal();
     render();
-    setStatus("warn", t("loading"));
+    setStatus("loading", t("loading"));
 
-    await loadBundledData();
-    await loadCloudData();
+    const bundledLoaded = await loadBundledData();
+    const cloudLoaded = await loadCloudData();
     render();
+
+    if (cloudLoaded || bundledLoaded) {
+      setStatus("ok", t("synced"));
+    } else {
+      setStatus("warn", endpoint() ? t("syncFailed") : t("localMode"));
+    }
 
     if (autoRefreshTimer) clearInterval(autoRefreshTimer);
     autoRefreshTimer = setInterval(async () => {
       if (endpoint()) {
-        await loadCloudData();
-        render();
+        const loaded = await loadCloudData();
+        if (loaded) {
+          render();
+          setStatus("ok", t("synced"));
+        }
       }
     }, AUTO_REFRESH_MS);
   }
