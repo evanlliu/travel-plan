@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.43.19";
+  const APP_VERSION = "v2.43.21";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -262,6 +262,7 @@
   let data = clone(DEFAULT_DATA);
   let headerSyncStatus = "";
   let headerSyncTime = "";
+  let headerSyncKind = "loading";
   let selectedPeople = [];
   let modalScrollY = 0;
   let modalBaseHeight = 0;
@@ -793,8 +794,13 @@
   }
 
   function updateHeaderSyncText() {
-    const label = headerSyncStatus ? (headerSyncTime ? `${headerSyncStatus} ${headerSyncTime}` : headerSyncStatus) : "";
-    $("#syncTimeText").text(label).attr("title", label).toggleClass("empty", !label);
+    const label = headerSyncStatus ? (headerSyncTime ? `${headerSyncStatus} · ${headerSyncTime}` : headerSyncStatus) : "";
+    $("#syncTimeText")
+      .text(label)
+      .attr("title", label)
+      .toggleClass("empty", !label)
+      .removeClass("sync-ok sync-loading sync-warn sync-error")
+      .addClass(headerSyncKind ? `sync-${headerSyncKind}` : "");
   }
 
 
@@ -981,15 +987,23 @@
   function setStatus(kind, message) {
     const cleanMessage = cleanText(message || "");
     if (kind === "loading") {
+      headerSyncKind = "loading";
       headerSyncStatus = "Loading data...";
       headerSyncTime = "";
     } else if (kind === "ok" && cleanMessage === t("synced")) {
+      headerSyncKind = "ok";
       headerSyncStatus = "Synced";
       headerSyncTime = currentTimeText();
     } else if (kind === "ok" && cleanMessage === t("loaded")) {
+      headerSyncKind = "ok";
       headerSyncStatus = "Synced";
       headerSyncTime = currentTimeText();
-    } else if (kind === "warn" || kind === "error") {
+    } else if (kind === "warn") {
+      headerSyncKind = "warn";
+      headerSyncStatus = cleanMessage;
+      headerSyncTime = "";
+    } else if (kind === "error") {
+      headerSyncKind = "error";
       headerSyncStatus = cleanMessage;
       headerSyncTime = "";
     }

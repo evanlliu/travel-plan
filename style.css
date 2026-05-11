@@ -4857,3 +4857,46 @@ select{
     font-size:11px!important;
   }
 }
+
+
+/* v2.43.20: sync dot before header sync info with state colors */
+.syncTime{
+  position:relative;
+  gap:8px;
+}
+.syncTime::before{
+  content:"";
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  background:#f79009;
+  flex:0 0 auto;
+  box-shadow:0 0 0 2px rgba(255,255,255,.7);
+}
+.syncTime.sync-ok::before{background:#12b76a;}
+.syncTime.sync-loading::before{background:#f79009;}
+.syncTime.sync-warn::before,
+.syncTime.sync-error::before{background:#d92d20;}
+.syncTime.sync-ok{color:#475467;}
+.syncTime.sync-loading{color:#b54708;}
+.syncTime.sync-warn,
+.syncTime.sync-error{color:#b42318; border-color:#fda29b; background:#fff5f5;}
+.syncTime.empty::before{display:none;}
+@media(max-width:760px){
+  .syncTime{gap:6px!important;}
+  .syncTime::before{width:8px;height:8px;}
+}
+
+
+/* v2.43.21: smaller sync status dot */
+.syncTime::before{
+  width:7px!important;
+  height:7px!important;
+  box-shadow:none!important;
+}
+@media(max-width:760px){
+  .syncTime::before{
+    width:6px!important;
+    height:6px!important;
+  }
+}
