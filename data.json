@@ -1,6 +1,6 @@
 {
   "version": "v2.43.23",
-  "updatedAt": "2026-05-11T10:50:29.300Z",
+  "updatedAt": "2026-05-11T10:50:38.061Z",
   "settings": {
     "activePlanId": "plan_default",
     "cloudflare": {
@@ -249,7 +249,7 @@
       "dateISO": "2026-05-19",
       "time": "19:00",
       "group": "",
-      "content": "Du Fu Pavilion/杜甫江阁",
+      "content": "Du Fu Pavilion",
       "links": [
         "https://www.xiaohongshu.com/discovery/item/69badd1f000000002300787d?source=webshare&xhsshare=pc_web&xsec_token=ABRovdC0e0CC6g7S2nH-3tRk1X8AwcSZ1Cm7e0tlN2YVQ=&xsec_source=pc_share"
       ],
