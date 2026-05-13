@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.43.24";
+  const APP_VERSION = "v2.43.26";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -62,6 +62,8 @@
       noMatch: "没有匹配的行程",
       collapseDay: "折叠当天",
       expandDay: "展开当天",
+      collapseAllDays: "全部折叠",
+      expandAllDays: "全部展开",
       dayCollapsed: "已折叠",
       date: "日期",
       time: "时间",
@@ -173,6 +175,8 @@
       noMatch: "No matching plans",
       collapseDay: "Collapse day",
       expandDay: "Expand day",
+      collapseAllDays: "Collapse all",
+      expandAllDays: "Expand all",
       dayCollapsed: "Collapsed",
       date: "Date",
       time: "Time",
@@ -1117,6 +1121,35 @@
     await saveData(true);
   }
 
+  function activePlanDates(planId) {
+    const id = cleanText(planId || getActivePlanId());
+    if (!id) return [];
+    return Array.from(new Set(
+      getPlanItems(id)
+        .map(item => dateToInput(item.dateISO))
+        .filter(Boolean)
+    )).sort((a, b) => a.localeCompare(b));
+  }
+
+  async function setAllDayCollapse(collapsed) {
+    const id = getActivePlanId();
+    const dates = activePlanDates(id);
+    if (!id || !dates.length) return;
+
+    ensureSettings();
+    if (collapsed) {
+      const days = getCollapsedDaysForPlan(id);
+      dates.forEach(date => {
+        days[date] = true;
+      });
+    } else if (data.settings.dayCollapsed) {
+      delete data.settings.dayCollapsed[id];
+    }
+
+    closeSwipeRows();
+    await saveData(true);
+  }
+
   function chipHtml(people) {
     if (!people || !people.length) return "-";
     return `<div class="chips">${people.map(name => `<span>${escapeHtml(name)}</span>`).join("")}</div>`;
@@ -1268,6 +1301,8 @@
     $("#btnFabMore").attr({ title: t("more"), "aria-label": t("more") });
     $("#planSelect").attr({ title: t("currentPlan"), "aria-label": t("currentPlan") });
     $("#btnSearchToggle").attr({ title: t("search"), "aria-label": t("search") });
+    $("#btnCollapseAllDays").attr({ title: t("collapseAllDays"), "aria-label": t("collapseAllDays") });
+    $("#btnExpandAllDays").attr({ title: t("expandAllDays"), "aria-label": t("expandAllDays") });
     $("#btnFabAdd").attr({ title: t("addItem"), "aria-label": t("addItem") });
     $("#btnFabSync").attr({ title: t("syncData"), "aria-label": t("syncData") });
     $("#btnLang").attr({
@@ -1858,6 +1893,14 @@
       e.preventDefault();
       e.stopPropagation();
       toggleDayCollapse($(this).data("plan-id"), $(this).data("date"));
+    });
+
+    $("#btnCollapseAllDays").on("click", async () => {
+      await setAllDayCollapse(true);
+    });
+
+    $("#btnExpandAllDays").on("click", async () => {
+      await setAllDayCollapse(false);
     });
 
     $("#btnLang").on("click", () => {

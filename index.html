@@ -10,15 +10,15 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-  <title>Travel Plan v2.43.24</title>
-  <link rel="stylesheet" href="./style.css?v=v2.43.24">
+  <title>Travel Plan v2.43.26</title>
+  <link rel="stylesheet" href="./style.css?v=v2.43.26">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 </head>
 <body>
   <main class="page">
     <section class="hero">
       <div class="heroText">
-        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.43.24</span><span class="syncTime" id="syncTimeText"></span></h1>
+        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.43.26</span><span class="syncTime" id="syncTimeText"></span></h1>
       </div>
     </section>
 
@@ -27,10 +27,20 @@
         <span class="planSwitchLabel" data-i18n="currentPlan">当前计划</span>
         <select id="planSelect" class="planSelect" aria-label="当前计划"></select>
         <span id="currentPlanStatus"></span>
-        <button id="btnSearchToggle" class="searchToggle" type="button" aria-label="Search" title="Search">🔍</button>
       </label>
       <div class="planTools">
         <div class="planMeta" id="currentPlanMeta">-</div>
+        <div class="dayBulkTools" aria-label="Day collapse controls">
+          <button id="btnCollapseAllDays" class="dayBulkBtn" type="button" aria-label="全部折叠" title="全部折叠">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 14l5-5 5 5M7 19l5-5 5 5"/></svg>
+            <span class="dayBulkText">全部折叠</span>
+          </button>
+          <button id="btnExpandAllDays" class="dayBulkBtn" type="button" aria-label="全部展开" title="全部展开">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5M7 5l5 5 5-5"/></svg>
+            <span class="dayBulkText">全部展开</span>
+          </button>
+        </div>
+        <button id="btnSearchToggle" class="searchToggle" type="button" aria-label="Search" title="Search">🔍</button>
       </div>
     </section>
 
@@ -255,6 +265,6 @@
     </div>
   </div>
 
-  <script src="./app.js?v=v2.43.24"></script>
+  <script src="./app.js?v=v2.43.26"></script>
 </body>
 </html>
