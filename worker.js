@@ -1,4 +1,4 @@
-const APP_VERSION = "v2.43.23";
+const APP_VERSION = "v2.43.24";
 
 const DEFAULT_DATA = {
   version: APP_VERSION,
@@ -15,7 +15,8 @@ const DEFAULT_DATA = {
       cardPeople: { pc: true, mobile: true },
       dayItemCount: { pc: true, mobile: true },
       daySummary: { pc: true, mobile: true }
-    }
+    },
+    dayCollapsed: {}
   },
   plans: [
     { id: "plan_default", name: "当前旅行计划", destination: "", startDate: "", endDate: "", status: "open", createdAt: "", archivedAt: "", sort: 1, note: "" }
@@ -100,6 +101,27 @@ function normalizeDisplayOptions(value) {
   };
 }
 
+function normalizeDayCollapsed(value) {
+  const output = {};
+  value = value && typeof value === "object" ? value : {};
+
+  Object.keys(value).forEach(planKey => {
+    const planId = cleanText(planKey);
+    const days = value[planKey];
+    if (!planId || !days || typeof days !== "object" || Array.isArray(days)) return;
+
+    const fixedDays = {};
+    Object.keys(days).forEach(dateKey => {
+      const dateISO = dateToInput(dateKey);
+      if (dateISO && days[dateKey] === true) fixedDays[dateISO] = true;
+    });
+
+    if (Object.keys(fixedDays).length) output[planId] = fixedDays;
+  });
+
+  return output;
+}
+
 
 function dateToInput(value) {
   const text = cleanText(value);
@@ -150,7 +172,8 @@ function normalizeSettings(settings, activePlanId) {
       configSavedInDataJson: true,
       passwordStorage: "data.json settings.cloudflare.appPassword"
     },
-    displayOptions: normalizeDisplayOptions(settings && settings.displayOptions)
+    displayOptions: normalizeDisplayOptions(settings && settings.displayOptions),
+    dayCollapsed: normalizeDayCollapsed(settings && settings.dayCollapsed)
   };
 }
 

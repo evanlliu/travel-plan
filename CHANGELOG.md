@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.43.24
+
+- 新增日期卡片折叠 / 展开功能。
+- 折叠状态保存到 `data.json` 的 `settings.dayCollapsed`，刷新和重新加载后保持不变。
+- PC 和移动端均支持，移动端折叠按钮改为小图标，减少占用空间。
+- Cloudflare Worker 同步保留 `settings.dayCollapsed`，避免写入 GitHub 时过滤折叠状态。
+
 ## v2.43.23
 
 - 首次加载和悬浮同步刷新时，版本号后面先显示 `Loading data...`。

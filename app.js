@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.43.23";
+  const APP_VERSION = "v2.43.24";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -60,6 +60,9 @@
       updatedAt: "更新时间：",
       noData: "暂无行程",
       noMatch: "没有匹配的行程",
+      collapseDay: "折叠当天",
+      expandDay: "展开当天",
+      dayCollapsed: "已折叠",
       date: "日期",
       time: "时间",
       weekday: "星期",
@@ -168,6 +171,9 @@
       updatedAt: "Updated: ",
       noData: "No plans yet",
       noMatch: "No matching plans",
+      collapseDay: "Collapse day",
+      expandDay: "Expand day",
+      dayCollapsed: "Collapsed",
       date: "Date",
       time: "Time",
       weekday: "Weekday",
@@ -242,7 +248,8 @@
         cardPeople: { pc: true, mobile: true },
         dayItemCount: { pc: true, mobile: true },
         daySummary: { pc: true, mobile: true }
-      }
+      },
+      dayCollapsed: {}
     },
     plans: [
       { id: "plan_default", name: "当前旅行计划", destination: "", startDate: "2026-05-17", endDate: "2026-05-19", status: "open", createdAt: "", archivedAt: "", sort: 1, note: "" }
@@ -337,6 +344,27 @@
       dayItemCount: normalizeDeviceVisibility(value.dayItemCount || value.itemCount || value.itemsLine, fallback.dayItemCount),
       daySummary: normalizeDeviceVisibility(value.daySummary || value.summaryLine || value.dayMeta, fallback.daySummary)
     };
+  }
+
+  function normalizeDayCollapsed(value) {
+    const output = {};
+    value = value && typeof value === "object" ? value : {};
+
+    Object.keys(value).forEach(planKey => {
+      const planId = cleanText(planKey);
+      const days = value[planKey];
+      if (!planId || !days || typeof days !== "object" || Array.isArray(days)) return;
+
+      const fixedDays = {};
+      Object.keys(days).forEach(dateKey => {
+        const dateISO = dateToInput(dateKey);
+        if (dateISO && days[dateKey] === true) fixedDays[dateISO] = true;
+      });
+
+      if (Object.keys(fixedDays).length) output[planId] = fixedDays;
+    });
+
+    return output;
   }
 
   function isDisplayOptionVisible(key) {
@@ -538,6 +566,7 @@
     cf.configSavedInDataJson = true;
     cf.passwordStorage = "data.json settings.cloudflare.appPassword";
     data.settings.displayOptions = normalizeDisplayOptions(data.settings.displayOptions);
+    data.settings.dayCollapsed = normalizeDayCollapsed(data.settings.dayCollapsed);
 
     if (!Array.isArray(data.plans) || !data.plans.length) {
       data.plans = [makeDefaultPlanFromItems(data.items || [])];
@@ -861,6 +890,7 @@
     base.settings = Object.assign({}, base.settings, input.settings || {}, { activePlanId });
     base.settings.cloudflare = Object.assign({}, DEFAULT_DATA.settings.cloudflare, (input.settings && input.settings.cloudflare) || {});
     base.settings.displayOptions = normalizeDisplayOptions((input.settings && input.settings.displayOptions) || input.displayOptions);
+    base.settings.dayCollapsed = normalizeDayCollapsed((input.settings && input.settings.dayCollapsed) || input.dayCollapsed);
     base.plans = plans;
     base.peopleOptions = cleanNameList(input.peopleOptions || base.peopleOptions);
     base.items = rawItems.map((item, index) => {
@@ -1053,6 +1083,40 @@
     return Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
   }
 
+  function getCollapsedDaysForPlan(planId) {
+    ensureSettings();
+    const id = cleanText(planId || getActivePlanId());
+    if (!id) return {};
+    if (!data.settings.dayCollapsed[id] || typeof data.settings.dayCollapsed[id] !== "object") {
+      data.settings.dayCollapsed[id] = {};
+    }
+    return data.settings.dayCollapsed[id];
+  }
+
+  function isDayCollapsed(dateISO, planId) {
+    const date = dateToInput(dateISO);
+    if (!date) return false;
+    return getCollapsedDaysForPlan(planId)[date] === true;
+  }
+
+  async function toggleDayCollapse(planId, dateISO) {
+    const id = cleanText(planId || getActivePlanId());
+    const date = dateToInput(dateISO);
+    if (!id || !date) return;
+
+    ensureSettings();
+    const days = getCollapsedDaysForPlan(id);
+    if (days[date]) {
+      delete days[date];
+    } else {
+      days[date] = true;
+    }
+
+    if (!Object.keys(days).length) delete data.settings.dayCollapsed[id];
+    closeSwipeRows();
+    await saveData(true);
+  }
+
   function chipHtml(people) {
     if (!people || !people.length) return "-";
     return `<div class="chips">${people.map(name => `<span>${escapeHtml(name)}</span>`).join("")}</div>`;
@@ -1141,6 +1205,7 @@
     const showPeopleColumn = isDisplayOptionVisible("cardPeople");
     const showDayItemCount = isDisplayOptionVisible("dayItemCount");
 
+    const activePlanId = getActivePlanId();
     const html = groupByDate(items).map(([dateISO, dayItems]) => {
       const rows = [];
       let lastGroup = null;
@@ -1153,15 +1218,10 @@
         rows.push(itemCardHtml(item));
       });
 
-      return `
-        <section class="dayCard ${showPeopleColumn ? "" : "hidePeopleColumn"}">
-          <header class="dayHead">
-            <div>
-              <h2>${escapeHtml(formatDate(dateISO))}</h2>
-              ${showDayItemCount ? `<p>${dayItems.length} ${appLang === "zh" ? "项安排" : dayItems.length === 1 ? "item" : "items"}</p>` : ""}
-              ${daySummaryHtml(dayItems)}
-            </div>
-          </header>
+      const collapsed = isDayCollapsed(dateISO, activePlanId);
+      const toggleLabel = collapsed ? t("expandDay") : t("collapseDay");
+      const collapsedBadge = collapsed ? `<span class="dayCollapsedBadge">${escapeHtml(t("dayCollapsed"))}</span>` : "";
+      const bodyHtml = collapsed ? "" : `
           <div class="tableHead">
             <span>${escapeHtml(t("time"))}</span>
             <span>${escapeHtml(t("content"))}</span>
@@ -1169,7 +1229,22 @@
             <span class="${showPeopleColumn ? "" : "peopleHeadHidden"}">${escapeHtml(t("people"))}</span>
             <span>${escapeHtml(t("action"))}</span>
           </div>
-          ${rows.join("")}
+          ${rows.join("")}`;
+
+      return `
+        <section class="dayCard ${showPeopleColumn ? "" : "hidePeopleColumn"} ${collapsed ? "collapsed" : ""}" data-date="${escapeHtml(dateISO)}" data-plan-id="${escapeHtml(activePlanId)}">
+          <header class="dayHead">
+            <div class="dayTitleBlock">
+              <h2>${escapeHtml(formatDate(dateISO))}${collapsedBadge}</h2>
+              ${showDayItemCount ? `<p>${dayItems.length} ${appLang === "zh" ? "项安排" : dayItems.length === 1 ? "item" : "items"}</p>` : ""}
+              ${daySummaryHtml(dayItems)}
+            </div>
+            <button class="dayToggle" type="button" data-date="${escapeHtml(dateISO)}" data-plan-id="${escapeHtml(activePlanId)}" aria-expanded="${collapsed ? "false" : "true"}" aria-label="${escapeHtml(toggleLabel)}" title="${escapeHtml(toggleLabel)}">
+              <span class="dayToggleIcon" aria-hidden="true">${collapsed ? "▸" : "▾"}</span>
+              <span class="dayToggleText">${escapeHtml(toggleLabel)}</span>
+            </button>
+          </header>
+          ${bodyHtml}
         </section>`;
     }).join("");
 
@@ -1569,6 +1644,7 @@
     if (!confirm(t("confirmDeletePlan"))) return;
     data.plans = data.plans.filter(item => item.id !== planId);
     data.items = data.items.filter(item => item.planId !== planId);
+    if (data.settings && data.settings.dayCollapsed) delete data.settings.dayCollapsed[planId];
     if (data.settings.activePlanId === planId) {
       const next = getOpenPlans()[0] || getArchivedPlans()[0] || makeDefaultPlanFromItems([]);
       if (!planExists(next.id)) data.plans.push(next);
@@ -1776,6 +1852,12 @@
     $("#searchInput").on("input", () => {
       updateSearchCollapse(true);
       render();
+    });
+
+    $(document).on("click", ".dayToggle", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleDayCollapse($(this).data("plan-id"), $(this).data("date"));
     });
 
     $("#btnLang").on("click", () => {
