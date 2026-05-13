@@ -1,6 +1,6 @@
 {
   "version": "v2.43.24",
-  "updatedAt": "2026-05-13T10:16:41.618Z",
+  "updatedAt": "2026-05-13T10:21:54.470Z",
   "settings": {
     "activePlanId": "plan_default",
     "cloudflare": {
@@ -23,11 +23,7 @@
         "mobile": false
       }
     },
-    "dayCollapsed": {
-      "plan_default": {
-        "2026-05-17": true
-      }
-    }
+    "dayCollapsed": {}
   },
   "plans": [
     {
