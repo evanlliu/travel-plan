@@ -4914,7 +4914,7 @@ select{
   border-color:#d0d5dd!important;
 }
 
-/* v2.43.29: per-day collapse / expand, persisted in data.json */
+/* v2.43.30: per-day collapse / expand, persisted in data.json */
 .dayTitleBlock{
   min-width:0!important;
   flex:1 1 auto!important;
@@ -5006,7 +5006,7 @@ select{
 }
 
 
-/* v2.43.29: collapse all / expand all controls */
+/* v2.43.30: collapse all / expand all controls */
 .dayBulkTools{
   flex:0 0 auto!important;
   display:inline-flex!important;
@@ -5059,7 +5059,7 @@ select{
   }
 }
 
-/* v2.43.29: keep current plan, collapse-all, expand-all and search controls on one line */
+/* v2.43.30: keep current plan, collapse-all, expand-all and search controls on one line */
 .planBar{
   display:flex!important;
   grid-template-columns:none!important;
@@ -5239,7 +5239,7 @@ select{
   color:#067647!important;
 }
 
-/* v2.43.29: mobile current-plan row compact layout, no overlap */
+/* v2.43.30: mobile current-plan row compact layout, no overlap */
 @media(max-width:760px){
   .planBar{
     display:flex!important;
@@ -5373,7 +5373,7 @@ select{
   }
 }
 
-/* v2.43.29: mobile current-plan actions tighter and right-aligned */
+/* v2.43.30: mobile current-plan actions tighter and right-aligned */
 @media(max-width:760px){
   .planBar{
     padding:8px 8px 8px 10px!important;
@@ -5454,7 +5454,7 @@ select{
   }
 }
 
-/* v2.43.29: replace mobile native select with custom compact plan picker; keep actions tight/right */
+/* v2.43.30: replace mobile native select with custom compact plan picker; keep actions tight/right */
 .planSwitch{
   position:relative!important;
 }
@@ -5635,5 +5635,109 @@ select{
     height:32px!important;
     min-width:32px!important;
     min-height:32px!important;
+  }
+}
+
+/* v2.43.30: mobile plan row - keep collapse/expand/search as a tight right-aligned group */
+@media(max-width:760px){
+  .planBar{
+    display:flex!important;
+    grid-template-columns:none!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    flex-wrap:nowrap!important;
+    gap:6px!important;
+    padding:8px 8px 8px 10px!important;
+    overflow:visible!important;
+  }
+  .planSwitch{
+    flex:1 1 auto!important;
+    width:auto!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+  }
+  .planSelectButton{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    height:36px!important;
+    min-height:36px!important;
+    padding:5px 10px!important;
+  }
+  .planTools{
+    flex:0 0 auto!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    margin-left:0!important;
+    padding:0!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:flex-end!important;
+    flex-wrap:nowrap!important;
+    gap:4px!important;
+  }
+  .planMeta{
+    display:none!important;
+    flex:0 0 0!important;
+    width:0!important;
+    min-width:0!important;
+    max-width:0!important;
+    overflow:hidden!important;
+  }
+  .dayBulkTools{
+    flex:0 0 auto!important;
+    width:auto!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:4px!important;
+  }
+  .dayBulkBtn,
+  .searchToggle{
+    flex:0 0 36px!important;
+    width:36px!important;
+    height:36px!important;
+    min-width:36px!important;
+    min-height:36px!important;
+    max-width:36px!important;
+    padding:0!important;
+    border-radius:13px!important;
+  }
+  .dayBulkBtn svg{
+    width:17px!important;
+    height:17px!important;
+  }
+  .planSelectMenu{
+    left:0!important;
+    right:0!important;
+    top:calc(100% + 5px)!important;
+  }
+}
+@media(max-width:380px){
+  .planBar{
+    gap:4px!important;
+    padding-left:8px!important;
+    padding-right:7px!important;
+  }
+  .planTools,
+  .dayBulkTools{
+    gap:3px!important;
+  }
+  .dayBulkBtn,
+  .searchToggle{
+    flex-basis:34px!important;
+    width:34px!important;
+    height:34px!important;
+    min-width:34px!important;
+    min-height:34px!important;
+    max-width:34px!important;
+    border-radius:12px!important;
   }
 }
