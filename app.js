@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = "v2.43.26";
+  const APP_VERSION = "v2.43.29";
   const LS_DATA = "travel-plan-local-data";
   const LS_LANG = "travel-plan-ui-lang";
   const AUTO_REFRESH_MS = 60000;
@@ -773,23 +773,46 @@
     return plans.map(plan => `<option value="${escapeHtml(plan.id)}">${escapeHtml(planOptionText(plan))}</option>`).join("");
   }
 
+  function planMenuOptionHtml(plan, currentId, disabled) {
+    const selected = plan.id === currentId;
+    return `<button type="button" class="planSelectOption ${selected ? "selected" : ""}" role="option" data-id="${escapeHtml(plan.id)}" aria-selected="${selected ? "true" : "false"}" ${disabled ? "disabled" : ""}>${escapeHtml(planOptionText(plan))}</button>`;
+  }
+
+  function closePlanMenu() {
+    $("#planSwitch").removeClass("open");
+    $("#planSelectButton").attr("aria-expanded", "false");
+  }
+
   function renderPlanSelect(activePlanId) {
     const openPlans = getOpenPlans();
     const activePlan = getActivePlan();
     const currentId = activePlanId || getActivePlanId();
     let options = planOptionsHtml(openPlans);
+    let menuPlans = openPlans.slice();
+    let menuHtml = "";
 
     // Main page selector is for quick switching between non-archived plans only.
     // Archived plans can still be viewed / restored from More -> Plan Management.
     if (activePlan && activePlan.status === "archived") {
       options = `<option value="${escapeHtml(activePlan.id)}" selected disabled>${escapeHtml(planOptionText(activePlan))}</option>${options}`;
+      menuHtml += planMenuOptionHtml(activePlan, currentId, true);
     }
 
     if (!options) {
       options = `<option value="" disabled selected>${escapeHtml(t("noData"))}</option>`;
     }
 
+    if (menuPlans.length) {
+      menuHtml += menuPlans.map(plan => planMenuOptionHtml(plan, currentId, false)).join("");
+    } else if (!menuHtml) {
+      menuHtml = `<button type="button" class="planSelectOption empty" role="option" disabled>${escapeHtml(t("noData"))}</button>`;
+    }
+
+    const currentText = activePlan ? planOptionText(activePlan) : t("noData");
     $("#planSelect").html(options).val(currentId);
+    $("#planSelectCurrent").text(currentText);
+    $("#planSelectButton").attr({ title: currentText, "aria-label": `${t("currentPlan")}：${currentText}` });
+    $("#planSelectMenu").html(menuHtml);
   }
 
   function updatePlanBar() {
@@ -1840,9 +1863,33 @@
     $("#planSelect").on("change", function () {
       closeMorePanel();
       closeSwipeRows();
+      closePlanMenu();
       openPlan($(this).val());
     });
+    $("#planSelectButton").on("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      closeMorePanel();
+      closeSwipeRows();
+      const willOpen = !$("#planSwitch").hasClass("open");
+      $("#planSwitch").toggleClass("open", willOpen);
+      $(this).attr("aria-expanded", willOpen ? "true" : "false");
+    });
+    $("#planSelectMenu").on("click", ".planSelectOption", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if ($(this).prop("disabled")) return;
+      const planId = $(this).data("id");
+      closePlanMenu();
+      closeMorePanel();
+      closeSwipeRows();
+      openPlan(planId);
+    });
+    $(document).on("keydown", function (e) {
+      if (e.key === "Escape") closePlanMenu();
+    });
     $(document).on("click", function (e) {
+      if (!$(e.target).closest("#planSwitch").length) closePlanMenu();
       if ($(e.target).closest("#btnFabMore, #morePanel").length) return;
       closeMorePanel();
     });

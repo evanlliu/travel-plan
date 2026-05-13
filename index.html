@@ -10,24 +10,29 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-  <title>Travel Plan v2.43.26</title>
-  <link rel="stylesheet" href="./style.css?v=v2.43.26">
+  <title>Travel Plan v2.43.29</title>
+  <link rel="stylesheet" href="./style.css?v=v2.43.29">
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 </head>
 <body>
   <main class="page">
     <section class="hero">
       <div class="heroText">
-        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.43.26</span><span class="syncTime" id="syncTimeText"></span></h1>
+        <h1><span data-i18n="appTitle">行程计划</span><span class="ver">v2.43.29</span><span class="syncTime" id="syncTimeText"></span></h1>
       </div>
     </section>
 
     <section class="planBar">
-      <label class="planSwitch" for="planSelect">
+      <div class="planSwitch" id="planSwitch">
         <span class="planSwitchLabel" data-i18n="currentPlan">当前计划</span>
-        <select id="planSelect" class="planSelect" aria-label="当前计划"></select>
+        <button id="planSelectButton" class="planSelectButton" type="button" aria-haspopup="listbox" aria-expanded="false">
+          <span id="planSelectCurrent" class="planSelectCurrent">-</span>
+          <span class="planSelectCaret" aria-hidden="true">⌄</span>
+        </button>
+        <select id="planSelect" class="planSelect nativePlanSelect" aria-label="当前计划" tabindex="-1"></select>
+        <div id="planSelectMenu" class="planSelectMenu" role="listbox" aria-label="当前计划"></div>
         <span id="currentPlanStatus"></span>
-      </label>
+      </div>
       <div class="planTools">
         <div class="planMeta" id="currentPlanMeta">-</div>
         <div class="dayBulkTools" aria-label="Day collapse controls">
@@ -265,6 +270,6 @@
     </div>
   </div>
 
-  <script src="./app.js?v=v2.43.26"></script>
+  <script src="./app.js?v=v2.43.29"></script>
 </body>
 </html>

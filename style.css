@@ -4914,7 +4914,7 @@ select{
   border-color:#d0d5dd!important;
 }
 
-/* v2.43.26: per-day collapse / expand, persisted in data.json */
+/* v2.43.29: per-day collapse / expand, persisted in data.json */
 .dayTitleBlock{
   min-width:0!important;
   flex:1 1 auto!important;
@@ -5006,7 +5006,7 @@ select{
 }
 
 
-/* v2.43.26: collapse all / expand all controls */
+/* v2.43.29: collapse all / expand all controls */
 .dayBulkTools{
   flex:0 0 auto!important;
   display:inline-flex!important;
@@ -5059,7 +5059,7 @@ select{
   }
 }
 
-/* v2.43.26: keep current plan, collapse-all, expand-all and search controls on one line */
+/* v2.43.29: keep current plan, collapse-all, expand-all and search controls on one line */
 .planBar{
   display:flex!important;
   grid-template-columns:none!important;
@@ -5237,4 +5237,403 @@ select{
   border-color:#abefc6!important;
   background:#ecfdf3!important;
   color:#067647!important;
+}
+
+/* v2.43.29: mobile current-plan row compact layout, no overlap */
+@media(max-width:760px){
+  .planBar{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    flex-wrap:nowrap!important;
+    gap:6px!important;
+    padding:8px 10px!important;
+    overflow:hidden!important;
+  }
+  .planSwitch{
+    flex:1 1 0!important;
+    min-width:0!important;
+    width:auto!important;
+    max-width:none!important;
+    overflow:hidden!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:4px!important;
+    padding:2px!important;
+  }
+  .planSwitchLabel{
+    flex:0 1 auto!important;
+    min-width:0!important;
+    max-width:84px!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+    line-height:1.1!important;
+  }
+  .planSelect{
+    flex:1 1 auto!important;
+    min-width:58px!important;
+    width:100%!important;
+    max-width:100%!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+    -webkit-appearance:none!important;
+    appearance:none!important;
+    background:transparent!important;
+    padding:0!important;
+    font-size:16px!important;
+    line-height:1.15!important;
+  }
+  .planSwitch::after{
+    content:"⌄";
+    flex:0 0 auto;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:12px;
+    color:#475467;
+    font-size:14px;
+    font-weight:900;
+    line-height:1;
+    transform:translateY(-1px);
+    pointer-events:none;
+  }
+  #currentPlanStatus{
+    flex:0 0 auto!important;
+  }
+  .planTools{
+    flex:0 0 auto!important;
+    width:auto!important;
+    min-width:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-end!important;
+    flex-wrap:nowrap!important;
+    gap:5px!important;
+  }
+  .dayBulkTools{
+    flex:0 0 auto!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:5px!important;
+  }
+  .dayBulkBtn,
+  .searchToggle{
+    width:36px!important;
+    height:36px!important;
+    min-width:36px!important;
+    min-height:36px!important;
+    border-radius:13px!important;
+  }
+  .dayBulkBtn svg{
+    width:17px!important;
+    height:17px!important;
+  }
+}
+
+@media(max-width:430px){
+  .planSwitchLabel{
+    display:none!important;
+  }
+  .planSelect{
+    min-width:72px!important;
+    font-size:17px!important;
+  }
+  .planTools{
+    gap:6px!important;
+  }
+  .dayBulkTools{
+    gap:6px!important;
+  }
+}
+
+@media(max-width:380px){
+  .planBar{
+    gap:4px!important;
+    padding-left:8px!important;
+    padding-right:8px!important;
+  }
+  .planTools,
+  .dayBulkTools{
+    gap:4px!important;
+  }
+  .dayBulkBtn,
+  .searchToggle{
+    width:34px!important;
+    height:34px!important;
+    min-width:34px!important;
+    min-height:34px!important;
+    border-radius:12px!important;
+  }
+  .planSelect{
+    min-width:60px!important;
+    font-size:16px!important;
+  }
+}
+
+/* v2.43.29: mobile current-plan actions tighter and right-aligned */
+@media(max-width:760px){
+  .planBar{
+    padding:8px 8px 8px 10px!important;
+    gap:4px!important;
+    justify-content:flex-start!important;
+    overflow:hidden!important;
+  }
+  .planSwitch{
+    flex:1 1 auto!important;
+    max-width:calc(100% - 118px)!important;
+    min-width:0!important;
+    margin-right:2px!important;
+  }
+  .planSwitch::after{
+    display:none!important;
+    content:none!important;
+  }
+  .planSelect{
+    min-width:0!important;
+    max-width:100%!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .planTools{
+    flex:0 0 auto!important;
+    margin-left:auto!important;
+    padding-right:0!important;
+    justify-content:flex-end!important;
+    align-items:center!important;
+    gap:3px!important;
+  }
+  .dayBulkTools{
+    gap:3px!important;
+  }
+  .dayBulkBtn,
+  .searchToggle{
+    width:34px!important;
+    height:34px!important;
+    min-width:34px!important;
+    min-height:34px!important;
+    border-radius:12px!important;
+  }
+  .dayBulkBtn svg{
+    width:16px!important;
+    height:16px!important;
+  }
+}
+@media(max-width:430px){
+  .planBar{
+    padding-left:8px!important;
+    padding-right:7px!important;
+    gap:3px!important;
+  }
+  .planSwitch{
+    max-width:calc(100% - 110px)!important;
+    margin-right:1px!important;
+  }
+  .planTools,
+  .dayBulkTools{
+    gap:3px!important;
+  }
+}
+@media(max-width:360px){
+  .planSwitch{
+    max-width:calc(100% - 104px)!important;
+  }
+  .dayBulkBtn,
+  .searchToggle{
+    width:32px!important;
+    height:32px!important;
+    min-width:32px!important;
+    min-height:32px!important;
+    border-radius:11px!important;
+  }
+  .planTools,
+  .dayBulkTools{
+    gap:2px!important;
+  }
+}
+
+/* v2.43.29: replace mobile native select with custom compact plan picker; keep actions tight/right */
+.planSwitch{
+  position:relative!important;
+}
+.nativePlanSelect{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  left:-9999px!important;
+  top:auto!important;
+}
+.planSelectButton{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+  min-height:34px!important;
+  padding:5px 10px!important;
+  border:1px solid rgba(16,24,40,.12)!important;
+  border-radius:13px!important;
+  background:rgba(255,255,255,.82)!important;
+  color:var(--text)!important;
+  box-shadow:inset 0 0 0 1px rgba(18,183,106,.10)!important;
+  -webkit-backdrop-filter:blur(14px)!important;
+  backdrop-filter:blur(14px)!important;
+  cursor:pointer!important;
+}
+.planSelectButton:focus-visible{
+  outline:0!important;
+  box-shadow:0 0 0 3px rgba(18,183,106,.16), inset 0 0 0 1px rgba(18,183,106,.25)!important;
+}
+.planSelectCurrent{
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font-size:16px!important;
+  font-weight:900!important;
+  line-height:1.1!important;
+  letter-spacing:-.02em!important;
+}
+.planSelectCaret{
+  flex:0 0 auto!important;
+  color:#475467!important;
+  font-size:14px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  transition:transform .16s ease!important;
+}
+.planSwitch.open .planSelectCaret{
+  transform:rotate(180deg)!important;
+}
+.planSelectMenu{
+  display:none!important;
+  position:absolute!important;
+  z-index:60!important;
+  left:4px!important;
+  right:4px!important;
+  top:calc(100% + 5px)!important;
+  max-height:min(280px,52vh)!important;
+  overflow:auto!important;
+  padding:5px!important;
+  border:1px solid rgba(16,24,40,.12)!important;
+  border-radius:14px!important;
+  background:rgba(255,255,255,.96)!important;
+  box-shadow:0 16px 36px rgba(15,23,42,.16)!important;
+  -webkit-backdrop-filter:blur(18px)!important;
+  backdrop-filter:blur(18px)!important;
+}
+.planSwitch.open .planSelectMenu{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:4px!important;
+}
+.planSelectOption{
+  width:100%!important;
+  min-height:34px!important;
+  padding:7px 9px!important;
+  border:0!important;
+  border-radius:10px!important;
+  background:transparent!important;
+  color:#0f172a!important;
+  text-align:left!important;
+  font-size:14px!important;
+  font-weight:900!important;
+  line-height:1.15!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  box-shadow:none!important;
+}
+.planSelectOption:hover,
+.planSelectOption.selected{
+  background:#ecfdf3!important;
+  color:#067647!important;
+}
+.planSelectOption:disabled{
+  opacity:.62!important;
+  cursor:not-allowed!important;
+}
+
+@media(max-width:760px){
+  .planBar{
+    padding:8px 7px 8px 9px!important;
+    gap:4px!important;
+    overflow:visible!important;
+  }
+  .planSwitch{
+    flex:1 1 0!important;
+    min-width:0!important;
+    max-width:calc(100% - 112px)!important;
+    margin-right:0!important;
+    gap:0!important;
+    padding:0!important;
+    overflow:visible!important;
+  }
+  .planSwitchLabel{
+    display:none!important;
+  }
+  .planSelectButton{
+    min-height:36px!important;
+    height:36px!important;
+    padding:5px 10px!important;
+    border-radius:13px!important;
+  }
+  .planSelectCurrent{
+    font-size:17px!important;
+  }
+  .planSelectCaret{
+    display:none!important;
+  }
+  .planTools{
+    flex:0 0 auto!important;
+    margin-left:auto!important;
+    gap:3px!important;
+  }
+  .dayBulkTools{
+    gap:3px!important;
+  }
+  .dayBulkBtn,
+  .searchToggle{
+    width:34px!important;
+    height:34px!important;
+    min-width:34px!important;
+    min-height:34px!important;
+    border-radius:12px!important;
+  }
+  .planSelectMenu{
+    left:0!important;
+    right:0!important;
+    top:calc(100% + 4px)!important;
+  }
+}
+@media(max-width:380px){
+  .planSwitch{
+    max-width:calc(100% - 104px)!important;
+  }
+  .planSelectButton{
+    min-height:34px!important;
+    height:34px!important;
+    padding-left:9px!important;
+    padding-right:9px!important;
+  }
+  .planSelectCurrent{
+    font-size:16px!important;
+  }
+  .planTools,
+  .dayBulkTools{
+    gap:2px!important;
+  }
+  .dayBulkBtn,
+  .searchToggle{
+    width:32px!important;
+    height:32px!important;
+    min-width:32px!important;
+    min-height:32px!important;
+  }
 }
