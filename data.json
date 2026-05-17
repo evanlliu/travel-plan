@@ -1,6 +1,6 @@
 {
   "version": "v2.43.24",
-  "updatedAt": "2026-05-17T15:48:20.205Z",
+  "updatedAt": "2026-05-17T15:48:33.861Z",
   "settings": {
     "activePlanId": "plan_default",
     "cloudflare": {
@@ -462,7 +462,7 @@
       "dateISO": "2026-05-18",
       "time": "",
       "group": "",
-      "content": "",
+      "content": "Sam market",
       "links": [],
       "participants": [],
       "priority": "must",
