@@ -1,6 +1,6 @@
 {
   "version": "v2.43.24",
-  "updatedAt": "2026-05-18T14:21:30.537Z",
+  "updatedAt": "2026-05-18T14:21:45.958Z",
   "settings": {
     "activePlanId": "plan_default",
     "cloudflare": {
@@ -468,6 +468,18 @@
       "participants": [],
       "priority": "must",
       "sort": 34
+    },
+    {
+      "id": "i_w9pwgnvv6ympbalpr9",
+      "planId": "plan_default",
+      "dateISO": "2026-05-20",
+      "time": "",
+      "group": "",
+      "content": "拿体检报告",
+      "links": [],
+      "participants": [],
+      "priority": "must",
+      "sort": 35
     }
   ]
 }
