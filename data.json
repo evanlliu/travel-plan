@@ -1,6 +1,6 @@
 {
   "version": "v2.43.24",
-  "updatedAt": "2026-05-19T08:28:06.504Z",
+  "updatedAt": "2026-05-21T04:47:15.401Z",
   "settings": {
     "activePlanId": "plan_default",
     "cloudflare": {
@@ -26,7 +26,8 @@
     "dayCollapsed": {
       "plan_default": {
         "2026-05-17": true,
-        "2026-05-18": true
+        "2026-05-18": true,
+        "2026-05-19": true
       }
     }
   },
@@ -480,18 +481,6 @@
       "participants": [],
       "priority": "must",
       "sort": 35
-    },
-    {
-      "id": "i_55oa2351ziumpcderds",
-      "planId": "plan_default",
-      "dateISO": "2026-05-20",
-      "time": "",
-      "group": "",
-      "content": "拿体检报告",
-      "links": [],
-      "participants": [],
-      "priority": "must",
-      "sort": 36
     }
   ]
 }
