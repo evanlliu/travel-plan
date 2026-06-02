@@ -1,6 +1,6 @@
 {
   "version": "v2.43.24",
-  "updatedAt": "2026-05-25T23:36:55.428Z",
+  "updatedAt": "2026-06-02T21:19:12.735Z",
   "settings": {
     "activePlanId": "plan_default",
     "cloudflare": {
@@ -43,9 +43,9 @@
       "destination": "China",
       "startDate": "2026-05-17",
       "endDate": "2026-05-24",
-      "status": "open",
+      "status": "archived",
       "createdAt": "2026-05-08T06:35:58.649Z",
-      "archivedAt": "",
+      "archivedAt": "2026-06-02T21:19:14.105Z",
       "sort": 1,
       "note": ""
     }
