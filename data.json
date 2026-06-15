@@ -1,8 +1,8 @@
 {
   "version": "v2.43.24",
-  "updatedAt": "2026-06-15T14:05:24.777Z",
+  "updatedAt": "2026-06-15T14:08:02.501Z",
   "settings": {
-    "activePlanId": "plan_default",
+    "activePlanId": "plan_wwlyedy54h8mqfafywk",
     "cloudflare": {
       "apiBase": "https://travel-plan-data-worker.287418456.workers.dev",
       "appPassword": "1123",
@@ -47,6 +47,18 @@
       "createdAt": "2026-05-08T06:35:58.649Z",
       "archivedAt": "2026-06-02T21:19:14.105Z",
       "sort": 1,
+      "note": ""
+    },
+    {
+      "id": "plan_wwlyedy54h8mqfafywk",
+      "name": "Monterey",
+      "destination": "Monterey",
+      "startDate": "2026-06-20",
+      "endDate": "2026-06-20",
+      "status": "open",
+      "createdAt": "2026-06-15T14:08:04.724Z",
+      "archivedAt": "",
+      "sort": 2,
       "note": ""
     }
   ],
