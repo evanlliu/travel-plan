@@ -1,6 +1,6 @@
 {
   "version": "v2.43.24",
-  "updatedAt": "2026-06-15T14:08:02.501Z",
+  "updatedAt": "2026-06-16T02:03:51.259Z",
   "settings": {
     "activePlanId": "plan_wwlyedy54h8mqfafywk",
     "cloudflare": {
@@ -51,8 +51,8 @@
     },
     {
       "id": "plan_wwlyedy54h8mqfafywk",
-      "name": "Monterey",
-      "destination": "Monterey",
+      "name": "蒙特雷",
+      "destination": "蒙特雷",
       "startDate": "2026-06-20",
       "endDate": "2026-06-20",
       "status": "open",
